@@ -78,7 +78,6 @@ export const DATOS = {
   proyectos: [
     {
       titulo: "Resired",
-      href: "",
       fechas: "Junio 2024 - Julio 2024",
       activo: true,
       descripcion: "Una plataforma web para gestión de consorcios que incluye un asistente de inteligencia artificial para facilitar tareas a administradores e inquilinos. Este proyecto me permitió aplicar tecnologías como Next.js y MongoDB.",
@@ -92,6 +91,11 @@ export const DATOS = {
       ],
       enlaces: [
         {
+          tipo: "Sitio Web",
+          href: "https://resired.vercel.app", // Ejemplo de URL
+          icon: <Icons.website className="size-3" />,
+        },
+        {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/consorcio-web",
           icon: <Icons.github className="size-3" />,
@@ -102,7 +106,6 @@ export const DATOS = {
     },
     {
       titulo: "Gimnasio Palermo",
-      href: "",
       fechas: "Octubre 2024 - Presente",
       activo: true,
       descripcion: "Modernización de un sistema de gestión para un gimnasio local, mejorando su interfaz y optimizando su base de datos. Este proyecto me ha desafiado a utilizar nuevas tecnologías como Electron y React.",
@@ -117,6 +120,11 @@ export const DATOS = {
       ],
       enlaces: [
         {
+          tipo: "Sitio Web",
+          href: "https://gimnasio-palermo.vercel.app", // Ejemplo de URL
+          icon: <Icons.website className="size-3" />,
+        },
+        {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/proyecto_gimnasio",
           icon: <Icons.github className="size-3" />,
@@ -127,7 +135,6 @@ export const DATOS = {
     },
     {
       titulo: "Dogtor - Veterinaria",
-      href: "https://dogtor.netlify.app",
       fechas: "Agosto 2023",
       activo: false,
       descripcion: "Un sitio web desarrollado durante mi curso en RollingCode, donde los usuarios pueden crear perfiles para sus mascotas y reservar turnos.",
@@ -139,6 +146,11 @@ export const DATOS = {
       ],
       enlaces: [
         {
+          tipo: "Sitio Web",
+          href: "https://dogtor.netlify.app",
+          icon: <Icons.website className="size-3" />,
+        },
+        {
           tipo: "Repositorio",
           href: "https://github.com/agustincolo/ProyectoFinal-G2",
           icon: <Icons.github className="size-3" />,
@@ -149,7 +161,6 @@ export const DATOS = {
     },
     {
       titulo: "Ristretto Coffee Shop",
-      href: "https://ristretto-coffee.netlify.app",
       fechas: "Octubre 2023 - Noviembre 2023",
       activo: false,
       descripcion: "Landing page para cafetería diseñada para modernizar un sitio tradicional, utilizando imágenes generadas por IA como ejemplos de café.",
@@ -159,6 +170,11 @@ export const DATOS = {
         "JavaScript",
       ],
       enlaces: [
+        {
+          tipo: "Sitio Web",
+          href: "https://ristretto-coffee.netlify.app",
+          icon: <Icons.website className="size-3" />,
+        },
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/coffee-shop",
@@ -170,7 +186,6 @@ export const DATOS = {
     },
     {
       titulo: "Selector de Agentes",
-      href: "",
       fechas: "Noviembre 2024",
       activo: true,
       descripcion: "Una aplicación de escritorio desarrollada con PySide6 para explorar y seleccionar agentes, con carga dinámica de datos y caché de imágenes.",
@@ -183,11 +198,11 @@ export const DATOS = {
       enlaces: [
         {
           tipo: "Repositorio",
-          href: "https://tu-enlace-de-github",
+          href: "https://github.com/AndresRuiu/selector-agentes",
           icon: <Icons.github className="size-3" />,
         }
       ],
       imagen: "/img/selector-agentes.png",
-}
+    }
   ]
 } as const;

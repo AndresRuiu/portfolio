@@ -15,6 +15,7 @@ import ProjectModal from './ProjectModal';
 import Navbar from '@/components/NavBar';
 import { Icons } from './ui/icons';
 import { SectionReveal, AnimateElements, AnimatedElement }  from '@/components/SectionReveal'
+import ProjectsCarousel from './ProjectsCarousel';
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -125,86 +126,20 @@ const Portfolio = () => {
         {/* Projects Section */}
         <SectionReveal delay={0.5}>
           <AnimateElements>
-          <motion.section 
-            id="projects" 
-            className="container mx-auto pt-12 pb-12"
-          >
-            <AnimatedElement delay={0}>
-              <h2 className="text-3xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Proyectos</h2>
-            </AnimatedElement>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
-              {DATOS.proyectos.map((project, index) => (
-                <AnimatedElement key={project.titulo} delay={index * 0.1}>
-                  <motion.div 
-                    className="group relative h-full"
-                    whileHover={{ 
-                      scale: 1.03,
-                      boxShadow: "0 10px 20px rgba(0,0,0,0.12)"
-                    }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 300 
-                    }}
-                  >
-                    <div className="rounded-lg bg-card text-card-foreground flex flex-col overflow-hidden border hover:shadow-lg transition-all duration-300 ease-out h-full">
-                      {project.imagen || project.video ? (
-                        <div 
-                          className="w-full h-40 sm:h-48 md:h-56 object-cover cursor-pointer"
-                          onClick={() => setSelectedProject(project)}
-                        >
-                          {project.video ? (
-                            <video 
-                              src={project.video} 
-                              className="w-full h-full object-cover"
-                              muted 
-                              loop 
-                              playsInline
-                            />
-                          ) : (
-                            <img 
-                              src={project.imagen || '/placeholder.jpg'} 
-                              alt={project.titulo}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                      ) : null}
-                      <div className="p-3 sm:p-4 flex flex-col flex-grow">
-                        <div className="flex items-center mb-2">
-                          <Code className="mr-2 text-primary" size={16} sm:size={20} />
-                          <h3 className="font-semibold text-sm sm:text-base">{project.titulo}</h3>
-                        </div>
-                        <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
-                          {project.tecnologias.map((tech) => (
-                            <Badge key={tech} variant="outline" className="text-[10px] sm:text-xs">{tech}</Badge>
-                          ))}
-                        </div>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground pb-2">{project.fechas}</p>
-                        <div className="flex flex-row flex-wrap items-start gap-1 mt-auto">
-                          {project.href && (
-                            <Badge 
-                              onClick={() => handleExternalLink(project.href)} 
-                              className="flex gap-1 sm:gap-2 px-1 sm:px-2 py-0.5 sm:py-1 text-[8px] sm:text-[10px] cursor-pointer hover:bg-accent"
-                            >
-                              Sitio Web
-                            </Badge>
-                          )}
-                          {project.enlaces[0] && (
-                            <Badge 
-                              onClick={() => handleExternalLink(project.enlaces[0].href)} 
-                              className="flex gap-1 sm:gap-2 px-1 sm:px-2 py-0.5 sm:py-1 text-[8px] sm:text-[10px] cursor-pointer hover:bg-accent"
-                            >
-                              Repositorio
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </AnimatedElement>
-              ))}
-            </div>
-          </motion.section>
+            <motion.section 
+              id="projects" 
+              className="container mx-auto pt-12 pb-12"
+            >
+              <AnimatedElement delay={0}>
+                <h2 className="text-3xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Proyectos</h2>
+              </AnimatedElement>
+              
+              <ProjectsCarousel 
+                projects={DATOS.proyectos}
+                onProjectClick={setSelectedProject}
+                handleExternalLink={handleExternalLink}
+              />
+            </motion.section>
           </AnimateElements>
         </SectionReveal>
 
