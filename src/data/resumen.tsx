@@ -105,7 +105,7 @@ export const DATOS = {
       href: "",
       fechas: "Octubre 2024 - Presente",
       activo: true,
-      descripcion: "Estoy modernizando el sistema de gestión de un gimnasio, mejorando su interfaz y optimizando su base de datos. Este proyecto me ha desafiado a integrar varias tecnologías como Electron y React.",
+      descripcion: "Modernización de un sistema de gestión para un gimnasio local, mejorando su interfaz y optimizando su base de datos. Este proyecto me ha desafiado a utilizar nuevas tecnologías como Electron y React.",
       tecnologias: [
         "Electron",
         "React",

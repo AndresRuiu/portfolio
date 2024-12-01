@@ -59,7 +59,7 @@ const Portfolio = () => {
               opacity: heroOpacity
             }}
             id="hero" 
-            className="container mx-auto px-4 py-16"
+            className="container mx-auto px-4 py-12"
           >
             <div className="mx-auto w-full max-w-3xl space-y-8">
               <div className="gap-4 flex flex-col md:flex-row justify-between items-center">
@@ -67,7 +67,7 @@ const Portfolio = () => {
                   <div className="flex flex-col md:flex-row items-center justify-center md:justify-start space-x-2 mb-6 md:mb-2">
                     <BlurFadeText
                       delay={BLUR_FADE_DELAY}
-                      className="text-3xl font-bold tracking-tighter sm:text-4xl xl:text-6xl"
+                      className="text-4xl font-bold tracking-tighter xl:text-6xl"
                       yOffset={8}
                       text={`Hola, soy ${DATOS.nombre.split(" ")[0]}`}
                     />
@@ -84,7 +84,7 @@ const Portfolio = () => {
                   />
                 </div>
                 <BlurFade delay={BLUR_FADE_DELAY} className="flex justify-center">
-                  <Avatar className="size-32 md:size-48 border">
+                  <Avatar className="size-48 border">
                     <AvatarImage alt={DATOS.nombre} src={DATOS.urlAvatar} />
                     <AvatarFallback>{DATOS.iniciales}</AvatarFallback>
                   </Avatar>
@@ -98,7 +98,7 @@ const Portfolio = () => {
         <AnimateElements>
           <section id="about" className="container mx-auto pb-6">
             <AnimatedElement delay={0}>
-              <h2 className="text-xl font-bold mb-4 text-center md:text-left">Sobre mí</h2>
+              <h2 className="text-2xl md:text-xl font-bold mb-4 text-center md:text-left">Sobre mí</h2>
             </AnimatedElement>
             <AnimatedElement delay={0.1}>
               <p className="text-muted-foreground text-center md:text-left">{DATOS.resumen}</p>
@@ -108,9 +108,9 @@ const Portfolio = () => {
 
         {/* Skills Section */}
         <AnimateElements>
-          <section id="skills" className="container mx-auto">
+          <section id="skills" className="container mx-auto mt-6">
             <AnimatedElement delay={0}>
-              <h2 className="text-xl font-bold mb-4 text-center md:text-left">Habilidades</h2>
+              <h2 className="text-2xl md:text-xl font-bold mb-4 text-center md:text-left">Habilidades</h2>
             </AnimatedElement>
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               {DATOS.habilidades.map((skill, index) => (
@@ -127,10 +127,10 @@ const Portfolio = () => {
           <AnimateElements>
           <motion.section 
             id="projects" 
-            className="container mx-auto pt-20 pb-12"
+            className="container mx-auto pt-12 pb-12"
           >
             <AnimatedElement delay={0}>
-              <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Proyectos</h2>
+              <h2 className="text-3xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Proyectos</h2>
             </AnimatedElement>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
               {DATOS.proyectos.map((project, index) => (
@@ -211,7 +211,7 @@ const Portfolio = () => {
         {/* Education Section */}
         <SectionReveal delay={0.2}>
           <AnimateElements>
-          <section id="education" className="container mx-auto px-4 py-12 relative">
+          <section id="education" className="container mx-auto px-4 py-8 relative">
             <div className="relative flex flex-col items-center">
               <div className="hidden md:block absolute left-1/2 top-8 bottom-0 w-0.5 bg-muted-foreground/30 transform -translate-x-1/2"></div>
               
