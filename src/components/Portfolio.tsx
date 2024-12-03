@@ -5,7 +5,7 @@ import {
   useScroll, 
   useTransform
 } from 'framer-motion';
-import { Code, Download } from 'lucide-react';
+import {Download } from 'lucide-react';
 import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Badge } from "@/components/ui/badge";
