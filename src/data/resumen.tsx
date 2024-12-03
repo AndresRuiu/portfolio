@@ -1,6 +1,7 @@
 import { Icons } from "@/components/ui/icons";
 import { HomeIcon, NotebookIcon } from "lucide-react";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DATOS = {
   nombre: "Andrés Ruiu",	
   iniciales: "AR",
@@ -92,7 +93,7 @@ export const DATOS = {
       enlaces: [
         {
           tipo: "Sitio Web",
-          href: "https://resired.vercel.app", // Ejemplo de URL
+          href: "https://consorcio-web-theta.vercel.app",
           icon: <Icons.website className="size-3" />,
         },
         {
@@ -121,7 +122,7 @@ export const DATOS = {
       enlaces: [
         {
           tipo: "Sitio Web",
-          href: "https://gimnasio-palermo.vercel.app", // Ejemplo de URL
+          href: "https://gimnasio-palermo.vercel.app",
           icon: <Icons.website className="size-3" />,
         },
         {

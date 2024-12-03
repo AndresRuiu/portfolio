@@ -123,7 +123,6 @@ const Portfolio = () => {
           </section>
         </AnimateElements>
 
-        {/* Projects Section */}
         <SectionReveal delay={0.5}>
           <AnimateElements>
             <motion.section 
@@ -223,7 +222,7 @@ const Portfolio = () => {
                           href={edu.href} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-primary hover:underline text-sm mt-2 block"
+                          className="text-primary hover:underline hover:text-secondary-foreground text-sm mt-2 block"
                         >
                           Visitar institución
                         </a>
