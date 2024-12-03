@@ -265,7 +265,6 @@ const Portfolio = () => {
                       </a>
 
                       <a
-                        href={`https://wa.me/54${DATOS.contacto.tel.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
