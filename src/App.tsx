@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom'
 import Portfolio from "@/components/Portfolio"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Analytics } from '@vercel/analytics/next'
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
           <Portfolio />
         </TooltipProvider>
       </ThemeProvider>
+      <Analytics />
     </BrowserRouter>
   )
 }
