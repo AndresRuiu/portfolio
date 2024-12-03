@@ -50,7 +50,6 @@ const Portfolio = () => {
       <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[80%] xl:max-w-[60%] px-4 pb-16">
         <Navbar />
         
-        {/* Hero Section with Parallax */}
         <SectionReveal delay={0.2}>
           <motion.section 
             ref={heroRef}
@@ -95,7 +94,6 @@ const Portfolio = () => {
           </motion.section>
         </SectionReveal>
 
-        {/* About Section */}
         <AnimateElements>
           <section id="about" className="container mx-auto pb-6">
             <AnimatedElement delay={0}>
@@ -107,7 +105,6 @@ const Portfolio = () => {
           </section>
         </AnimateElements>
 
-        {/* Skills Section */}
         <AnimateElements>
           <section id="skills" className="container mx-auto mt-6">
             <AnimatedElement delay={0}>
@@ -142,7 +139,6 @@ const Portfolio = () => {
           </AnimateElements>
         </SectionReveal>
 
-        {/* Education Section */}
         <SectionReveal delay={0.2}>
           <AnimateElements>
           <section id="education" className="container mx-auto px-4 py-8 relative">
@@ -236,7 +232,6 @@ const Portfolio = () => {
           </AnimateElements>
         </SectionReveal>
 
-        {/* Contact Section */}
         <SectionReveal delay={0.2}>
           <AnimateElements>
             <section id="contact" className="container mx-auto px-4 py-12">

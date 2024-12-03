@@ -10,7 +10,7 @@ export const DATOS = {
   description: "Desarrollador FullStack apasionado por la tecnología. Transformando ideas en soluciones digitales innovadoras, con un enfoque en crear aplicaciones que realmente marquen la diferencia",
   resumen: 
   "Al final de 2022, decidí dejar atrás mis estudios en Ingeniería Civil para dedicarme por completo a mi verdadera pasión: la programación. Actualmente estoy en el último año de la Tecnicatura Universitaria en Programación en la UTN - FRT. A lo largo de mi camino, he explorado diversas tecnologías y he participado en proyectos emocionantes que me han permitido crecer como desarrollador. Siempre estoy buscando aprender algo nuevo y aplicar mis habilidades para crear soluciones innovadoras que impacten positivamente en el mundo digital",
-  urlAvatar: "/yo.jpg",
+  urlAvatar: "/yo.webp",
   habilidades: [
     "React",
     "Next.js",
@@ -102,7 +102,7 @@ export const DATOS = {
           icon: <Icons.github className="size-3" />,
         }
       ],
-      imagen: "/img/resired.png",
+      imagen: "/img/resired.webp",
       video: "",
     },
     {
@@ -131,7 +131,7 @@ export const DATOS = {
           icon: <Icons.github className="size-3" />,
         }
       ],
-      imagen: "/img/gimnasio-palermo.png",
+      imagen: "/img/gimnasio-palermo.webp",
       video: "",
     },
     {
@@ -157,7 +157,7 @@ export const DATOS = {
           icon: <Icons.github className="size-3" />,
         }
       ],
-      imagen: "/img/dogtor-veterinaria.png",
+      imagen: "/img/dogtor-veterinaria.webp",
       video: "",
     },
     {
@@ -182,7 +182,7 @@ export const DATOS = {
           icon: <Icons.github className="size-3" />,
         }
       ],
-      imagen: "/img/ristretto-cafe.png",
+      imagen: "/img/ristretto-cafe.webp",
       video: "",
     },
     {
@@ -203,7 +203,7 @@ export const DATOS = {
           icon: <Icons.github className="size-3" />,
         }
       ],
-      imagen: "/img/selector-agentes.png",
+      imagen: "/img/selector-agentes.webp",
     }
   ]
 } as const;
