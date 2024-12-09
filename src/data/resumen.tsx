@@ -186,6 +186,35 @@ export const DATOS = {
       video: "",
     },
     {
+      titulo: "CV Generator",
+      fechas: "Diciembre 2024",
+      activo: true,
+      descripcion: "Una aplicación web integral para la generación y personalización de currículos profesionales. El proyecto ofrece una experiencia de usuario intuitiva que permite a los usuarios diseñar, editar y exportar sus CVs de manera completamente personalizada. Desarrollé características avanzadas como guardado automático en localStorage, selección de paletas de color, vista previa en tiempo real, y exportación a PDF. La aplicación está construida con React y Tailwind CSS, implementando animaciones con Framer Motion para mejorar la interactividad y la experiencia de usuario.",
+      tecnologias: [
+        "React",
+        "TypeScript",
+        "Tailwind CSS", 
+        "Framer Motion",
+        "React PDF",
+        "React Router",
+        "Shadcn UI"
+      ],
+      enlaces: [
+        {
+          tipo: "Sitio Web",
+          href: "https://cv-generator-virid.vercel.app",
+          icon: <Icons.website className="size-3" />,
+        },
+        {
+          tipo: "Repositorio",
+          href: "https://github.com/AndresRuiu/cv-generator",
+          icon: <Icons.github className="size-3" />,
+        }
+      ],
+      imagen: "/img/cv-generator.webp",
+      video: "",
+    },
+    {
       titulo: "Selector de Agentes",
       fechas: "Noviembre 2024",
       activo: true,
