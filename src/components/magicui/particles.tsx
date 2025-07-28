@@ -100,8 +100,8 @@ export default function Particles({
     const particleSize = Math.random() * size + size * 0.5; // Usar la prop size
     const alpha = 0;
     const targetAlpha = parseFloat((Math.random() * 0.8 + 0.2).toFixed(2)); // Mayor opacidad (0.2-1.0)
-    const dx = (Math.random() - 0.5) * 0.2 + vx;
-    const dy = (Math.random() - 0.5) * 0.2 + vy;
+    const dx = (Math.random() - 0.5) * 0.6 + vx; // Aumentado de 0.2 a 0.6
+    const dy = (Math.random() - 0.5) * 0.6 + vy; // Aumentado de 0.2 a 0.6
     const magnetism = 0.1 + Math.random() * 0.4;
     const smooth = 0.05 + Math.random() * 0.15; // Transición más suave
 

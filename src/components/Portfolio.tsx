@@ -55,7 +55,7 @@ const Portfolio = () => {
     <main className="flex flex-col min-h-[100dvh] items-center bg-background relative">
       <Particles
         className="absolute inset-0 z-0"
-        quantity={400}
+        quantity={300}
         ease={80}
         color="#4b6faa"
         refresh
