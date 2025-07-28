@@ -68,7 +68,7 @@ const ProjectsCarousel: React.FC<ProjectsCarouselProps> = ({
     return projectsToShow;
   };
 
-  const handleDragEnd = (event: never, info: { offset: { x: number } }) => {
+  const handleDragEnd = (_: never, info: { offset: { x: number } }) => {
     if (windowWidth >= 640) return;
 
     const swipeThreshold = 50;

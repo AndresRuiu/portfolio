@@ -16,12 +16,14 @@ import Navbar from '@/components/NavBar';
 import { Icons } from './ui/icons';
 import { SectionReveal, AnimateElements, AnimatedElement }  from '@/components/SectionReveal'
 import ProjectsCarousel from './ProjectsCarousel';
+import Particles from './magicui/particles';
 
 const BLUR_FADE_DELAY = 0.04;
 
 const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const heroRef = useRef(null);
+  
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
@@ -30,6 +32,10 @@ const Portfolio = () => {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+
+  const handleProjectClick = (project: any) => {
+    setSelectedProject(project);
+  };
 
   const handleExternalLink = (url: string) => {
     if (url) {
@@ -46,8 +52,16 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <main className="flex flex-col min-h-[100dvh] items-center bg-background">
-      <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[80%] xl:max-w-[60%] px-4 pb-16">
+    <main className="flex flex-col min-h-[100dvh] items-center bg-background relative">
+      <Particles
+        className="absolute inset-0 z-0"
+        quantity={400}
+        ease={80}
+        color="#4b6faa"
+        refresh
+        size={10}
+      />
+      <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[80%] xl:max-w-[60%] px-4 pb-16 relative z-10">
         <Navbar />
         
         <SectionReveal delay={0.2}>
@@ -131,8 +145,8 @@ const Portfolio = () => {
               </AnimatedElement>
               
               <ProjectsCarousel 
-                projects={DATOS.proyectos}
-                onProjectClick={setSelectedProject}
+                projects={DATOS.proyectos as any}
+                onProjectClick={handleProjectClick}
                 handleExternalLink={handleExternalLink}
               />
             </motion.section>

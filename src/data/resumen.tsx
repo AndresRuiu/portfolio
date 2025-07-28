@@ -78,6 +78,28 @@ export const DATOS = {
   ],
   proyectos: [
     {
+      titulo: "Landing Page - Laboratorio Saguir Correa",
+      fechas: "Marzo 2025 - Junio 2025",
+      activo: true,
+      descripcion: "Desarrollo de una landing page completa para el Laboratorio de Análisis Clínicos Saguir Correa, incluyendo secciones de historia, servicios, contacto y visualización de resultados clínicos. El proyecto se mantiene activo con actualizaciones y mejoras continuas para optimizar la experiencia del usuario y la funcionalidad del sitio.",
+      tecnologias: [
+        "Next.js",
+        "React",
+        "Tailwind CSS",
+        "Framer Motion",
+        "Responsive Design",
+        "SEO"
+      ],
+      enlaces: [
+        {
+          tipo: "Sitio Web",
+          href: "https://laboratoriosaguircorrea.com.ar",
+          icon: <Icons.website className="size-3" />,
+        }
+      ],
+      imagen: "/img/saguir-correa.png",
+    },
+    {
       titulo: "Resired",
       fechas: "Junio 2024 - Julio 2024",
       activo: true,
