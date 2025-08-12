@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { 
   AnimatePresence, 
   motion, 
@@ -36,18 +36,21 @@ import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DATOS } from "@/data/resumen";
-import ProjectModal from './ProjectModal';
 import Navbar from '@/components/NavBar';
 import { Icons } from './ui/icons';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
-import ProjectsCarousel from './ProjectsCarousel';
-import Particles from './magicui/particles';
 import ScrollProgress from './ScrollProgress';
-import ContactModal from './ContactModal';
-import ServiciosSection from './ServiciosSection';
+import { ProjectsSkeleton, ServicesSkeleton, ModalSkeleton } from './LoadingFallbacks';
+
+// Lazy loading for heavy components
+const ProjectModal = React.lazy(() => import('./ProjectModal'));
+const ProjectsCarousel = React.lazy(() => import('./ProjectsCarousel'));
+const ContactModal = React.lazy(() => import('./ContactModal'));
+const ServiciosSection = React.lazy(() => import('./ServiciosSection'));
+const Particles = React.lazy(() => import('./magicui/particles'));
 import { useSmoothScroll, useKeyboardNavigation } from '@/hooks/useNavigation';
 
-const BLUR_FADE_DELAY = 0.04;
+const BLUR_FADE_DELAY = 0.02;
 
 const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -99,14 +102,16 @@ const Portfolio = () => {
   return (
     <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
       {/* Enhanced Particles Background */}
-      <Particles
-        className="absolute inset-0 z-0"
-        quantity={200}
-        ease={60}
-        color="#4b6faa"
-        refresh
-        size={8}
-      />
+      <Suspense fallback={<div />}>
+        <Particles
+          className="absolute inset-0 z-0"
+          quantity={30}
+          ease={90}
+          color="#4b6faa"
+          refresh={false}
+          size={4}
+        />
+      </Suspense>
       
       {/* Scroll Progress Indicator */}
       <ScrollProgress />
@@ -133,24 +138,28 @@ const Portfolio = () => {
               <div className="gap-4 flex flex-col md:flex-row justify-between items-center">
                 <div className="flex-col flex flex-1 space-y-1.5 text-center md:text-left">
                   <div className="flex flex-col md:flex-row items-center justify-center md:justify-start space-x-2 mb-6 md:mb-2">
-                    <BlurFadeText
-                      delay={BLUR_FADE_DELAY}
+                    <motion.h1
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
                       className="text-4xl font-bold tracking-tighter xl:text-6xl bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
-                      yOffset={8}
-                      text={`Hola, soy ${DATOS.nombre.split(" ")[0]}`}
-                    />
+                    >
+                      {`Hola, soy ${DATOS.nombre.split(" ")[0]}`}
+                    </motion.h1>
                     <motion.img 
                       src="https://fonts.gstatic.com/s/e/notoemoji/15.1/1faf0/72.png" 
                       alt="emoji" 
+                      loading="lazy"
                       className="inline-block align-middle w-8 h-8 sm:w-10 sm:h-10"
                       animate={{ 
-                        rotate: [0, 14, -8, 14, -4, 10, 0],
-                        scale: [1, 1.1, 0.9, 1.1, 1]
+                        rotate: [0, 10, 0],
+                        scale: [1, 1.05, 1]
                       }}
                       transition={{ 
-                        duration: 2.5, 
+                        duration: 2, 
                         repeat: Infinity, 
-                        repeatDelay: 3 
+                        repeatDelay: 4,
+                        ease: "easeInOut"
                       }}
                     />
                   </div>
@@ -205,7 +214,7 @@ const Portfolio = () => {
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <Avatar className="size-48 border-2 border-primary/20 shadow-2xl">
-                      <AvatarImage alt={DATOS.nombre} src={DATOS.urlAvatar} />
+                      <AvatarImage alt={DATOS.nombre} src={DATOS.urlAvatar} loading="lazy" />
                       <AvatarFallback>{DATOS.iniciales}</AvatarFallback>
                     </Avatar>
                   </motion.div>
@@ -264,10 +273,12 @@ const Portfolio = () => {
         </AnimateElements>
 
         {/* Services Section */}
-        <ServiciosSection
-          servicios={DATOS.servicios as unknown as Servicio[]}
-          onContactClick={handleContactClick}
-        />
+        <Suspense fallback={<ServicesSkeleton />}>
+          <ServiciosSection
+            servicios={DATOS.servicios as unknown as Servicio[]}
+            onContactClick={handleContactClick}
+          />
+        </Suspense>
 
         {/* Enhanced Projects Section */}
         <SectionReveal delay={0.5}>
@@ -282,11 +293,13 @@ const Portfolio = () => {
                 </h2>
               </AnimatedElement>
               
-              <ProjectsCarousel 
-                projects={DATOS.proyectos as unknown as Project[]}
-                onProjectClick={handleProjectClick}
-                handleExternalLink={handleExternalLink}
-              />
+              <Suspense fallback={<ProjectsSkeleton />}>
+                <ProjectsCarousel 
+                  projects={DATOS.proyectos as unknown as Project[]}
+                  onProjectClick={handleProjectClick}
+                  handleExternalLink={handleExternalLink}
+                />
+              </Suspense>
             </motion.section>
           </AnimateElements>
         </SectionReveal>
@@ -495,17 +508,23 @@ const Portfolio = () => {
         {/* Modals */}
         <AnimatePresence>
           {selectedProject && (
-            <ProjectModal 
-              project={selectedProject} 
-              onClose={() => setSelectedProject(null)} 
-            />
+            <Suspense fallback={<ModalSkeleton />}>
+              <ProjectModal 
+                project={selectedProject} 
+                onClose={() => setSelectedProject(null)} 
+              />
+            </Suspense>
           )}
         </AnimatePresence>
 
-        <ContactModal
-          isOpen={isContactModalOpen}
-          onClose={() => setIsContactModalOpen(false)}
-        />
+        {isContactModalOpen && (
+          <Suspense fallback={<ModalSkeleton />}>
+            <ContactModal
+              isOpen={isContactModalOpen}
+              onClose={() => setIsContactModalOpen(false)}
+            />
+          </Suspense>
+        )}
       </div>
     </main>
   );

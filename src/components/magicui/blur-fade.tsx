@@ -27,7 +27,12 @@ const BlurFade = ({
   blur = "6px",
 }: BlurFadeProps) => {
   const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin as any });
+  const inViewResult = useInView(ref, { 
+    once: true, 
+    margin: inViewMargin,
+    threshold: 0.1
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any);
   const isInView = !inView || inViewResult;
   const defaultVariants: Variants = {
     hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
