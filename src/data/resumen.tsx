@@ -1,7 +1,6 @@
 import { Icons } from "@/components/ui/icons";
-import { HomeIcon, NotebookIcon } from "lucide-react";
+import { HomeIcon, NotebookIcon, Sparkles } from "lucide-react";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const DATOS = {
   nombre: "Andrés Ruiu",	
   iniciales: "AR",
@@ -24,6 +23,7 @@ export const DATOS = {
   ],
   navegacion: [
     { href: "/", icon: HomeIcon, label: "Inicio" },
+    { href: "/gossip", icon: Sparkles, label: "Gossip Girl" },
     { href: "/blog", icon: NotebookIcon, label: "Blog" },
   ],
   contacto: {
@@ -50,6 +50,64 @@ export const DATOS = {
       },
     },
   },
+  servicios: [
+    {
+      titulo: "Desarrollo Frontend",
+      descripcion: "Creo sitios web modernos que se ven geniales en cualquier dispositivo",
+      icono: "🎨",
+      tecnologias: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+      incluye: [
+        "Diseño responsivo para móvil y desktop",
+        "Optimización para buscadores (SEO)",
+        "Animaciones suaves y atractivas",
+        "Conexión con APIs externas",
+        "Código limpio y documentado"
+      ],
+      entregables: "Sitio web funcionando + código fuente + hosting configurado"
+    },
+    {
+      titulo: "Desarrollo Backend",
+      descripcion: "Construyo la parte invisible que hace funcionar tu aplicación",
+      icono: "⚙️",
+      tecnologias: ["Node.js", "NestJS", "MySQL", "MongoDB"],
+      incluye: [
+        "API completa para tu aplicación",
+        "Base de datos bien organizada",
+        "Sistema de usuarios y permisos",
+        "Documentación fácil de entender",
+        "Pruebas automatizadas básicas"
+      ],
+      entregables: "API funcionando + base de datos + documentación + servidor configurado"
+    },
+    {
+      titulo: "Landing Pages",
+      descripcion: "Páginas web que convierten visitantes en clientes de forma efectiva",
+      icono: "📱",
+      tecnologias: ["React", "Next.js", "Tailwind CSS", "Framer Motion"],
+      incluye: [
+        "Diseño enfocado en conversiones",
+        "Formularios de contacto funcionales",
+        "Optimización de velocidad de carga",
+        "Integración con Google Analytics",
+        "Adaptado a móviles perfectamente"
+      ],
+      entregables: "Landing page completa + hosting + formularios configurados"
+    },
+    {
+      titulo: "Desarrollo Full Stack",
+      descripcion: "La solución completa: desde la idea hasta la aplicación funcionando",
+      icono: "🚀",
+      tecnologias: ["React", "Next.js", "Node.js", "PostgreSQL"],
+      incluye: [
+        "Aplicación web completa y funcional",
+        "Panel de administración sencillo",
+        "Base de datos optimizada",
+        "Hosting gratuito por 6 meses",
+        "Soporte y actualizaciones (2 meses)"
+      ],
+      entregables: "Aplicación completa + código fuente + hosting + soporte inicial"
+    }
+  ],
   educacion: [
     {
       institucion: "Universidad Tecnológica Nacional - FRT",

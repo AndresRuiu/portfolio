@@ -71,25 +71,30 @@ export interface DockIconProps {
   size?: number;
   magnification?: number;
   distance?: number;
-  mouseX?: any;
+  mouseX?: ReturnType<typeof useMotionValue<number>>;
   className?: string;
   children?: React.ReactNode;
   props?: PropsWithChildren;
 }
  
-const DockIcon = ({
-  size,
-  magnification = DEFAULT_MAGNIFICATION,
-  distance = DEFAULT_DISTANCE,
-  mouseX = useMotionValue(Infinity), 
-  className,
-  children,
-  ...props
-}: DockIconProps) => {
-  const ref = useRef<HTMLDivElement>(null);
+const DockIcon = React.forwardRef<HTMLDivElement, DockIconProps>((
+  {
+    magnification = DEFAULT_MAGNIFICATION,
+    distance = DEFAULT_DISTANCE,
+    mouseX, 
+    className,
+    children,
+    ...props
+  },
+  ref
+) => {
+  const internalRef = useRef<HTMLDivElement>(null);
+  const defaultMouseX = useMotionValue(Infinity);
+  const finalMouseX = mouseX || defaultMouseX;
  
-  const distanceCalc = useTransform(mouseX || 0, (val: number) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+  const distanceCalc = useTransform(finalMouseX as ReturnType<typeof useMotionValue<number>>, (val: number) => {
+    const bounds = (ref as React.RefObject<HTMLDivElement>)?.current?.getBoundingClientRect() ?? 
+                   internalRef.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
   
     return val - bounds.x - bounds.width / 2;
   });
@@ -100,7 +105,7 @@ const DockIcon = ({
     [40, magnification, 40],
   );
  
-  const width = useSpring(widthSync, {
+  const width = useSpring(widthSync as ReturnType<typeof useMotionValue<number>>, {
     mass: 0.1,
     stiffness: 150,
     damping: 12,
@@ -108,7 +113,7 @@ const DockIcon = ({
  
   return (
     <motion.div
-      ref={ref}
+      ref={ref || internalRef}
       style={{ width }}
       className={cn(
         "flex aspect-square cursor-pointer items-center justify-center rounded-full",
@@ -119,7 +124,7 @@ const DockIcon = ({
       {children}
     </motion.div>
   );
-};
+});
  
 DockIcon.displayName = "DockIcon";
  

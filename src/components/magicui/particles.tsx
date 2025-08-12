@@ -3,6 +3,20 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
+interface Circle {
+  x: number;
+  y: number;
+  translateX: number;
+  translateY: number;
+  size: number;
+  alpha: number;
+  targetAlpha: number;
+  dx: number;
+  dy: number;
+  magnetism: number;
+  smooth: number;
+}
+
 interface ParticlesProps {
   className?: string;
   quantity?: number;
@@ -29,7 +43,7 @@ export default function Particles({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const context = useRef<CanvasRenderingContext2D | null>(null);
-  const circles = useRef<any[]>([]);
+  const circles = useRef<Circle[]>([]);
   const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
@@ -46,14 +60,16 @@ export default function Particles({
     return () => {
       window.removeEventListener("resize", initCanvas);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     onMouseMove();
-  }, [mousePosition.current]);
+  }, []);
 
   useEffect(() => {
     initCanvas();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   const initCanvas = () => {
@@ -88,7 +104,7 @@ export default function Particles({
     }
   };
 
-  const circleParams = (): any => {
+  const circleParams = (): Circle => {
     const canvas = canvasSize.current;
     const canvasW = canvas.w;
     const canvasH = canvas.h;
@@ -120,7 +136,7 @@ export default function Particles({
     };
   };
 
-  const drawCircle = (circle: any, update = false) => {
+  const drawCircle = (circle: Circle, update = false) => {
     const { x, y, translateX, translateY, size, alpha } = circle;
     if (context.current) {
       context.current.translate(translateX, translateY);
@@ -230,7 +246,7 @@ export default function Particles({
 
   const animate = () => {
     clearContext();
-    circles.current.forEach((circle: any, i: number) => {
+    circles.current.forEach((circle: Circle, i: number) => {
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
         canvasSize.current.w - circle.x - circle.translateX - circle.size, // distance from right edge

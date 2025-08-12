@@ -44,7 +44,7 @@ export default function Navbar() {
         <Separator orientation="vertical" className="mx-2 h-8" />
 
         {Object.entries(DATOS.contacto.social)
-          .filter(([_, social]) => social.navbar)
+          .filter(([, social]) => social.navbar)
           .map(([name, social]) => (
             <Tooltip key={name}>
               <TooltipTrigger asChild>

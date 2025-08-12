@@ -6,14 +6,15 @@ import { Badge } from "@/components/ui/badge";
 interface ProjectModalProps {
   project: {
     titulo: string;
-    descripcion: string;
+    descripcion?: string;
     tecnologias: string[];
     imagen?: string;
     video?: string;
+    activo?: boolean;
     enlaces: Array<{
       tipo: string;
       href: string;
-      icon?: React.ReactNode;
+      icon: React.ReactElement;
     }>;
     fechas: string;
   };
@@ -68,7 +69,9 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
             {project.titulo}
           </h2>
           
-          <p className="text-muted-foreground mb-4">{project.descripcion}</p>
+          {project.descripcion && (
+            <p className="text-muted-foreground mb-4">{project.descripcion}</p>
+          )}
           
           <div className="flex flex-wrap gap-2 mb-4">
             {project.tecnologias.map((tech) => (
