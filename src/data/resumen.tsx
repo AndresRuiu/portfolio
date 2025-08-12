@@ -23,8 +23,8 @@ export const DATOS = {
   ],
   navegacion: [
     { href: "/", icon: HomeIcon, label: "Inicio" },
-    { href: "/gossip", icon: Sparkles, label: "Gossip Girl" },
-    { href: "/blog", icon: NotebookIcon, label: "Blog" },
+    { href: "/proyectos", icon: Sparkles, label: "Proyectos" },
+    { href: "/servicios", icon: NotebookIcon, label: "Servicios" },
   ],
   contacto: {
     email: "andresruiu@gmail.com",

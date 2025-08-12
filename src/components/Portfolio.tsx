@@ -105,11 +105,11 @@ const Portfolio = () => {
       <Suspense fallback={<div />}>
         <Particles
           className="absolute inset-0 z-0"
-          quantity={30}
+          quantity={180}
           ease={90}
           color="#4b6faa"
           refresh={false}
-          size={4}
+          size={12}
         />
       </Suspense>
       
