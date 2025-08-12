@@ -75,9 +75,96 @@ const HomePage = () => {
           className="container mx-auto px-4 py-12 relative"
         >
           <div className="mx-auto w-full max-w-3xl space-y-8">
-            <div className="gap-4 flex flex-col md:flex-row justify-between items-center">
-              <div className="flex-col flex flex-1 space-y-1.5 text-center md:text-left">
-                <div className="flex flex-col md:flex-row items-center justify-center md:justify-start space-x-2 mb-6 md:mb-2">
+            {/* Mobile Layout */}
+            <div className="md:hidden flex flex-col items-center space-y-6">
+              {/* Photo First on Mobile */}
+              <BlurFade delay={BLUR_FADE_DELAY} className="flex justify-center">
+                <motion.div
+                  whileHover={{ scale: 1.05, rotate: 2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Avatar className="size-48 border-2 border-primary/20 shadow-2xl">
+                    <AvatarImage alt={DATOS.nombre} src={DATOS.urlAvatar} loading="lazy" />
+                    <AvatarFallback>{DATOS.iniciales}</AvatarFallback>
+                  </Avatar>
+                </motion.div>
+              </BlurFade>
+
+              {/* Title and Description */}
+              <div className="text-center space-y-4">
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-4xl font-bold tracking-tighter bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
+                  >
+                    {`Hola, soy ${DATOS.nombre.split(" ")[0]}`}
+                  </motion.h1>
+                  <motion.img 
+                    src="https://fonts.gstatic.com/s/e/notoemoji/15.1/1faf0/72.png" 
+                    alt="emoji" 
+                    loading="lazy"
+                    className="w-8 h-8"
+                    animate={{ 
+                      rotate: [0, 10, 0],
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity, 
+                      repeatDelay: 4,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </div>
+                <BlurFadeText
+                  className="text-sm text-muted-foreground text-center leading-relaxed px-4"
+                  delay={BLUR_FADE_DELAY}
+                  text={DATOS.description}
+                />
+              </div>
+
+              {/* Full Width Buttons */}
+              <motion.div 
+                className="flex flex-col gap-4 w-full px-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+              >
+                <motion.button
+                  onClick={handleContactClick}
+                  className="group relative w-full px-6 py-4 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 overflow-hidden"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: "100%" }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  <MessageCircle className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                  <span className="font-medium">¡Trabajemos juntos!</span>
+                </motion.button>
+                
+                <Link to="/proyectos" className="w-full">
+                  <motion.button
+                    className="w-full px-6 py-4 border border-border rounded-xl hover:bg-muted/50 transition-all duration-300 flex items-center justify-center gap-2 group backdrop-blur-sm"
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="font-medium">Ver proyectos</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </motion.button>
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Desktop Layout */}
+            <div className="hidden md:flex gap-4 justify-between items-center">
+              <div className="flex-col flex flex-1 space-y-1.5 text-left">
+                <div className="flex items-center justify-start space-x-2 mb-2">
                   <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -104,14 +191,14 @@ const HomePage = () => {
                   />
                 </div>
                 <BlurFadeText
-                  className="max-w-[600px] text-sm md:text-base text-muted-foreground text-center md:text-left leading-relaxed"
+                  className="max-w-[600px] text-base text-muted-foreground text-left leading-relaxed"
                   delay={BLUR_FADE_DELAY}
                   text={DATOS.description}
                 />
                 
-                {/* Enhanced CTA Buttons */}
+                {/* Desktop CTA Buttons */}
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-4 mt-8 justify-center md:justify-start"
+                  className="flex gap-4 mt-8 justify-start"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
