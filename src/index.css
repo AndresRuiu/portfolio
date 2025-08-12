@@ -205,6 +205,13 @@
   @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all duration-200;
 }
 
+/* Hide back buttons on mobile for secondary pages */
+@media (max-width: 767px) {
+  .back-button-mobile-hidden {
+    display: none;
+  }
+}
+
 /* Loading states */
 .loading-shimmer {
   background: linear-gradient(

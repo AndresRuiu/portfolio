@@ -6,13 +6,14 @@ import { LoadingButton } from './LoadingStates';
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  prefilledSubject?: string;
 }
 
-const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
+const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledSubject }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
+    subject: prefilledSubject || '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,7 +73,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       
       // Resetear formulario después de éxito
       setTimeout(() => {
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: prefilledSubject || '', message: '' });
         setSubmitStatus('idle');
         onClose();
       }, 3000);

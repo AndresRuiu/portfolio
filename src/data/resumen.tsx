@@ -1,5 +1,5 @@
 import { Icons } from "@/components/ui/icons";
-import { HomeIcon, NotebookIcon, Sparkles } from "lucide-react";
+import { HomeIcon, NotebookIcon, Sparkles, GraduationCap } from "lucide-react";
 
 export const DATOS = {
   nombre: "Andrés Ruiu",	
@@ -25,6 +25,7 @@ export const DATOS = {
     { href: "/", icon: HomeIcon, label: "Inicio" },
     { href: "/proyectos", icon: Sparkles, label: "Proyectos" },
     { href: "/servicios", icon: NotebookIcon, label: "Servicios" },
+    { href: "/educacion", icon: GraduationCap, label: "Educación" },
   ],
   contacto: {
     email: "andresruiu@gmail.com",
@@ -116,6 +117,8 @@ export const DATOS = {
       logoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/67/UTN_logo.jpg",
       inicio: "2019",
       fin: "2022",
+      descripcion: "Cursé tres años de Ingeniería Civil donde desarrollé habilidades analíticas y de resolución de problemas que ahora aplico en la programación.",
+      estado: "Incompleto"
     },
     {
       institucion: "RollingCode School",
@@ -124,6 +127,8 @@ export const DATOS = {
       logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScahs7MB8GcE6Msj8AMnb5g16itCpVylxQRA&s",
       inicio: "Febrero 2023",
       fin: "Agosto 2023",
+      descripcion: "Bootcamp intensivo donde aprendí las bases del desarrollo web moderno: HTML, CSS, JavaScript, React, Node.js y MongoDB.",
+      estado: "Completado"
     },
     {
       institucion: "Universidad Tecnológica Nacional - FRT",
@@ -132,6 +137,31 @@ export const DATOS = {
       logoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/67/UTN_logo.jpg",
       inicio: "2023",
       fin: "2024",
+      descripcion: "Carrera universitaria enfocada en programación y desarrollo de software. Actualmente en el último año.",
+      estado: "En curso"
+    }
+  ],
+  certificados: [
+    {
+      titulo: "Desarrollo Web Full Stack",
+      institucion: "RollingCode School",
+      fecha: "Agosto 2023",
+      imagen: "/certificados/certificado-rolling.png",
+      enlace: "#",
+      tecnologias: ["HTML", "CSS", "JavaScript", "React", "Node.js", "MongoDB"],
+      descripcion: "Certificado de finalización del bootcamp de desarrollo web full stack"
+    }
+  ],
+  testimonios: [
+    {
+      nombre: "Jose Correa",
+      cargo: "Bioquímico",
+      empresa: "Laboratorio Saguir Correa",
+      imagen: "/testimonios/jose-correa.webp",
+      rating: 5,
+      fecha: "Marzo 2025",
+      texto: "Andrés desarrolló nuestra landing page con un resultado excepcional. El sitio es rápido, moderno y ha mejorado significativamente nuestra presencia online. Su atención al detalle y capacidad de traducir nuestras necesidades en código es impresionante.",
+      proyecto: "Landing Page - Laboratorio Saguir Correa"
     }
   ],
   proyectos: [
