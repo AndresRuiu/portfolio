@@ -1,0 +1,28 @@
+{
+  "name": "Andrés Ruiu - Desarrollador Full Stack",
+  "short_name": "Andrés Ruiu",
+  "description": "Desarrollador FullStack apasionado por la tecnología. Transformando ideas en soluciones digitales innovadoras.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3a76",
+  "theme_color": "#1e3a76",
+  "orientation": "portrait-primary",
+  "categories": ["portfolio", "developer", "technology"],
+  "lang": "es",
+  "dir": "ltr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

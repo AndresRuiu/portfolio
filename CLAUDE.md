@@ -1,388 +1,185 @@
-# Portafolio Personal - Andrés Ruiu
+# CLAUDE.md
 
-## Información General
-- **Desarrollador**: Andrés Ruiu
-- **Proyecto**: Portafolio Personal
-- **Tipo**: Single Page Application (SPA)
-- **Estado**: Activo
-- **Ubicación**: San Miguel de Tucumán, Tucumán, Argentina
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Stack Tecnológico
+## Project Overview
 
-### Frontend Core
-- **React 18.3.1** - Biblioteca principal de UI
-- **TypeScript** - Tipado estático para mejor mantenibilidad
-- **Vite 6.0.3** - Herramienta de build y desarrollo
+This is a JavaScript/TypeScript project optimized for modern web development. The project uses industry-standard tools and follows best practices for scalable application development.
 
-### Styling & UI
-- **Tailwind CSS 3.4.17** - Framework de CSS utility-first
-- **Radix UI** - Componentes primitivos accesibles
-  - Avatar, Dialog, Dropdown Menu, Icons, Separator, Slot, Tooltip
-- **Shadcn/ui** - Biblioteca de componentes basada en Radix UI
-- **Class Variance Authority** - Gestión de variantes de componentes
-- **Tailwind Merge** - Optimización de clases de Tailwind
-- **tailwindcss-animate** - Animaciones CSS
+## Development Commands
 
-### Animaciones & Interacciones
-- **Framer Motion 11.15.0** - Librería principal de animaciones
-- **React Spring 9.7.5** - Animaciones basadas en física
-- **React Use Gesture 9.1.3** - Gestión de gestos tactiles
+### Package Management
+- `npm install` or `yarn install` - Install dependencies
+- `npm ci` or `yarn install --frozen-lockfile` - Install dependencies for CI/CD
+- `npm update` or `yarn upgrade` - Update dependencies
 
-### Routing & Navigation
-- **React Router DOM 7.0.2** - Enrutamiento del lado cliente
+### Build Commands
+- `npm run build` - Build the project for production
+- `npm run dev` or `npm start` - Start development server
+- `npm run preview` - Preview production build locally
 
-### Iconografía
-- **Lucide React 0.462.0** - Biblioteca de iconos SVG
+### Testing Commands
+- `npm test` or `npm run test` - Run all tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
+- `npm run test:unit` - Run unit tests only
+- `npm run test:integration` - Run integration tests only
+- `npm run test:e2e` - Run end-to-end tests
 
-### Analytics & Performance
-- **Vercel Analytics 1.4.1** - Análisis de tráfico
-- **Vercel Speed Insights 1.1.0** - Métricas de rendimiento
+### Code Quality Commands
+- `npm run lint` - Run ESLint for code linting
+- `npm run lint:fix` - Run ESLint with auto-fix
+- `npm run format` - Format code with Prettier
+- `npm run format:check` - Check code formatting
+- `npm run typecheck` - Run TypeScript type checking
 
-### Herramientas de Desarrollo
-- **ESLint** - Linting y análisis estático de código
-- **TypeScript ESLint** - Reglas específicas para TypeScript
-- **PostCSS** - Procesamiento de CSS
-- **Autoprefixer** - Prefijos automáticos de CSS
+### Development Tools
+- `npm run storybook` - Start Storybook (if available)
+- `npm run analyze` - Analyze bundle size
+- `npm run clean` - Clean build artifacts
 
-## Arquitectura del Proyecto
+## Technology Stack
 
-### Estructura de Directorios
+### Core Technologies
+- **JavaScript/TypeScript** - Primary programming languages
+- **Node.js** - Runtime environment
+- **npm/yarn** - Package management
+
+### Common Frameworks
+- **React** - UI library with hooks and functional components
+- **Vue.js** - Progressive framework for building user interfaces
+- **Angular** - Full-featured framework for web applications
+- **Express.js** - Web application framework for Node.js
+- **Next.js** - React framework with SSR/SSG capabilities
+
+### Build Tools
+- **Vite** - Fast build tool and development server
+- **Webpack** - Module bundler
+- **Rollup** - Module bundler for libraries
+- **esbuild** - Extremely fast JavaScript bundler
+
+### Testing Framework
+- **Jest** - JavaScript testing framework
+- **Vitest** - Fast unit test framework
+- **Testing Library** - Simple and complete testing utilities
+- **Cypress** - End-to-end testing framework
+- **Playwright** - Cross-browser testing
+
+### Code Quality Tools
+- **ESLint** - JavaScript/TypeScript linter
+- **Prettier** - Code formatter
+- **TypeScript** - Static type checking
+- **Husky** - Git hooks
+
+## Project Structure Guidelines
+
+### File Organization
 ```
-portfolio/
-├── src/
-│   ├── components/         # Componentes React reutilizables
-│   │   ├── magicui/       # Componentes de interfaz personalizados
-│   │   ├── ui/            # Componentes base de Shadcn/ui
-│   │   ├── Portfolio.tsx  # Componente principal
-│   │   ├── NavBar.tsx     # Barra de navegación
-│   │   ├── ProjectsCarousel.tsx # Carrusel de proyectos
-│   │   ├── ProjectModal.tsx # Modal de detalles de proyecto
-│   │   └── SectionReveal.tsx # Animaciones de revelado
-│   ├── data/              # Datos estáticos del portafolio
-│   │   └── resumen.tsx    # Información personal y proyectos
-│   ├── lib/               # Utilidades y helpers
-│   ├── assets/            # Recursos estáticos
-│   ├── App.tsx            # Componente raíz
-│   ├── main.tsx           # Punto de entrada
-│   └── index.css          # Estilos globales
-├── public/                # Archivos públicos
-│   ├── img/               # Imágenes de proyectos
-│   ├── CV-Andres-Ruiu.pdf # Curriculum descargable
-│   └── yo.webp            # Foto personal
-└── dist/                  # Build de producción
-```
-
-## Características Principales
-
-### 1. Hero Section
-- Presentación personal con avatar
-- Animaciones de entrada con blur-fade
-- Texto dinámico con efectos de revelado
-- Información de contacto básica
-
-### 2. Sección Sobre Mí
-- Descripción personal detallada
-- Historia profesional y educativa
-- Transición de Ingeniería Civil a Programación
-
-### 3. Habilidades Técnicas
-- Display de tecnologías dominadas
-- Badges interactivos con animaciones
-- Stack completo: Frontend, Backend, Bases de datos
-
-### 4. Portafolio de Proyectos
-- **Carrusel Interactivo**: Navegación fluida entre proyectos
-- **Modal de Detalles**: Vista expandida de cada proyecto
-- **Enlaces Externos**: Sitios web y repositorios
-- **Tecnologías**: Badges por proyecto
-- **Estados**: Proyectos activos e inactivos
-- **Multimedia**: Imágenes y videos
-
-#### Proyectos Destacados:
-1. **Landing Page - Laboratorio Saguir Correa** (2025)
-   - Next.js, React, Tailwind CSS, Framer Motion
-   - SEO optimizado, diseño responsivo
-   
-2. **Resired** - Plataforma de Gestión de Consorcios (2024)
-   - Next.js, TypeScript, MongoDB, OpenAI
-   - IA integrada para asistencia
-   
-3. **Gimnasio Palermo** - Sistema de Gestión (2024)
-   - Electron, React, TypeScript, MySQL, NestJs
-   - Aplicación de escritorio moderna
-   
-4. **CV Generator** - Generador de Currículums (2024)
-   - React, TypeScript, React PDF
-   - Personalización completa, exportación PDF
-   
-5. **Dogtor** - Veterinaria Online (2023)
-   - React, Vite, CSS
-   - Sistema de reserva de turnos
-   
-6. **Ristretto Coffee Shop** - Landing Page (2023)
-   - HTML, Tailwind CSS, JavaScript
-   - Diseño moderno con imágenes IA
-
-### 5. Trayectoria Académica
-- Timeline interactivo con animaciones
-- Universidad Tecnológica Nacional (UTN-FRT)
-- RollingCode School - Desarrollo Full Stack
-- Logos institucionales y enlaces
-
-### 6. Contacto
-- Información completa de contacto
-- Enlaces a redes sociales (GitHub, LinkedIn)
-- Email y WhatsApp directos
-- Descarga de CV en PDF
-
-## Sistema de Temas
-
-### Tema Oscuro (Por Defecto)
-- **Background**: `#1e3a76` (azul oscuro)
-- **Foreground**: `#e0f7ff` (azul claro)
-- **Primary**: `#4b6faa` (azul medio)
-- **Secondary**: `#799bcd` (azul grisáceo)
-
-### Tema Claro
-- Inversión completa de colores
-- Mantenimiento de contraste y legibilidad
-- Transiciones suaves entre temas
-
-## Animaciones y UX
-
-### Framer Motion Integration
-- **Parallax scrolling** en hero section
-- **Scroll-triggered animations** para secciones
-- **Page transitions** fluidas
-- **Hover effects** en elementos interactivos
-
-### Gestos Táctiles
-- **Drag to scroll** en carrusel de proyectos
-- **Swipe navigation** en dispositivos móviles
-- **Touch-friendly** interface
-
-### Performance Optimizations
-- **Lazy loading** de imágenes
-- **Code splitting** automático
-- **Bundle optimization** con Vite
-- **Analytics** integrados para métricas
-
-## Responsive Design
-
-### Breakpoints
-- **Mobile**: < 640px
-- **Tablet**: 640px - 1024px  
-- **Desktop**: > 1024px
-- **Wide**: > 1280px
-
-### Adaptaciones
-- Layout flexible con CSS Grid y Flexbox
-- Carrusel adaptativo (1 proyecto en móvil, 2 en desktop)
-- Navegación optimizada para touch
-- Tipografía escalable
-
-## SEO y Accesibilidad
-
-### SEO
-- Meta tags optimizados
-- Structured data para proyectos
-- URLs amigables
-- Sitemap automático
-
-### Accesibilidad
-- Componentes Radix UI (WAI-ARIA compliant)
-- Contraste de colores optimizado
-- Navegación por teclado
-- Screen reader friendly
-- Alt text en todas las imágenes
-
-## Configuración de Build
-
-### Desarrollo
-```bash
-pnpm dev        # Servidor de desarrollo
-pnpm lint       # Análisis de código
+src/
+├── components/     # Reusable UI components
+├── pages/         # Page components or routes
+├── hooks/         # Custom React hooks
+├── utils/         # Utility functions
+├── services/      # API calls and external services
+├── types/         # TypeScript type definitions
+├── constants/     # Application constants
+├── styles/        # Global styles and themes
+└── tests/         # Test files
 ```
 
-### Producción
-```bash
-pnpm build      # Build optimizado
-pnpm preview    # Preview del build
-```
+### Naming Conventions
+- **Files**: Use kebab-case for file names (`user-profile.component.ts`)
+- **Components**: Use PascalCase for component names (`UserProfile`)
+- **Functions**: Use camelCase for function names (`getUserData`)
+- **Constants**: Use UPPER_SNAKE_CASE for constants (`API_BASE_URL`)
+- **Types/Interfaces**: Use PascalCase with descriptive names (`UserData`, `ApiResponse`)
 
-### Características del Build
-- **Tree shaking** automático
-- **Asset optimization** (imágenes, fuentes)
-- **CSS purging** para tamaño mínimo
-- **TypeScript compilation** estricta
+## TypeScript Guidelines
 
-## Deployment
+### Type Safety
+- Enable strict mode in `tsconfig.json`
+- Use explicit types for function parameters and return values
+- Prefer interfaces over types for object shapes
+- Use union types for multiple possible values
+- Avoid `any` type - use `unknown` when type is truly unknown
 
-### Plataforma
-- **Vercel** - Hosting y CDN global
-- **GitHub** - Control de versiones
-- **Custom Domain** - Configuración DNS
+### Best Practices
+- Use type guards for runtime type checking
+- Leverage utility types (`Partial`, `Pick`, `Omit`, etc.)
+- Create custom types for domain-specific data
+- Use enums for finite sets of values
+- Document complex types with JSDoc comments
 
-### CI/CD
-- Auto-deployment desde rama main
-- Preview deployments para PRs
-- Performance monitoring integrado
+## Code Quality Standards
 
-## Datos Personales (Configurables)
+### ESLint Configuration
+- Use recommended ESLint rules for JavaScript/TypeScript
+- Enable React-specific rules if using React
+- Configure import/export rules for consistent module usage
+- Set up accessibility rules for inclusive development
 
-### Información Personal
-```typescript
-nombre: "Andrés Ruiu"
-ubicacion: "San Miguel de Tucumán, Tucumán, Argentina"
-email: "andresruiu@gmail.com"
-telefono: "3865351958"
-```
+### Prettier Configuration
+- Use consistent indentation (2 spaces recommended)
+- Set maximum line length (80-100 characters)
+- Use single quotes for strings
+- Add trailing commas for better git diffs
 
-### Redes Sociales
-- **GitHub**: https://github.com/AndresRuiu
-- **LinkedIn**: https://www.linkedin.com/in/andrés-ruiu-b941a1103
+### Testing Standards
+- Aim for 80%+ test coverage
+- Write unit tests for utilities and business logic
+- Use integration tests for component interactions
+- Implement e2e tests for critical user flows
+- Follow AAA pattern (Arrange, Act, Assert)
 
-### Tecnologías Dominadas
-React, Next.js, TypeScript, Tailwind CSS, Node.js, Electron, NestJs, MySQL, MongoDB
+## Performance Optimization
 
-## Consideraciones de Mantenimiento
+### Bundle Optimization
+- Use code splitting for large applications
+- Implement lazy loading for routes and components
+- Optimize images and assets
+- Use tree shaking to eliminate dead code
+- Analyze bundle size regularly
 
-### Actualizaciones Regulares
-- Dependencias de seguridad
-- Nuevos proyectos en data/resumen.tsx
-- Imágenes en public/img/
-- CV actualizado en public/
+### Runtime Performance
+- Implement proper memoization (React.memo, useMemo, useCallback)
+- Use virtualization for large lists
+- Optimize re-renders in React applications
+- Implement proper error boundaries
+- Use web workers for heavy computations
 
-### Monitoreo
-- Analytics de Vercel para métricas de uso
-- Speed Insights para rendimiento
-- Error tracking integrado
+## Security Guidelines
 
-## ✨ Mejoras Implementadas (Agosto 2025)
+### Dependencies
+- Regularly audit dependencies with `npm audit`
+- Keep dependencies updated
+- Use lock files (`package-lock.json`, `yarn.lock`)
+- Avoid dependencies with known vulnerabilities
 
-### 🚀 Prioridad Alta - COMPLETADAS
-1. **Estados de Loading**: 
-   - Skeletons para carrusel de proyectos
-   - Spinners y botones con loading states
-   - Componente LoadingButton reutilizable
+### Code Security
+- Sanitize user inputs
+- Use HTTPS for API calls
+- Implement proper authentication and authorization
+- Store sensitive data securely (environment variables)
+- Use Content Security Policy (CSP) headers
 
-2. **Feedback Visual Mejorado**:
-   - Animaciones hover en todos los elementos interactivos
-   - Escalado y transiciones suaves
-   - Microinteracciones en botones y cards
+## Development Workflow
 
-3. **Smooth Scroll Implementado**:
-   - Hook personalizado useSmoothScroll
-   - Navegación fluida entre secciones
-   - Botón "Ver proyectos" funcional
+### Before Starting
+1. Check Node.js version compatibility
+2. Install dependencies with `npm install`
+3. Copy environment variables from `.env.example`
+4. Run type checking with `npm run typecheck`
 
-4. **Contact Modal Completo**:
-   - Integración con EmailJS
-   - Opciones directas WhatsApp y Email
-   - Formulario con validación y estados de envío
+### During Development
+1. Use TypeScript for type safety
+2. Run linter frequently to catch issues early
+3. Write tests for new features
+4. Use meaningful commit messages
+5. Review code changes before committing
 
-5. **Navegación Avanzada**:
-   - Scroll progress bar
-   - Navegación por teclado (Ctrl+↑/↓, Escape)
-   - Indicadores visuales de progreso
-
-### 🎨 Carrusel Completamente Rediseñado
-1. **Estética Premium**:
-   - Cards con glassmorphism y gradientes
-   - Efectos de profundidad y sombras dinámicas
-   - Badges de estado activo con animaciones
-
-2. **UX Mejorada**:
-   - Layout responsivo optimizado (1/2/3 columnas)
-   - Espaciado mejorado en desktop
-   - Botones de navegación más accesibles
-   - Estados de hover con overlay y botón "Ver detalles"
-
-3. **Performance**:
-   - Loading states con skeletons
-   - Animaciones optimizadas con Framer Motion
-   - Lazy loading de contenido
-
-### 🛠️ Nueva Sección de Servicios
-1. **Contenido Profesional**:
-   - 4 servicios principales: Frontend, Backend, Desktop, Full Stack
-   - Precios indicativos y tecnologías utilizadas
-   - Lista detallada de incluidos y entregables
-
-2. **Diseño Cohesivo**:
-   - Mantiene la estética del resto del portafolio
-   - Cards con efectos glassmorphism
-   - Animaciones escalonadas y hover effects
-   - Badge "Más Popular" para Full Stack
-
-3. **Call-to-Actions**:
-   - Botones de cotización integrados
-   - Enlaces directos a WhatsApp
-   - Integración con contact modal
-
-### 🎨 Sistema de Diseño Mejorado
-1. **Colores Optimizados**:
-   - Tema oscuro/claro con mejor contraste
-   - Gradientes sutiles en títulos y backgrounds
-   - Variables CSS para colores semánticos
-
-2. **Animaciones Avanzadas**:
-   - Keyframes personalizados (float, glow, shimmer)
-   - Transiciones suaves entre estados
-   - Efectos de paralax y scroll-triggered animations
-
-3. **Componentes Reutilizables**:
-   - LoadingStates (ProjectSkeleton, LoadingSpinner, LoadingButton)
-   - Hooks personalizados (useNavigation, useScrollProgress)
-   - ScrollProgress component
-
-### 📧 Integración EmailJS
-1. **Configuración Completa**:
-   - Variables de entorno configurables
-   - Importación dinámica para optimización
-   - Manejo de errores robusto
-
-2. **Template Personalizado**:
-   - Formato profesional de emails
-   - Variables dinámicas del formulario
-   - Confirmaciones de envío
-
-### 📱 Responsive Design Mejorado
-1. **Layout Optimizado**:
-   - Carrusel: 1 proyecto (móvil), 2 (tablet), 3 (desktop)
-   - Espaciado dinámico según viewport
-   - Botones de navegación adaptativos
-
-2. **Touch Interactions**:
-   - Gestos de swipe mejorados
-   - Indicadores de deslizamiento
-   - Feedback táctil optimizado
-
-## Próximas Mejoras Sugeridas
-
-### Performance
-1. **Image optimization**: WebP y lazy loading avanzado
-2. **Font loading**: Optimización de Google Fonts
-3. **Bundle splitting**: Carga progresiva de componentes
-
-### Accessibility
-1. **Focus management**: Mejorar navegación por teclado
-2. **ARIA labels**: Descripciones más detalladas
-3. **Screen reader**: Testing con herramientas específicas
-
-## 📧 Variables de Entorno Requeridas
-
-### EmailJS (.env.local)
-```env
-VITE_EMAILJS_SERVICE_ID=your_service_id_here
-VITE_EMAILJS_TEMPLATE_ID=your_template_id_here
-VITE_EMAILJS_PUBLIC_KEY=your_public_key_here
-```
-
-**Ver EMAILJS_SETUP.md para instrucciones detalladas de configuración**
-
----
-
-*Documento generado por Claude AI - Análisis completo del proyecto portafolio de Andrés Ruiu*
-*Última actualización: Agosto 2025*
-*Versión: 2.0 - Con mejoras implementadas*
+### Before Committing
+1. Run full test suite: `npm test`
+2. Check linting: `npm run lint`
+3. Verify formatting: `npm run format:check`
+4. Run type checking: `npm run typecheck`
+5. Test production build: `npm run build`

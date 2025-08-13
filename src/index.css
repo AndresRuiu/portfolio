@@ -125,9 +125,59 @@
     animation: glow 2s ease-in-out infinite alternate;
   }
   
-  /* Smooth scrolling */
+  /* Smooth scrolling - Disabled for Lenis */
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+  }
+  
+  /* Lenis smooth scrolling styles */
+  html.lenis {
+    height: auto;
+  }
+  
+  .lenis.lenis-smooth {
+    scroll-behavior: auto;
+  }
+  
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+  
+  /* Optimize animations for mobile devices */
+  @media (max-width: 767px) {
+    * {
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+      will-change: auto;
+    }
+    
+    /* Reduce animation complexity on mobile */
+    .motion-safe {
+      animation-duration: 0.3s !important;
+      transition-duration: 0.3s !important;
+    }
+  }
+  
+  /* Enhanced mobile scroll performance */
+  @media (max-width: 767px) {
+    body {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }
+    
+    /* Optimize viewport meta for better scroll performance */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
   }
   
   /* Custom scrollbar - Hidden on mobile */
@@ -231,4 +281,149 @@
   100% {
     background-position: 200% 0;
   }
+}
+
+/* Sonner toaster styles */
+.toaster {
+  --normal-bg: hsl(var(--background));
+  --normal-border: hsl(var(--border));
+  --normal-text: hsl(var(--foreground));
+  --success-bg: hsl(var(--success) / 0.1);
+  --success-border: hsl(var(--success));
+  --success-text: hsl(var(--success));
+  --error-bg: hsl(var(--destructive) / 0.1);
+  --error-border: hsl(var(--destructive));
+  --error-text: hsl(var(--destructive));
+  --warning-bg: hsl(var(--warning) / 0.1);
+  --warning-border: hsl(var(--warning));
+  --warning-text: hsl(var(--warning));
+  --info-bg: hsl(var(--info) / 0.1);
+  --info-border: hsl(var(--info));
+  --info-text: hsl(var(--info));
+}
+
+[data-sonner-toaster] {
+  z-index: 9999;
+}
+
+[data-sonner-toast] {
+  background: var(--normal-bg);
+  border: 1px solid var(--normal-border);
+  color: var(--normal-text);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+[data-sonner-toast][data-type="success"] {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+[data-sonner-toast][data-type="error"] {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: var(--error-text);
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background: var(--warning-bg);
+  border-color: var(--warning-border);
+  color: var(--warning-text);
+}
+
+[data-sonner-toast][data-type="info"] {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+  color: var(--info-text);
+}
+
+/* React Loading Skeleton overrides */
+.react-loading-skeleton {
+  border-radius: 4px;
+  animation: react-loading-skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes react-loading-skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Custom skeleton styles for better integration */
+.skeleton-card {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted) / 0.8) 0%,
+    hsl(var(--muted) / 0.4) 50%,
+    hsl(var(--muted) / 0.8) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.8s infinite ease-in-out;
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Enhanced skeleton animations for different states */
+.skeleton-slow {
+  animation-duration: 2.5s;
+}
+
+.skeleton-fast {
+  animation-duration: 1s;
+}
+
+/* Skeleton shimmer effect for premium feel */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 20%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2s infinite;
+  content: '';
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Dark mode skeleton adjustments */
+.dark .skeleton-shimmer::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }

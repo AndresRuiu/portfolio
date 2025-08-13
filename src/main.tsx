@@ -4,13 +4,16 @@ import './index.css'
 import App from './App.tsx'
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
+import QueryProvider from './providers/QueryProvider';
 
 injectSpeedInsights();
 inject();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <QueryProvider>
+      <App />
+    </QueryProvider>
   </StrictMode>,
 )
 

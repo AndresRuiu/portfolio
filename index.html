@@ -1,111 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Andrés Ruiu</title>
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Andrés Ruiu - Desarrollador Full Stack</title>
     
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/yo.webp" as="image" type="image/webp" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Desarrollador FullStack apasionado por la tecnología. Transformando ideas en soluciones digitales innovadoras con React, Node.js, TypeScript y más." />
+    <meta name="keywords" content="Andrés Ruiu, desarrollador, full stack, React, Node.js, TypeScript, programador, Tucumán, Argentina" />
+    <meta name="author" content="Andrés Ruiu" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Andrés Ruiu - Desarrollador Full Stack" />
+    <meta property="og:description" content="Desarrollador FullStack apasionado por la tecnología. Transformando ideas en soluciones digitales innovadoras." />
+    <meta property="og:image" content="/yo.webp" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Andrés Ruiu - Desarrollador Full Stack" />
+    <meta name="twitter:description" content="Desarrollador FullStack apasionado por la tecnología." />
+    <meta name="twitter:image" content="/yo.webp" />
+    
+    <!-- Theme and display -->
+    <meta name="theme-color" content="#1e3a76" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Performance optimizations -->
+    <link rel="preload" href="/yo.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://vercel.live" />
     
-    <!-- Critical CSS for beautiful loading -->
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="/icon.png" />
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Minimal CSS for smooth loading -->
     <style>
-      body { margin: 0; background: #1e3a76; font-family: system-ui, -apple-system, sans-serif; }
-      #root { min-height: 100vh; }
-      
-      .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background: linear-gradient(135deg, #1e3a76 0%, #2a4884 50%, #1e3a76 100%);
-        color: #e0f7ff;
-        padding: 2rem;
+      body { 
+        margin: 0; 
+        font-family: system-ui, -apple-system, sans-serif;
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
       }
-      
-      .loading-avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #4b6faa, #799bcd);
-        margin-bottom: 2rem;
-        position: relative;
-        overflow: hidden;
-      }
-      
-      .loading-avatar::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
+      #root { 
+        min-height: 100vh; 
         width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        animation: shimmer 2s infinite;
       }
       
-      .loading-text {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #e0f7ff, #4b6faa);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
+      /* CSS Variables for theme support */
+      :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
       }
       
-      .loading-subtitle {
-        color: #799bcd;
-        font-size: 1rem;
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-      
-      .loading-dots {
-        display: flex;
-        gap: 0.5rem;
-      }
-      
-      .loading-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #4b6faa;
-        animation: pulse 1.5s infinite;
-      }
-      
-      .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-      .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-      
-      @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-      }
-      
-      @keyframes pulse {
-        0%, 100% { opacity: 0.3; transform: scale(0.8); }
-        50% { opacity: 1; transform: scale(1.2); }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: 222.2 84% 4.9%;
+          --foreground: 210 40% 98%;
+        }
       }
     </style>
   </head>
   <body>
-    <div id="root">
-      <div class="loading-container">
-        <div class="loading-avatar"></div>
-        <div class="loading-text">Andrés Ruiu</div>
-        <div class="loading-subtitle">Desarrollador Full Stack</div>
-        <div class="loading-dots">
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-        </div>
-      </div>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -3,8 +3,16 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, MapPin, ExternalLink, Award, Star, Trophy, CheckCircle, Clock, BookOpen, Sparkles } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DATOS } from "@/data/resumen";
+import { 
+  UnifiedCard, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle, 
+  UnifiedCardDescription, 
+  UnifiedCardContent,
+  UnifiedCardFooter,
+  UnifiedGrid
+} from '@/components/ui/UnifiedCard';
 import Layout from '@/components/Layout';
 import { SectionReveal, AnimatedElement } from '@/components/SectionReveal';
 import { Link } from 'react-router-dom';
@@ -56,10 +64,10 @@ const EducacionPage = () => {
             </Link>
             <div className="text-center md:text-left flex-1 md:flex-none">
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent">
-                Mi Trayectoria Académica
+                Mi Camino de Aprendizaje
               </h1>
               <p className="text-muted-foreground mt-2">
-                El camino de aprendizaje que me llevó al desarrollo de software
+                La historia de cómo descubrí mi pasión por el desarrollo
               </p>
             </div>
           </div>
@@ -67,35 +75,39 @@ const EducacionPage = () => {
 
         {/* Historia Personal */}
         <SectionReveal delay={0.2}>
-          <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-3xl p-8 mb-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Mi Historia de Cambio</h2>
-            <p className="text-lg text-muted-foreground mb-6 max-w-3xl mx-auto leading-relaxed">
-              En 2022 tomé una de las decisiones más importantes de mi vida: dejar atrás tres años de Ingeniería Civil 
-              para seguir mi verdadera pasión por la programación. Fue un cambio radical que me llevó a descubrir 
-              mi vocación en el desarrollo de software.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
-                <Calendar className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">3 años en Ingeniería</span>
+          <UnifiedCard variant="gradient" size="xl" className="mb-12 text-center">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle size="lg">Una decisión que lo cambió todo</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <UnifiedCardDescription className="text-lg mb-6 max-w-3xl mx-auto leading-relaxed">
+                En 2022 tomé una de las decisiones más importantes: dejar atrás tres años de Ingeniería Civil 
+                para seguir mi verdadera vocación en la programación. Fue el inicio de una transformación que 
+                me llevó a encontrar mi lugar en el desarrollo de software.
+              </UnifiedCardDescription>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">3 años en Ingeniería</span>
+                </div>
+                <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
+                  <Trophy className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Cambio de rumbo</span>
+                </div>
+                <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
+                  <Star className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Nuevo comienzo</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
-                <Trophy className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">Transición a Programación</span>
-              </div>
-              <div className="flex items-center gap-2 bg-background/80 rounded-lg px-4 py-2">
-                <Star className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium">Pasión encontrada</span>
-              </div>
-            </div>
-          </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </SectionReveal>
 
         {/* Timeline de Educación */}
         <SectionReveal delay={0.3}>
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Cronología Educativa
+              Mi evolución académica
             </h2>
             
             <div className="relative">
@@ -153,8 +165,13 @@ const EducacionPage = () => {
                         transition={{ duration: 0.5, delay: index * 0.1 }}
                         className="w-full md:w-1/2"
                       >
-                        <Card className="bg-card/80 backdrop-blur-sm border-border/50 shadow-xl hover:shadow-2xl transition-all duration-500 group hover:border-primary/30">
-                          <CardHeader className="pb-4">
+                        <UnifiedCard 
+                          variant="glass" 
+                          size="lg" 
+                          hover={true}
+                          className="group hover:border-primary/30"
+                        >
+                          <UnifiedCardHeader>
                             <div className="flex items-start justify-between mb-4">
                               {edu.logoUrl && (
                                 <motion.img 
@@ -170,15 +187,15 @@ const EducacionPage = () => {
                               </Badge>
                             </div>
                             
-                            <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                            <UnifiedCardTitle size="md" className="group-hover:text-primary transition-colors">
                               {edu.titulo}
-                            </CardTitle>
-                            <CardDescription className="font-medium text-base">
+                            </UnifiedCardTitle>
+                            <UnifiedCardDescription className="font-medium text-base">
                               {edu.institucion}
-                            </CardDescription>
-                          </CardHeader>
+                            </UnifiedCardDescription>
+                          </UnifiedCardHeader>
                           
-                          <CardContent className="space-y-4">
+                          <UnifiedCardContent className="space-y-4">
                             <div className="flex items-center justify-between text-sm text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4" />
@@ -191,13 +208,15 @@ const EducacionPage = () => {
                             </div>
                             
                             {edu.descripcion && (
-                              <p className="text-muted-foreground leading-relaxed">
+                              <UnifiedCardDescription className="leading-relaxed">
                                 {edu.descripcion}
-                              </p>
+                              </UnifiedCardDescription>
                             )}
-                            
-                            {edu.href && (
-                              <Button variant="outline" size="sm" asChild className="mt-4">
+                          </UnifiedCardContent>
+                          
+                          {edu.href && (
+                            <UnifiedCardFooter>
+                              <Button variant="outline" size="sm" asChild>
                                 <a 
                                   href={edu.href} 
                                   target="_blank" 
@@ -205,12 +224,12 @@ const EducacionPage = () => {
                                   className="flex items-center gap-2"
                                 >
                                   <ExternalLink className="w-4 h-4" />
-                                  Visitar institución
+                                  Ver institución
                                 </a>
                               </Button>
-                            )}
-                          </CardContent>
-                        </Card>
+                            </UnifiedCardFooter>
+                          )}
+                        </UnifiedCard>
                       </motion.div>
                     </div>
                   </AnimatedElement>
@@ -225,106 +244,110 @@ const EducacionPage = () => {
         <SectionReveal delay={0.4}>
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Certificaciones y Cursos
+              Certificaciones y especializaciones
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <UnifiedGrid columns={3} gap="md">
               {DATOS.certificados.map((cert, index) => (
-                <motion.div
+                <UnifiedCard
                   key={cert.titulo}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  className="h-full"
+                  variant="default"
+                  size="md"
+                  delay={index * 0.1}
+                  hover={true}
+                  className="h-full group overflow-hidden"
                 >
-                  <Card className="h-full bg-card/50 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 group">
-                    {cert.imagen && (
-                      <div className="relative overflow-hidden rounded-t-lg">
-                        <img 
-                          src={cert.imagen} 
-                          alt={cert.titulo}
-                          className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-                    )}
+                  {cert.imagen && (
+                    <div className="relative overflow-hidden -m-6 mb-4">
+                      <img 
+                        src={cert.imagen} 
+                        alt={cert.titulo}
+                        className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  )}
+                  
+                  <UnifiedCardHeader>
+                    <UnifiedCardTitle size="sm" className="group-hover:text-primary transition-colors">
+                      {cert.titulo}
+                    </UnifiedCardTitle>
+                    <UnifiedCardDescription>
+                      {cert.institucion}
+                    </UnifiedCardDescription>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-3 h-3" />
+                      {cert.fecha}
+                    </div>
+                  </UnifiedCardHeader>
+                  
+                  <UnifiedCardContent className="space-y-4">
+                    <UnifiedCardDescription className="text-sm leading-relaxed">
+                      {cert.descripcion}
+                    </UnifiedCardDescription>
                     
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {cert.titulo}
-                      </CardTitle>
-                      <CardDescription>
-                        {cert.institucion}
-                      </CardDescription>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
-                        {cert.fecha}
-                      </div>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-4">
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {cert.descripcion}
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-2">
-                        {cert.tecnologias.slice(0, 3).map((tech) => (
-                          <Badge key={tech} variant="secondary" className="text-xs">
-                            {tech}
-                          </Badge>
-                        ))}
-                        {cert.tecnologias.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{cert.tecnologias.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      {cert.enlace && cert.enlace !== "#" && (
-                        <Button variant="outline" size="sm" asChild className="w-full">
-                          <a 
-                            href={cert.enlace} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2"
-                          >
-                            <Award className="w-4 h-4" />
-                            Ver certificado
-                          </a>
-                        </Button>
+                    <div className="flex flex-wrap gap-2">
+                      {cert.tecnologias.slice(0, 3).map((tech) => (
+                        <Badge key={tech} variant="secondary" className="text-xs">
+                          {tech}
+                        </Badge>
+                      ))}
+                      {cert.tecnologias.length > 3 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{cert.tecnologias.length - 3}
+                        </Badge>
                       )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                    </div>
+                  </UnifiedCardContent>
+                  
+                  {cert.enlace && cert.enlace !== "#" && (
+                    <UnifiedCardFooter>
+                      <Button variant="outline" size="sm" asChild className="w-full">
+                        <a 
+                          href={cert.enlace} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                          <Award className="w-4 h-4" />
+                          Ver certificado
+                        </a>
+                      </Button>
+                    </UnifiedCardFooter>
+                  )}
+                </UnifiedCard>
               ))}
-            </div>
+            </UnifiedGrid>
           </div>
         </SectionReveal>
 
 
         {/* Call to Action */}
         <SectionReveal delay={0.5}>
-          <div className="mt-16 bg-gradient-to-r from-primary to-secondary rounded-3xl p-8 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">¿Quieres ver mis proyectos?</h2>
-            <p className="text-lg mb-6 opacity-90 max-w-2xl mx-auto">
-              Descubre cómo aplico todo este conocimiento en proyectos reales y funcionales.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" asChild className="bg-white text-primary hover:bg-white/90">
-                <Link to="/proyectos">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Ver mis proyectos
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="border-white text-white hover:bg-white hover:text-primary">
-                <Link to="/servicios">
-                  Conocer mis servicios
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <UnifiedCard variant="gradient" size="xl" className="mt-16 text-center bg-gradient-to-r from-primary to-secondary text-white">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle size="lg" className="text-white mb-4">¿Curioso por ver mis proyectos?</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <UnifiedCardDescription className="text-lg mb-6 opacity-90 max-w-2xl mx-auto text-white">
+                Descubre cómo transformo todo este aprendizaje en soluciones web reales y funcionales.
+              </UnifiedCardDescription>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button variant="secondary" asChild className="bg-white text-primary hover:bg-white/90">
+                  <Link to="/proyectos">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Explorar portfolio
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild className="border-white text-white hover:bg-white hover:text-primary">
+                  <Link to="/servicios">
+                    Ver cómo puedo ayudarte
+                  </Link>
+                </Button>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </SectionReveal>
       </div>
     </Layout>

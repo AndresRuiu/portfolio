@@ -17,6 +17,16 @@ import { Icons } from '@/components/ui/icons';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { useSmoothScroll, useKeyboardNavigation } from '@/hooks/useNavigation';
+import { BentoGrid } from '@/components/BentoGrid';
+import { 
+  UnifiedCard, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle, 
+  UnifiedCardDescription, 
+  UnifiedCardContent,
+  UnifiedCardFooter,
+  UnifiedGrid
+} from '@/components/ui/UnifiedCard';
 
 const ContactModal = React.lazy(() => import('@/components/ContactModal'));
 
@@ -145,7 +155,7 @@ const HomePage = () => {
                     transition={{ duration: 0.6 }}
                   />
                   <MessageCircle className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                  <span className="font-medium">¡Trabajemos juntos!</span>
+                  <span className="font-medium">¡Conversemos de tu idea!</span>
                 </motion.button>
                 
                 <Link to="/proyectos" className="w-full">
@@ -216,7 +226,7 @@ const HomePage = () => {
                       transition={{ duration: 0.6 }}
                     />
                     <MessageCircle className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                    <span className="font-medium">¡Trabajemos juntos!</span>
+                    <span className="font-medium">¡Conversemos de tu idea!</span>
                   </motion.button>
                   
                   <Link to="/proyectos">
@@ -247,20 +257,29 @@ const HomePage = () => {
         </motion.section>
       </SectionReveal>
 
+      {/* Bento Grid Section */}
+      <SectionReveal delay={0.3}>
+        <section className="container mx-auto px-4 py-16">
+          <BentoGrid />
+        </section>
+      </SectionReveal>
+
       {/* Enhanced About Section */}
       <AnimateElements>
         <section id="about" className="container mx-auto pb-8">
           <AnimatedElement delay={0}>
             <h2 className="text-3xl md:text-2xl font-bold mb-6 text-center md:text-left bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Sobre mí
+              Mi historia
             </h2>
           </AnimatedElement>
           <AnimatedElement delay={0.1}>
-            <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
-              <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base">
-                {DATOS.resumen}
-              </p>
-            </div>
+            <UnifiedCard variant="gradient" size="lg">
+              <UnifiedCardContent>
+                <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base">
+                  {DATOS.resumen}
+                </p>
+              </UnifiedCardContent>
+            </UnifiedCard>
           </AnimatedElement>
         </section>
       </AnimateElements>
@@ -270,28 +289,30 @@ const HomePage = () => {
         <section id="skills" className="container mx-auto mt-8">
           <AnimatedElement delay={0}>
             <h2 className="text-3xl md:text-2xl font-bold mb-6 text-center md:text-left bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Habilidades
+              Mi stack tecnológico
             </h2>
           </AnimatedElement>
-          <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
-            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              {DATOS.habilidades.map((skill, index) => (
-                <AnimatedElement key={skill} delay={index * 0.05}>
-                  <motion.div
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Badge 
-                      variant="secondary" 
-                      className="px-4 py-2 text-sm bg-muted/70 hover:bg-primary hover:text-primary-foreground transition-all duration-300 cursor-pointer shadow-md"
+          <UnifiedCard variant="subtle" size="lg">
+            <UnifiedCardContent>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                {DATOS.habilidades.map((skill, index) => (
+                  <AnimatedElement key={skill} delay={index * 0.05}>
+                    <motion.div
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      {skill}
-                    </Badge>
-                  </motion.div>
-                </AnimatedElement>
-              ))}
-            </div>
-          </div>
+                      <Badge 
+                        variant="secondary" 
+                        className="px-4 py-2 text-sm bg-muted/70 hover:bg-primary hover:text-primary-foreground transition-all duration-300 cursor-pointer shadow-md"
+                      >
+                        {skill}
+                      </Badge>
+                    </motion.div>
+                  </AnimatedElement>
+                ))}
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </section>
       </AnimateElements>
 
@@ -310,38 +331,41 @@ const HomePage = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <UnifiedGrid columns={2} gap="md">
             {serviciosPrincipales.map((servicio, index) => (
-              <motion.div
+              <UnifiedCard
                 key={servicio.titulo}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
-                whileHover={{ y: -5, scale: 1.02 }}
+                variant="highlight"
+                size="md"
+                delay={index * 0.1}
+                hover={true}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">{servicio.icono}</span>
-                  <h3 className="text-xl font-bold">{servicio.titulo}</h3>
-                </div>
-                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                  {servicio.descripcion}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {servicio.tecnologias.slice(0, 3).map((tech) => (
-                    <Badge key={tech} variant="secondary" className="text-xs">
-                      {tech}
-                    </Badge>
-                  ))}
-                  {servicio.tecnologias.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{servicio.tecnologias.length - 3} más
-                    </Badge>
-                  )}
-                </div>
-              </motion.div>
+                <UnifiedCardHeader>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-3xl">{servicio.icono}</span>
+                    <UnifiedCardTitle size="md">{servicio.titulo}</UnifiedCardTitle>
+                  </div>
+                </UnifiedCardHeader>
+                <UnifiedCardContent>
+                  <UnifiedCardDescription className="mb-4">
+                    {servicio.descripcion}
+                  </UnifiedCardDescription>
+                  <div className="flex flex-wrap gap-2">
+                    {servicio.tecnologias.slice(0, 3).map((tech) => (
+                      <Badge key={tech} variant="secondary" className="text-xs">
+                        {tech}
+                      </Badge>
+                    ))}
+                    {servicio.tecnologias.length > 3 && (
+                      <Badge variant="secondary" className="text-xs">
+                        +{servicio.tecnologias.length - 3} más
+                      </Badge>
+                    )}
+                  </div>
+                </UnifiedCardContent>
+              </UnifiedCard>
             ))}
-          </div>
+          </UnifiedGrid>
         </section>
       </SectionReveal>
 
@@ -360,18 +384,18 @@ const HomePage = () => {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <UnifiedGrid columns={3} gap="md">
             {proyectosDestacados.map((proyecto, index) => (
-              <motion.div
+              <UnifiedCard
                 key={proyecto.titulo}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
-                whileHover={{ y: -5, scale: 1.02 }}
+                variant="default"
+                size="md"
+                delay={index * 0.1}
+                hover={true}
+                className="overflow-hidden group"
               >
                 {proyecto.imagen && (
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden -m-6 mb-4">
                     <img 
                       src={proyecto.imagen} 
                       alt={proyecto.titulo}
@@ -386,13 +410,16 @@ const HomePage = () => {
                   </div>
                 )}
                 
-                <div className="p-6">
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">
+                <UnifiedCardHeader>
+                  <UnifiedCardTitle size="sm" className="group-hover:text-primary transition-colors">
                     {proyecto.titulo}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+                  </UnifiedCardTitle>
+                </UnifiedCardHeader>
+                
+                <UnifiedCardContent>
+                  <UnifiedCardDescription className="mb-4 line-clamp-2">
                     {proyecto.descripcion}
-                  </p>
+                  </UnifiedCardDescription>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {proyecto.tecnologias.slice(0, 3).map((tech) => (
                       <Badge key={tech} variant="secondary" className="text-xs">
@@ -405,6 +432,9 @@ const HomePage = () => {
                       </Badge>
                     )}
                   </div>
+                </UnifiedCardContent>
+                
+                <UnifiedCardFooter>
                   <div className="flex gap-2">
                     {proyecto.enlaces.map((enlace, linkIndex) => (
                       <Button
@@ -425,10 +455,10 @@ const HomePage = () => {
                       </Button>
                     ))}
                   </div>
-                </div>
-              </motion.div>
+                </UnifiedCardFooter>
+              </UnifiedCard>
             ))}
-          </div>
+          </UnifiedGrid>
         </section>
       </SectionReveal>
 
@@ -439,11 +469,12 @@ const HomePage = () => {
             <BlurFade delay={BLUR_FADE_DELAY * 16}>
               <div className="text-center space-y-8">
                 <h2 className="text-4xl font-bold bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent">
-                  ¡Conectemos!
+                  ¿Tienes un proyecto en mente?
                 </h2>
                 
-                <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-xl max-w-2xl mx-auto">
-                  <div className="flex flex-col items-center space-y-6">
+                <div className="max-w-2xl mx-auto">
+                  <UnifiedCard variant="glass" size="xl">
+                    <div className="flex flex-col items-center space-y-6">
                     {/* Social Links */}
                     <div className="flex justify-center space-x-6">
                       {Object.values(DATOS.contacto.social)
@@ -494,7 +525,7 @@ const HomePage = () => {
                         whileTap={{ scale: 0.98 }}
                       >
                         <MessageCircle className="size-5" />
-                        <span>Enviar mensaje</span>
+                        <span>Hablemos</span>
                       </motion.button>
 
                       <motion.a
@@ -508,7 +539,8 @@ const HomePage = () => {
                         <span>Descargar CV</span>
                       </motion.a>
                     </div>
-                  </div>
+                    </div>
+                  </UnifiedCard>
                 </div>
               </div>
             </BlurFade>

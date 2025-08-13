@@ -1,10 +1,17 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle, MessageCircle, Star, Clock, Users, Award } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DATOS } from "@/data/resumen";
+import { 
+  UnifiedCard, 
+  UnifiedCardHeader, 
+  UnifiedCardTitle, 
+  UnifiedCardDescription, 
+  UnifiedCardContent,
+  UnifiedCardFooter,
+  UnifiedGrid
+} from '@/components/ui/UnifiedCard';
 import Layout from '@/components/Layout';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
@@ -52,10 +59,10 @@ const ServiciosPage = () => {
             </Link>
             <div className="text-center md:text-left flex-1 md:flex-none">
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent">
-                Mis Servicios
+                Servicios de Desarrollo
               </h1>
               <p className="text-muted-foreground mt-2">
-                Soluciones completas para llevar tus ideas al mundo digital
+                De la idea al lanzamiento: desarrollo web completo y personalizado
               </p>
             </div>
           </div>
@@ -63,151 +70,157 @@ const ServiciosPage = () => {
 
         {/* Hero Section */}
         <SectionReveal delay={0.2}>
-          <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-3xl p-8 mb-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">¿Listo para digitalizar tu proyecto?</h2>
-            <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Desde ideas hasta aplicaciones funcionando. Te acompaño en todo el proceso de desarrollo, 
-              desde el diseño hasta el lanzamiento.
-            </p>
-            <Button 
-              onClick={() => handleContactClick()}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 md:px-8 py-3 text-sm md:text-base"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Conversemos sobre tu proyecto</span>
-              <span className="sm:hidden">Conversemos</span>
-            </Button>
-          </div>
+          <UnifiedCard variant="gradient" size="xl" className="mb-12 text-center">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle size="lg">¿Tienes una idea brillante?</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <UnifiedCardDescription className="text-lg mb-6 max-w-2xl mx-auto">
+                Te ayudo a convertirla en realidad. Desde el concepto inicial hasta una aplicación web completamente funcional.
+              </UnifiedCardDescription>
+              <Button 
+                onClick={() => handleContactClick()}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 md:px-8 py-3 text-sm md:text-base"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Cuéntame tu proyecto</span>
+                <span className="sm:hidden">Conversemos</span>
+              </Button>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </SectionReveal>
 
         {/* Servicios Grid */}
         <AnimateElements>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <UnifiedGrid columns={2} gap="lg" className="mb-16">
             {servicios.map((servicio, index) => (
               <AnimatedElement key={servicio.titulo} delay={index * 0.1}>
-                <motion.div
-                  whileHover={{ y: -5, scale: 1.02 }}
+                <UnifiedCard
+                  variant="highlight"
+                  size="lg"
+                  hover={true}
                   className="h-full"
                 >
-                  <Card className="h-full bg-card/50 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-4xl">{servicio.icono}</span>
-                        <div>
-                          <CardTitle className="text-xl">{servicio.titulo}</CardTitle>
-                          <CardDescription className="text-sm mt-1">
-                            {servicio.descripcion}
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-6">
-                      {/* Tecnologías */}
+                  <UnifiedCardHeader>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-4xl">{servicio.icono}</span>
                       <div>
-                        <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">
-                          Tecnologías
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {servicio.tecnologias.map((tech) => (
-                            <Badge key={tech} variant="secondary" className="text-xs">
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
+                        <UnifiedCardTitle size="md">{servicio.titulo}</UnifiedCardTitle>
+                        <UnifiedCardDescription className="text-sm mt-1">
+                          {servicio.descripcion}
+                        </UnifiedCardDescription>
                       </div>
-
-                      {/* Lo que incluye */}
-                      <div>
-                        <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">
-                          ¿Qué incluye?
-                        </h4>
-                        <ul className="space-y-2">
-                          {servicio.incluye.map((item, itemIndex) => (
-                            <li key={itemIndex} className="flex items-start gap-2 text-sm">
-                              <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span>{item}</span>
-                            </li>
-                          ))}
-                        </ul>
+                    </div>
+                  </UnifiedCardHeader>
+                  
+                  <UnifiedCardContent className="space-y-6">
+                    {/* Tecnologías */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">
+                        Stack tecnológico
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {servicio.tecnologias.map((tech) => (
+                          <Badge key={tech} variant="secondary" className="text-xs">
+                            {tech}
+                          </Badge>
+                        ))}
                       </div>
+                    </div>
 
-                      {/* Entregables */}
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <h4 className="font-semibold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
-                          Entregables
-                        </h4>
-                        <p className="text-sm leading-relaxed">{servicio.entregables}</p>
-                      </div>
+                    {/* Lo que incluye */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-sm uppercase tracking-wide text-muted-foreground">
+                        Lo que obtienes
+                      </h4>
+                      <ul className="space-y-2">
+                        {servicio.incluye.map((item, itemIndex) => (
+                          <li key={itemIndex} className="flex items-start gap-2 text-sm">
+                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-                      {/* CTA Button */}
-                      <Button 
-                        onClick={() => handleContactClick(servicio.titulo)}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Consultar sobre {servicio.titulo}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                    {/* Entregables */}
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <h4 className="font-semibold mb-2 text-sm uppercase tracking-wide text-muted-foreground">
+                        Resultado final
+                      </h4>
+                      <p className="text-sm leading-relaxed">{servicio.entregables}</p>
+                    </div>
+                  </UnifiedCardContent>
+
+                  <UnifiedCardFooter>
+                    <Button 
+                      onClick={() => handleContactClick(servicio.titulo)}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      Consultar {servicio.titulo}
+                    </Button>
+                  </UnifiedCardFooter>
+                </UnifiedCard>
               </AnimatedElement>
             ))}
-          </div>
+          </UnifiedGrid>
         </AnimateElements>
 
         {/* Proceso de Trabajo */}
         <SectionReveal delay={0.4}>
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Mi Proceso de Trabajo
+              Cómo trabajamos juntos
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <UnifiedGrid columns={4} gap="md">
               {[
                 {
                   step: "01",
-                  title: "Consulta Inicial",
-                  description: "Conversamos sobre tu proyecto, objetivos y necesidades específicas.",
+                  title: "Descubrimiento",
+                  description: "Entiendo tu visión, objetivos y audiencia objetivo.",
                   icon: MessageCircle
                 },
                 {
                   step: "02", 
-                  title: "Planificación",
-                  description: "Defino la estrategia, tecnologías y cronograma del proyecto.",
+                  title: "Estrategia",
+                  description: "Diseño la arquitectura, tecnologías y roadmap.",
                   icon: Clock
                 },
                 {
                   step: "03",
-                  title: "Desarrollo",
-                  description: "Creo tu solución con actualizaciones constantes y feedback.",
+                  title: "Construcción",
+                  description: "Desarrollo iterativo con feedback continuo.",
                   icon: Users
                 },
                 {
                   step: "04",
-                  title: "Entrega",
-                  description: "Lanzo tu proyecto y te proporciono todo el soporte necesario.",
+                  title: "Lanzamiento",
+                  description: "Deploy, testing y soporte post-lanzamiento.",
                   icon: Award
                 }
               ].map((process, index) => (
-                <motion.div
+                <UnifiedCard
                   key={process.step}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  variant="subtle"
+                  size="md"
+                  delay={index * 0.1}
                   className="text-center"
                 >
-                  <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <process.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <div className="text-2xl font-bold text-primary mb-2">{process.step}</div>
-                  <h3 className="font-semibold mb-2">{process.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {process.description}
-                  </p>
-                </motion.div>
+                  <UnifiedCardContent>
+                    <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                      <process.icon className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="text-2xl font-bold text-primary mb-2">{process.step}</div>
+                    <UnifiedCardTitle size="sm" className="mb-2">{process.title}</UnifiedCardTitle>
+                    <UnifiedCardDescription className="text-sm leading-relaxed">
+                      {process.description}
+                    </UnifiedCardDescription>
+                  </UnifiedCardContent>
+                </UnifiedCard>
               ))}
-            </div>
+            </UnifiedGrid>
           </div>
         </SectionReveal>
 
@@ -215,64 +228,72 @@ const ServiciosPage = () => {
         <SectionReveal delay={0.5}>
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
-              Lo que dicen mis clientes
+              Experiencias reales
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <UnifiedGrid columns={2} gap="md">
               {testimonials.map((testimonial, index) => (
-                <motion.div
+                <UnifiedCard
                   key={testimonial.nombre}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg"
+                  variant="glass"
+                  size="md"
+                  delay={index * 0.1}
                 >
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
-                    "{testimonial.texto}"
-                  </p>
-                  <div>
-                    <div className="font-semibold">{testimonial.nombre}</div>
-                    <div className="text-sm text-muted-foreground">{testimonial.cargo} - {testimonial.empresa}</div>
-                  </div>
-                </motion.div>
+                  <UnifiedCardHeader>
+                    <div className="flex items-center gap-1 mb-2">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                  </UnifiedCardHeader>
+                  <UnifiedCardContent>
+                    <UnifiedCardDescription className="mb-4 leading-relaxed text-base">
+                      "{testimonial.texto}"
+                    </UnifiedCardDescription>
+                  </UnifiedCardContent>
+                  <UnifiedCardFooter>
+                    <div>
+                      <div className="font-semibold">{testimonial.nombre}</div>
+                      <div className="text-sm text-muted-foreground">{testimonial.cargo} - {testimonial.empresa}</div>
+                    </div>
+                  </UnifiedCardFooter>
+                </UnifiedCard>
               ))}
-            </div>
+            </UnifiedGrid>
           </div>
         </SectionReveal>
 
         {/* Call to Action Final */}
         <SectionReveal delay={0.7}>
-          <div className="bg-gradient-to-r from-primary to-secondary rounded-3xl p-8 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">¿Listo para empezar?</h2>
-            <p className="text-lg mb-6 opacity-90 max-w-2xl mx-auto">
-              Cada proyecto es único, y me encanta crear soluciones personalizadas. 
-              Conversemos sobre cómo puedo ayudarte a digitalizar tu idea.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={() => handleContactClick()}
-                variant="secondary"
-                className="bg-white text-primary hover:bg-white/90"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Contactar ahora
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-primary"
-                asChild
-              >
-                <Link to="/proyectos">
-                  Ver mis trabajos
-                </Link>
-              </Button>
-            </div>
-          </div>
+          <UnifiedCard variant="gradient" size="xl" className="text-center bg-gradient-to-r from-primary to-secondary text-white">
+            <UnifiedCardHeader>
+              <UnifiedCardTitle size="lg" className="text-white mb-4">¿Empezamos hoy?</UnifiedCardTitle>
+            </UnifiedCardHeader>
+            <UnifiedCardContent>
+              <UnifiedCardDescription className="text-lg mb-6 opacity-90 max-w-2xl mx-auto text-white">
+                Tu proyecto merece una solución única. Hablemos sobre cómo convertir tu idea en una realidad digital exitosa.
+              </UnifiedCardDescription>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={() => handleContactClick()}
+                  variant="secondary"
+                  className="bg-white text-primary hover:bg-white/90"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Conversemos ahora
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-primary"
+                  asChild
+                >
+                  <Link to="/proyectos">
+                    Ver portfolio
+                  </Link>
+                </Button>
+              </div>
+            </UnifiedCardContent>
+          </UnifiedCard>
         </SectionReveal>
       </div>
 

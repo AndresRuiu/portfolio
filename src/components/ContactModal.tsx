@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Phone, Mail, MessageCircle } from 'lucide-react';
 import { LoadingButton } from './LoadingStates';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ContactModalProps {
 }
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledSubject }) => {
+  const { success, error } = useNotifications();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -70,17 +72,25 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
       );
       
       setSubmitStatus('success');
+      success(
+        `¡Gracias ${formData.name}!`,
+        'Tu mensaje se envió correctamente. Te responderé pronto.'
+      );
       
       // Resetear formulario después de éxito
       setTimeout(() => {
         setFormData({ name: '', email: '', subject: prefilledSubject || '', message: '' });
         setSubmitStatus('idle');
         onClose();
-      }, 3000);
+      }, 2000);
       
-    } catch (error) {
-      console.error('Error sending email:', error);
+    } catch (err) {
+      console.error('Error sending email:', err);
       setSubmitStatus('error');
+      error(
+        'Error al enviar el mensaje',
+        'Por favor, inténtalo nuevamente o contáctame directamente.'
+      );
     } finally {
       setIsSubmitting(false);
     }
