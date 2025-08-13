@@ -14,7 +14,7 @@ export const useTouchOptimizations = () => {
       const checkTouchSupport = () => {
         return 'ontouchstart' in window || 
                navigator.maxTouchPoints > 0 || 
-               (navigator as any).msMaxTouchPoints > 0;
+               ((navigator as Navigator & { msMaxTouchPoints?: number }).msMaxTouchPoints ?? 0) > 0;
       };
 
       setTouchSupported(checkTouchSupport());

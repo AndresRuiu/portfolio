@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import Navbar from '@/components/NavBar';
+import NavBar from '@/components/NavBar';
 import ScrollProgress from '@/components/ScrollProgress';
 import { CommandPalette, useCommandPalette } from '@/components/CommandPalette';
 import { useSmoothScrolling } from '@/hooks/useSmoothScrolling';
@@ -16,10 +16,10 @@ const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
   const { open, setOpen } = useCommandPalette();
   const { theme } = useTheme();
   
-  // Configurar smooth scrolling con Lenis
+  // Configurar smooth scrolling con Lenis - Optimizado para mobile
   useSmoothScrolling({
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    duration: 0.8, // Más rápido
+    easing: (t: number) => 1 - (1 - t) * (1 - t), // Easing más simple
   });
 
   // Color dinámico de partículas basado en el tema
@@ -39,18 +39,18 @@ const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
   };
   
   return (
-    <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
-      {/* Particles Background */}
+    <main className="flex flex-col min-h-[100dvh] items-center bg-background overflow-x-hidden">
+      {/* Particles Background - Reduced for performance */}
       {showParticles && (
         <Suspense fallback={<div />}>
           <Particles
-            key={theme} // Force re-render when theme changes
+            key={theme}
             className="absolute inset-0 z-0"
-            quantity={150}
+            quantity={75} // Reduced from 150
             ease={90}
             color={getParticleColor()}
-            refresh={true}
-            size={10}
+            refresh={false} // Disable refresh for performance
+            size={8} // Smaller size
           />
         </Suspense>
       )}
@@ -62,9 +62,11 @@ const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background/80 z-[1]" />
       
       <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[85%] xl:max-w-[75%] px-4 pb-16 relative z-10">
-        <Navbar />
         {children}
       </div>
+      
+      {/* Navbar fixed to viewport - outside content container */}
+      <NavBar />
       
       {/* Command Palette */}
       <CommandPalette open={open} onOpenChange={setOpen} />

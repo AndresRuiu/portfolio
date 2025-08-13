@@ -10,9 +10,10 @@ const queryClient = new QueryClient({
       // Mantener en cache por 10 minutos
       gcTime: 1000 * 60 * 10,
       // Reintentar automáticamente en caso de error
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: { status?: number } | unknown) => {
         // No reintentar para errores 4xx
-        if (error?.status >= 400 && error?.status < 500) {
+        const errorWithStatus = error as { status?: number };
+        if ((errorWithStatus.status ?? 0) >= 400 && (errorWithStatus.status ?? 0) < 500) {
           return false;
         }
         // Reintentar máximo 3 veces

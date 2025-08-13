@@ -3,7 +3,7 @@ import React from "react";
 
 type IconName = keyof typeof Icons;
 
-export const getIcon = (iconName: string | React.ReactElement, props?: any) => {
+export const getIcon = (iconName: string | React.ReactElement, props?: Record<string, unknown>) => {
   // Si ya es un elemento React, lo devolvemos tal como está
   if (React.isValidElement(iconName)) {
     return iconName;

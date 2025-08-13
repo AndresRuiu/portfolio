@@ -11,7 +11,6 @@ interface OptimizedImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElem
   onLoad?: () => void;
   onError?: (error: Event) => void;
   sizes?: string;
-  quality?: number;
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({
@@ -24,7 +23,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   onLoad,
   onError,
   sizes = '100vw',
-  quality = 85,
   ...props
 }) => {
   const [isLoading, setIsLoading] = useState(true);

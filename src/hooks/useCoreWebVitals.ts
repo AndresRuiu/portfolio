@@ -70,8 +70,8 @@ export const useCoreWebVitals = () => {
       }
 
       // Send to analytics in production
-      if (process.env.NODE_ENV === 'production' && (window as any).gtag) {
-        (window as any).gtag('event', name, {
+      if (process.env.NODE_ENV === 'production' && (window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
+        (window as unknown as Window & { gtag: (...args: unknown[]) => void }).gtag('event', name, {
           custom_parameter_1: value,
           custom_parameter_2: metric.rating,
         });
@@ -117,7 +117,7 @@ export const useCoreWebVitals = () => {
         const entries = list.getEntries();
         const fidEntry = entries[0];
         if (fidEntry) {
-          updateVital('fid', (fidEntry as any).processingStart - fidEntry.startTime);
+          updateVital('fid', (fidEntry as PerformanceEventTiming & { processingStart: number }).processingStart - fidEntry.startTime);
           observer.disconnect();
         }
       });
@@ -171,7 +171,7 @@ export const useCoreWebVitals = () => {
       
       try {
         observer.observe({ entryTypes: ['event'] });
-      } catch (e) {
+      } catch {
         // INP might not be supported in all browsers
         console.warn('INP measurement not supported');
       }
@@ -187,7 +187,8 @@ export const useCoreWebVitals = () => {
 
     // Cleanup
     return () => {
-      observerRef.current?.disconnect();
+      const currentObserver = observerRef.current;
+      currentObserver?.disconnect();
     };
   }, []);
 

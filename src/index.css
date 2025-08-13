@@ -68,10 +68,6 @@
 @layer base {
   * {
     @apply border-border;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
   }
   body {
     @apply bg-background text-foreground;
@@ -151,12 +147,13 @@
     pointer-events: none;
   }
   
-  /* Optimize animations for mobile devices */
+  /* Optimize animations for mobile devices - but exclude fixed elements */
   @media (max-width: 767px) {
-    * {
+    /* Only apply GPU acceleration to elements that need it, not fixed positioned ones */
+    .gpu-accelerate:not([data-fixed]):not([data-fixed] *) {
       transform: translateZ(0);
       -webkit-transform: translateZ(0);
-      will-change: auto;
+      will-change: transform;
     }
     
     /* Reduce animation complexity on mobile */
@@ -178,27 +175,58 @@
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
     }
+    
+    /* Fixed elements positioning for mobile - guaranteed viewport positioning */
+    [data-fixed],
+    .navbar-mobile-container,
+    [data-sonner-toaster] {
+      position: fixed !important;
+      z-index: 9999 !important;
+      /* Ensure proper fixed positioning without stacking context issues */
+      transform: none !important;
+      -webkit-transform: none !important;
+      will-change: auto !important;
+      /* Only basic GPU optimization that doesn't break fixed positioning */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    
+    .navbar-mobile-container {
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      pointer-events: none;
+    }
+    
+    .navbar-mobile-container > * {
+      pointer-events: auto;
+    }
+    
+    /* Prevent navbar from being affected by scroll behavior */
+    .navbar-mobile-container [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
   }
   
   /* Custom scrollbar - Hidden on mobile */
   @media (min-width: 768px) {
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
     
     ::-webkit-scrollbar-track {
-      background: hsl(var(--muted) / 0.3);
-      border-radius: 4px;
+      background: hsl(var(--muted) / 0.2);
+      border-radius: 3px;
     }
     
     ::-webkit-scrollbar-thumb {
-      background: hsl(var(--primary) / 0.6);
-      border-radius: 4px;
+      background: hsl(var(--muted-foreground) / 0.3);
+      border-radius: 3px;
       transition: background 0.2s;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-      background: hsl(var(--primary));
+      background: hsl(var(--muted-foreground) / 0.5);
     }
   }
   
@@ -212,6 +240,12 @@
     * {
       -ms-overflow-style: none;
       scrollbar-width: none;
+    }
+    
+    /* Prevent horizontal scrolling on mobile */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
     }
   }
   

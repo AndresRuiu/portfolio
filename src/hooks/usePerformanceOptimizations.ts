@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 
 // Simple throttle implementation
-const throttle = <T extends (...args: any[]) => any>(func: T, delay: number) => {
+const throttle = <T extends (...args: unknown[]) => unknown>(func: T, delay: number) => {
   let lastCall = 0;
   return ((...args: Parameters<T>) => {
     const now = Date.now();
@@ -13,7 +13,7 @@ const throttle = <T extends (...args: any[]) => any>(func: T, delay: number) => 
 };
 
 // Hook for memoized callbacks
-export const useStableCallback = <T extends (...args: any[]) => any>(callback: T): T => {
+export const useStableCallback = <T extends (...args: unknown[]) => unknown>(callback: T): T => {
   const callbackRef = useRef(callback);
   
   useEffect(() => {
@@ -41,7 +41,7 @@ export const useDebounce = <T>(value: T, delay: number): T => {
 };
 
 // Hook for throttled callbacks
-export const useThrottledCallback = <T extends (...args: any[]) => any>(
+export const useThrottledCallback = <T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number
 ): T => {

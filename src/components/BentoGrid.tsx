@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import type { Project, BentoGridItem } from '../types';
 import { 
   Code2, 
   Rocket, 
@@ -48,8 +49,8 @@ const BentoCard: React.FC<BentoCardProps> = ({ className, children, delay = 0 })
 export const BentoGrid: React.FC = () => {
   const stats = {
     projectsCount: DATOS.proyectos.length,
-    activeProjects: DATOS.proyectos.filter((p: any) => p.activo).length,
-    technologiesCount: Array.from(new Set(DATOS.proyectos.flatMap((p: any) => p.tecnologias))).length,
+    activeProjects: DATOS.proyectos.filter((p: Project) => p.activo).length,
+    technologiesCount: Array.from(new Set(DATOS.proyectos.flatMap((p: Project) => p.tecnologias))).length,
     experienceYears: new Date().getFullYear() - 2022, // Desde que empezaste programación
   };
 
@@ -221,13 +222,7 @@ export const BentoGrid: React.FC = () => {
 // Bento Grid más compacto para secciones específicas
 export const BentoGridCompact: React.FC<{
   title?: string;
-  items: Array<{
-    icon: React.ComponentType<any>;
-    title: string;
-    value: string | number;
-    description: string;
-    gradient: string;
-  }>;
+  items: BentoGridItem[];
 }> = ({ title, items }) => {
   return (
     <div className="space-y-6">

@@ -260,7 +260,7 @@ export const useAssistiveTechnology = () => {
       const detectScreenReader = () => {
         return !!(
           window.navigator.userAgent.match(/NVDA|JAWS|VoiceOver|TalkBack|Dragon/i) ||
-          (window as any).speechSynthesis ||
+          (window as Window & { speechSynthesis?: SpeechSynthesis }).speechSynthesis ||
           document.querySelector('[aria-live]')
         );
       };

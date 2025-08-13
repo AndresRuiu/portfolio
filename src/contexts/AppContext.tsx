@@ -46,7 +46,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     
-    case 'ADD_NOTIFICATION':
+    case 'ADD_NOTIFICATION': {
       const notification: Notification = {
         ...action.payload,
         id: crypto.randomUUID(),
@@ -56,6 +56,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         ...state, 
         notifications: [...state.notifications, notification] 
       };
+    }
     
     case 'REMOVE_NOTIFICATION':
       return {

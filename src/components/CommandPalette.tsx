@@ -54,7 +54,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       setCopied(label);
       success(`${label} copiado al portapapeles`, text);
       setTimeout(() => setCopied(null), 2000);
-    } catch (err) {
+    } catch {
       error('Error al copiar', 'No se pudo copiar al portapapeles');
     }
   };

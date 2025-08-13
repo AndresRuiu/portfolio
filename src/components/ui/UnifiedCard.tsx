@@ -83,7 +83,7 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
 interface UnifiedCardHeaderProps {
   children: React.ReactNode;
   className?: string;
-  icon?: React.ComponentType<any>;
+  icon?: React.ComponentType<{ className?: string; size?: number }>;
   iconColor?: string;
 }
 
@@ -221,7 +221,7 @@ export const UnifiedGrid: React.FC<UnifiedGridProps> = ({
 
 // Stats component siguiendo el estilo Bento
 interface StatsCardProps {
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
   value: string | number;
   label: string;
   description?: string;

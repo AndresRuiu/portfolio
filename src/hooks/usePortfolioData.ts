@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DATOS } from '@/data/resumen';
+import type { Project } from '../types';
 
 // Keys para las queries
 export const portfolioKeys = {
@@ -73,15 +74,15 @@ export const usePortfolioStats = () => {
       
       const projects = DATOS.proyectos;
       const technologies = Array.from(
-        new Set(projects.flatMap((p: any) => p.tecnologias))
+        new Set(projects.flatMap((p: Project) => p.tecnologias))
       );
       
       return {
         totalProjects: projects.length,
-        activeProjects: projects.filter((p: any) => p.activo).length,
+        activeProjects: projects.filter((p: Project) => p.activo).length,
         totalTechnologies: technologies.length,
-        totalLinks: projects.reduce((acc: number, p: any) => acc + p.enlaces.length, 0),
-        projectsByYear: projects.reduce((acc: Record<string, number>, p: any) => {
+        totalLinks: projects.reduce((acc: number, p: Project) => acc + p.enlaces.length, 0),
+        projectsByYear: projects.reduce((acc: Record<string, number>, p: Project) => {
           const year = p.fechas.split(' - ')[0] || '2023';
           acc[year] = (acc[year] || 0) + 1;
           return acc;
@@ -107,12 +108,12 @@ export const useSearch = (query: string) => {
         type: string;
         title: string;
         description?: string;
-        data: any;
+        data: Project | Record<string, unknown>;
       }> = [];
       const searchTerm = query.toLowerCase();
       
       // Buscar en proyectos
-      DATOS.proyectos.forEach((project: any) => {
+      DATOS.proyectos.forEach((project: Project) => {
         if (
           project.titulo.toLowerCase().includes(searchTerm) ||
           project.descripcion?.toLowerCase().includes(searchTerm) ||
@@ -130,7 +131,7 @@ export const useSearch = (query: string) => {
       // Buscar en servicios
       DATOS.servicios.forEach((service: any) => {
         if (
-          service.titulo.toLowerCase().includes(searchTerm) ||
+          service.titulo?.toLowerCase().includes(searchTerm) ||
           service.descripcion?.toLowerCase().includes(searchTerm) ||
           service.tecnologias?.some((tech: string) => tech.toLowerCase().includes(searchTerm))
         ) {
@@ -177,12 +178,12 @@ export const usePrefetchRelated = () => {
       queryFn: async () => {
         const projects = DATOS.proyectos;
         const technologies = Array.from(
-          new Set(projects.flatMap((p: any) => p.tecnologias))
+          new Set(projects.flatMap((p: Project) => p.tecnologias))
         );
         
         return {
           totalProjects: projects.length,
-          activeProjects: projects.filter((p: any) => p.activo).length,
+          activeProjects: projects.filter((p: Project) => p.activo).length,
           totalTechnologies: technologies.length,
         };
       },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Separator } from "@/components/ui/separator";
@@ -12,9 +12,139 @@ import { cn } from "@/lib/utils";
 import { getIcon } from '@/lib/iconResolver';
 import { Link, useLocation } from 'react-router-dom';
 
+// Tipos para mejorar TypeScript
+interface NavItem {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+}
+
+// Componente móvil para botones de navegación con hover sutil
+const MobileNavButton: React.FC<{
+  item: NavItem;
+  isActive: boolean;
+  index: number;
+}> = ({ item, isActive, index }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <motion.div
+      className="relative"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.1, type: "spring", stiffness: 400 }}
+    >
+      <Link
+        to={item.href}
+        className={cn(
+          "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300 active:scale-95",
+          "relative", // Added for proper positioning
+          isActive 
+            ? "bg-primary/20 text-primary shadow-lg" 
+            : "text-foreground/70 active:bg-muted/50"
+        )}
+        onTouchStart={() => setIsPressed(true)}
+        onTouchEnd={() => setIsPressed(false)}
+        onTouchCancel={() => setIsPressed(false)}
+      >
+        <motion.div
+          className="flex items-center justify-center w-full h-full"
+          animate={{
+            scale: isPressed ? 0.9 : 1
+          }}
+          transition={{ duration: 0.1 }}
+        >
+          <item.icon className="w-5 h-5 flex-shrink-0" />
+        </motion.div>
+      </Link>
+      {isActive && (
+        <motion.div
+          className="absolute -bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full"
+          layoutId="mobile-indicator"
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          style={{ x: "-50%" }}
+        />
+      )}
+    </motion.div>
+  );
+};
+
+// Componente móvil para iconos sociales
+const MobileSocialButton: React.FC<{
+  href: string;
+  tooltip: string;
+  icon: string;
+}> = ({ href, tooltip, icon }) => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300",
+            "text-foreground/70 active:scale-95 active:bg-muted/50 relative" // Added relative positioning
+          )}
+          onTouchStart={() => setIsPressed(true)}
+          onTouchEnd={() => setIsPressed(false)}
+          onTouchCancel={() => setIsPressed(false)}
+        >
+          <motion.div
+            className="flex items-center justify-center w-full h-full"
+            animate={{
+              scale: isPressed ? 0.9 : 1
+            }}
+            transition={{ duration: 0.1 }}
+          >
+            {getIcon(icon, { 
+              className: "w-5 h-5 transition-colors flex-shrink-0" 
+            })}
+          </motion.div>
+        </a>
+      </TooltipTrigger>
+      <TooltipContent side="top">{tooltip}</TooltipContent>
+    </Tooltip>
+  );
+};
+
+// Componente móvil para el toggle de tema
+const MobileThemeButton: React.FC = () => {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          className={cn(
+            "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300",
+            "text-foreground/70 active:scale-95 active:bg-muted/50 cursor-pointer relative" // Added relative positioning
+          )}
+          onTouchStart={() => setIsPressed(true)}
+          onTouchEnd={() => setIsPressed(false)}
+          onTouchCancel={() => setIsPressed(false)}
+        >
+          <motion.div
+            className="flex items-center justify-center w-full h-full"
+            animate={{
+              scale: isPressed ? 0.9 : 1
+            }}
+            transition={{ duration: 0.1 }}
+          >
+            <ModeToggle />
+          </motion.div>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="top">Cambiar tema</TooltipContent>
+    </Tooltip>
+  );
+};
+
 // Componente individual para botones con animaciones suaves
 const NavButton: React.FC<{
-  item: any;
+  item: NavItem;
   isActive: boolean;
   isHovered: boolean;
   onMouseEnter: () => void;
@@ -43,28 +173,29 @@ const NavButton: React.FC<{
           }}
           whileTap={{ scale: 0.95 }}
         >
-          {/* Fondo animado */}
+          {/* Fondo animado - Fixed for Framer Motion */}
           <motion.div
             className="absolute inset-0 rounded-xl"
             animate={{
+              opacity: isActive ? 0.2 : isHovered ? 0.8 : 0,
+              scale: isActive ? 1 : isHovered ? 1 : 0.95
+            }}
+            style={{
               background: isActive 
-                ? "linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.1))"
-                : isHovered 
-                  ? "linear-gradient(135deg, hsl(var(--muted) / 0.8), hsl(var(--muted) / 0.4))"
-                  : "transparent"
+                ? "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)))"
+                : "linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted)))"
             }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           />
           
-          {/* Efecto de brillo en hover */}
+          {/* Efecto de brillo en hover - Fixed for Framer Motion */}
           <motion.div
-            className="absolute inset-0 rounded-xl"
+            className="absolute inset-0 rounded-xl overflow-hidden"
             style={{
-              background: "linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)",
-              transform: "translateX(-100%)"
+              background: "linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)"
             }}
             animate={{
-              transform: isHovered ? "translateX(100%)" : "translateX(-100%)"
+              x: isHovered ? "200%" : "-100%"
             }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
           />
@@ -177,22 +308,24 @@ const IconButton: React.FC<{
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Fondo con gradiente animado */}
+      {/* Fondo con gradiente animado - Fixed for Framer Motion */}
       <motion.div
         className="absolute inset-0 rounded-xl"
         animate={{
-          background: isHovered 
-            ? "linear-gradient(135deg, hsl(var(--muted) / 0.8), hsl(var(--muted) / 0.4))"
-            : "transparent"
+          opacity: isHovered ? 0.8 : 0,
+          scale: isHovered ? 1 : 0.95
+        }}
+        style={{
+          background: "linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted)))"
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       />
       
-      {/* Efecto de ondas en hover */}
+      {/* Efecto de ondas en hover - Fixed for Framer Motion */}
       <motion.div
-        className="absolute inset-0 rounded-xl border-2 border-primary/0"
+        className="absolute inset-0 rounded-xl border-2 border-primary/30"
         animate={{
-          borderColor: isHovered ? "hsl(var(--primary) / 0.3)" : "hsl(var(--primary) / 0)",
+          opacity: isHovered ? 0.3 : 0,
           scale: isHovered ? [1, 1.05, 1] : 1
         }}
         transition={{ 
@@ -240,52 +373,26 @@ const IconButton: React.FC<{
 export default function Navbar() {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   const isActive = (href: string) => {
     return location.pathname === href;
   };
 
-  // Auto-hide navbar on scroll down
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < 50) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  // Navbar siempre visible - sin auto-hide
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed bottom-0 left-0 right-0 z-50 flex justify-center py-3"
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ 
-          y: isVisible ? 0 : 100,
-          opacity: isVisible ? 1 : 0
-        }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 30,
-          mass: 0.8
-        }}
-      >
+    <div
+      className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center px-4"
+      data-lenis-prevent
+      data-navbar
+      data-fixed
+      style={{
+        paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))',
+      }}
+    >
         {/* Desktop version */}
-        <motion.div 
-          className="hidden md:block"
+        <motion.div
+          className="hidden md:block relative"
           layout
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
@@ -384,61 +491,93 @@ export default function Navbar() {
           </motion.div>
         </motion.div>
         
-        {/* Mobile version - Simplified but still smooth */}
-        <motion.div 
-          className="md:hidden"
-          initial={{ scale: 0.9, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 400, 
-            damping: 25,
-            delay: 0.1
-          }}
+        {/* Mobile version - Same structure as desktop */}
+        <motion.div
+          className="md:hidden relative"
+          layout
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         >
-          <div 
-            className="mx-auto flex gap-3 rounded-3xl border border-border/20 p-3 shadow-2xl"
+          <motion.div 
+            className="w-full max-w-md mx-auto flex items-center justify-center gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl"
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
             }}
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 400, 
+              damping: 25,
+              delay: 0.1
+            }}
           >
+            {/* Navigation buttons */}
             {DATOS.navegacion.map((item, index) => (
-              <motion.div
+              <MobileNavButton
                 key={item.href}
-                className="relative"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1, type: "spring", stiffness: 400 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Link
-                  to={item.href}
-                  className={cn(
-                    "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300",
-                    isActive(item.href) 
-                      ? "bg-primary/20 text-primary shadow-lg" 
-                      : "text-foreground/70 hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  <item.icon className="w-5 h-5" />
-                </Link>
-                {isActive(item.href) && (
-                  <motion.div
-                    className="absolute -bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full"
-                    layoutId="mobile-indicator"
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    style={{ x: "-50%" }}
-                  />
-                )}
-              </motion.div>
+                item={item}
+                isActive={isActive(item.href)}
+                index={index}
+              />
             ))}
-          </div>
+            
+            {/* Separator */}
+            <motion.div
+              className="flex items-center justify-center px-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Separator 
+                orientation="vertical" 
+                className="h-8 bg-border/30" 
+              />
+            </motion.div>
+            
+            {/* Social icons for mobile */}
+            {Object.entries(DATOS.contacto.social)
+              .filter(([, social]) => social.navbar)
+              .map(([name, social], index) => (
+                <motion.div
+                  key={name}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.35 + (index * 0.1), type: "spring", stiffness: 400 }}
+                >
+                  <MobileSocialButton
+                    href={social.url}
+                    tooltip={name}
+                    icon={social.icon}
+                  />
+                </motion.div>
+              ))}
+              
+            {/* Separator */}
+            <motion.div
+              className="flex items-center justify-center px-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Separator 
+                orientation="vertical" 
+                className="h-8 bg-border/30" 
+              />
+            </motion.div>
+            
+            {/* Theme toggle for mobile */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.55, type: "spring", stiffness: 400 }}
+            >
+              <MobileThemeButton />
+            </motion.div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    </div>
   );
 }

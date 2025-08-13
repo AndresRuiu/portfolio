@@ -195,8 +195,8 @@ export const useWebVitalsReporting = () => {
     // Reportar a analytics cuando tengamos datos
     if (process.env.NODE_ENV === 'production' && overallScore > 0) {
       // Google Analytics 4
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'web_vitals', {
+      if (typeof window !== 'undefined' && (window as Window & { gtag?: (...args: unknown[]) => void }).gtag) {
+        (window as unknown as Window & { gtag: (...args: unknown[]) => void }).gtag('event', 'web_vitals', {
           overall_score: overallScore,
           lcp_score: vitals.lcp?.value,
           fid_score: vitals.fid?.value,
@@ -207,8 +207,8 @@ export const useWebVitalsReporting = () => {
       }
 
       // Vercel Analytics (si está disponible)
-      if (typeof window !== 'undefined' && (window as any).va) {
-        (window as any).va('track', 'WebVitals', {
+      if (typeof window !== 'undefined' && (window as Window & { va?: (...args: unknown[]) => void }).va) {
+        (window as unknown as Window & { va: (...args: unknown[]) => void }).va('track', 'WebVitals', {
           overallScore,
           vitals: Object.fromEntries(
             Object.entries(vitals).map(([key, vital]) => [

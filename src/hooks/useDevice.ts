@@ -20,16 +20,26 @@ export const useDevice = (): DeviceInfo => {
       };
     }
 
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    
-    return {
-      isMobile: width < 768,
-      isTablet: width >= 768 && width < 1024,
-      isDesktop: width >= 1024,
-      width,
-      height
-    };
+    try {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      return {
+        isMobile: width < 768,
+        isTablet: width >= 768 && width < 1024,
+        isDesktop: width >= 1024,
+        width,
+        height
+      };
+    } catch {
+      return {
+        isMobile: false,
+        isTablet: false,
+        isDesktop: true,
+        width: 1024,
+        height: 768
+      };
+    }
   });
 
   useEffect(() => {

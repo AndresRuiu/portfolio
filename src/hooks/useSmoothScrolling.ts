@@ -27,7 +27,7 @@ export const useSmoothScrolling = (options: UseSmoothScrollingOptions = {}) => {
     requestAnimationFrame(raf);
 
     // Eventos personalizados
-    lenis.on('scroll', (e: any) => {
+    lenis.on('scroll', (e: unknown) => {
       // Opcional: emitir eventos personalizados
       window.dispatchEvent(new CustomEvent('lenis-scroll', { detail: e }));
     });
@@ -43,7 +43,7 @@ export const useSmoothScrolling = (options: UseSmoothScrollingOptions = {}) => {
   ]);
 
   // Métodos útiles
-  const scrollTo = (target: string | number | HTMLElement, options?: any) => {
+  const scrollTo = (target: string | number | HTMLElement, options?: Record<string, unknown>) => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(target, options);
     }

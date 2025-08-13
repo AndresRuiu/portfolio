@@ -44,7 +44,7 @@ export const useNotifications = () => {
     }: {
       loading: string;
       success: string | ((data: T) => string);
-      error: string | ((error: any) => string);
+      error: string | ((error: Error | unknown) => string);
     }
   ) => {
     return toast.promise(promise, {
@@ -55,7 +55,7 @@ export const useNotifications = () => {
     });
   };
 
-  const custom = (message: string, options?: any) => {
+  const custom = (message: string, options?: Record<string, unknown>) => {
     toast(message, options);
   };
 
