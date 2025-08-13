@@ -1,4 +1,3 @@
-import { Icons } from "@/components/ui/icons";
 import { HomeIcon, NotebookIcon, Sparkles, GraduationCap } from "lucide-react";
 
 export const DATOS = {
@@ -34,19 +33,19 @@ export const DATOS = {
       GitHub: {
         name: "GitHub",
         url: "https://github.com/AndresRuiu",
-        icon: Icons.github,
+        icon: "github",
         navbar: true,
       },
       LinkedIn: {
         name: "LinkedIn",
         url: "https://www.linkedin.com/in/andrés-ruiu-b941a1103",
-        icon: Icons.linkedin,
+        icon: "linkedin",
         navbar: true,
       },
       email: {
         name: "Enviar Correo",
         url: "#",
-        icon: Icons.email,
+        icon: "email",
         navbar: false,
       },
     },
@@ -182,7 +181,7 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://laboratoriosaguircorrea.com.ar",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         }
       ],
       imagen: "/img/saguir-correa.png",
@@ -204,12 +203,12 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://consorcio-web-theta.vercel.app",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         },
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/consorcio-web",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/resired.webp",
@@ -233,12 +232,12 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://gimnasio-palermo.vercel.app",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         },
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/proyecto_gimnasio",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/gimnasio-palermo.webp",
@@ -259,12 +258,12 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://dogtor.netlify.app",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         },
         {
           tipo: "Repositorio",
           href: "https://github.com/agustincolo/ProyectoFinal-G2",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/dogtor-veterinaria.webp",
@@ -284,12 +283,12 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://ristretto-coffee.netlify.app",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         },
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/coffee-shop",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/ristretto-cafe.webp",
@@ -313,12 +312,12 @@ export const DATOS = {
         {
           tipo: "Sitio Web",
           href: "https://cv-generator-virid.vercel.app",
-          icon: <Icons.website className="size-3" />,
+          icon: "website",
         },
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/cv-generator",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/cv-generator.webp",
@@ -339,7 +338,7 @@ export const DATOS = {
         {
           tipo: "Repositorio",
           href: "https://github.com/AndresRuiu/selector-agentes",
-          icon: <Icons.github className="size-3" />,
+          icon: "github",
         }
       ],
       imagen: "/img/selector-agentes.webp",

@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getIcon } from '@/lib/iconResolver';
 import { 
   UnifiedCard, 
   UnifiedCardHeader, 
@@ -334,7 +335,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {enlace.icon}
+                  {getIcon(enlace.icon, { className: "size-3" })}
                   {enlace.tipo}
                 </a>
               </Button>

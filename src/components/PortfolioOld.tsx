@@ -36,6 +36,7 @@ import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DATOS } from "@/data/resumen";
+import { getIcon } from '@/lib/iconResolver';
 import Navbar from '@/components/NavBar';
 import { Icons } from './ui/icons';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
@@ -447,7 +448,7 @@ const Portfolio = () => {
                               whileHover={{ scale: 1.1, y: -2, rotate: 5 }}
                               whileTap={{ scale: 0.95 }}
                             >
-                              {React.createElement(social.icon, { className: "size-6" })}
+                              {getIcon(social.icon, { className: "size-6" })}
                             </motion.a>
                           ))}
                       </div>

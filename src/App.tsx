@@ -26,7 +26,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <SkeletonProvider>
           <TooltipProvider>
             {isInitialLoading ? (

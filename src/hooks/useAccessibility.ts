@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 // Hook principal de accesibilidad
 export const useAccessibility = () => {
@@ -7,30 +7,37 @@ export const useAccessibility = () => {
   const [screenReaderMode, setScreenReaderMode] = useState(false);
 
   useEffect(() => {
-    // Detectar preferencias de accesibilidad
-    const mediaQueryMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const mediaQueryContrast = window.matchMedia('(prefers-contrast: high)');
+    // Verificar que estamos en el cliente
+    if (typeof window === 'undefined') return;
 
-    setReducedMotion(mediaQueryMotion.matches);
-    setHighContrast(mediaQueryContrast.matches);
+    try {
+      // Detectar preferencias de accesibilidad
+      const mediaQueryMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const mediaQueryContrast = window.matchMedia('(prefers-contrast: high)');
 
-    // Detectar screen reader
-    const isScreenReader = navigator.userAgent.includes('NVDA') || 
-                          navigator.userAgent.includes('JAWS') || 
-                          window.speechSynthesis?.speaking;
-    setScreenReaderMode(!!isScreenReader);
+      setReducedMotion(mediaQueryMotion.matches);
+      setHighContrast(mediaQueryContrast.matches);
 
-    // Listeners para cambios dinámicos
-    const handleMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    const handleContrastChange = (e: MediaQueryListEvent) => setHighContrast(e.matches);
+      // Detectar screen reader
+      const isScreenReader = navigator.userAgent.includes('NVDA') || 
+                            navigator.userAgent.includes('JAWS') || 
+                            window.speechSynthesis?.speaking;
+      setScreenReaderMode(!!isScreenReader);
 
-    mediaQueryMotion.addEventListener('change', handleMotionChange);
-    mediaQueryContrast.addEventListener('change', handleContrastChange);
+      // Listeners para cambios dinámicos
+      const handleMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+      const handleContrastChange = (e: MediaQueryListEvent) => setHighContrast(e.matches);
 
-    return () => {
-      mediaQueryMotion.removeEventListener('change', handleMotionChange);
-      mediaQueryContrast.removeEventListener('change', handleContrastChange);
-    };
+      mediaQueryMotion.addEventListener('change', handleMotionChange);
+      mediaQueryContrast.addEventListener('change', handleContrastChange);
+
+      return () => {
+        mediaQueryMotion.removeEventListener('change', handleMotionChange);
+        mediaQueryContrast.removeEventListener('change', handleContrastChange);
+      };
+    } catch (error) {
+      console.warn('Error initializing accessibility features:', error);
+    }
   }, []);
 
   // Función para anunciar a screen readers
@@ -222,37 +229,20 @@ export const useAriaLive = () => {
     }
   }, []);
 
-  const LiveRegion = useCallback(() => {
-    return React.createElement('div', {
-      ref: liveRegionRef,
-      'aria-live': 'polite',
-      'aria-atomic': 'true',
-      className: 'sr-only'
-    });
+  // Simple factory function for creating live region element
+  const createLiveRegion = useCallback(() => {
+    const div = document.createElement('div');
+    div.setAttribute('aria-live', 'polite');
+    div.setAttribute('aria-atomic', 'true');
+    div.className = 'sr-only';
+    return div;
   }, []);
 
   return {
     announce,
-    LiveRegion,
+    liveRegionRef,
+    createLiveRegion,
   };
-};
-
-// Hook para skip links
-export const useSkipLinks = () => {
-  const skipLinkRef = useRef<HTMLAnchorElement>(null);
-
-  const SkipLink = useCallback(({ href, children }: { href: string; children: React.ReactNode }) => {
-    return React.createElement('a', {
-      ref: skipLinkRef,
-      href: href,
-      className: 'sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
-      onFocus: (e: React.FocusEvent<HTMLAnchorElement>) => {
-        e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }, children);
-  }, []);
-
-  return { SkipLink };
 };
 
 // Hook para detectar dispositivos de asistencia
@@ -262,48 +252,55 @@ export const useAssistiveTechnology = () => {
   const [hasKeyboardOnly, setHasKeyboardOnly] = useState(false);
 
   useEffect(() => {
-    // Detectar screen reader
-    const detectScreenReader = () => {
-      return !!(
-        window.navigator.userAgent.match(/NVDA|JAWS|VoiceOver|TalkBack|Dragon/i) ||
-        (window as any).speechSynthesis ||
-        document.querySelector('[aria-live]')
-      );
-    };
+    // Verificar que estamos en el cliente
+    if (typeof window === 'undefined') return;
 
-    // Detectar uso exclusivo de teclado
-    let keyboardOnlyTimer: NodeJS.Timeout;
-    let hasUsedMouse = false;
+    try {
+      // Detectar screen reader
+      const detectScreenReader = () => {
+        return !!(
+          window.navigator.userAgent.match(/NVDA|JAWS|VoiceOver|TalkBack|Dragon/i) ||
+          (window as any).speechSynthesis ||
+          document.querySelector('[aria-live]')
+        );
+      };
 
-    const handleMouseMove = () => {
-      hasUsedMouse = true;
-      setHasKeyboardOnly(false);
-    };
+      // Detectar uso exclusivo de teclado
+      let keyboardOnlyTimer: NodeJS.Timeout;
+      let hasUsedMouse = false;
 
-    const handleKeydown = () => {
-      if (!hasUsedMouse) {
-        clearTimeout(keyboardOnlyTimer);
-        keyboardOnlyTimer = setTimeout(() => {
-          setHasKeyboardOnly(true);
-        }, 2000);
+      const handleMouseMove = () => {
+        hasUsedMouse = true;
+        setHasKeyboardOnly(false);
+      };
+
+      const handleKeydown = () => {
+        if (!hasUsedMouse) {
+          clearTimeout(keyboardOnlyTimer);
+          keyboardOnlyTimer = setTimeout(() => {
+            setHasKeyboardOnly(true);
+          }, 2000);
+        }
+      };
+
+      setHasScreenReader(detectScreenReader());
+
+      // Detectar control por voz (muy básico)
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        setHasVoiceControl(true);
       }
-    };
 
-    setHasScreenReader(detectScreenReader());
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('keydown', handleKeydown);
 
-    // Detectar control por voz (muy básico)
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      setHasVoiceControl(true);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('keydown', handleKeydown);
+        clearTimeout(keyboardOnlyTimer);
+      };
+    } catch (error) {
+      console.warn('Error detecting assistive technology:', error);
     }
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('keydown', handleKeydown);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('keydown', handleKeydown);
-      clearTimeout(keyboardOnlyTimer);
-    };
   }, []);
 
   return {

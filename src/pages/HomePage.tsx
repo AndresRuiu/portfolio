@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { DATOS } from "@/data/resumen";
 import Layout from '@/components/Layout';
 import { Icons } from '@/components/ui/icons';
+import { getIcon } from '@/lib/iconResolver';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { useSmoothScroll, useKeyboardNavigation } from '@/hooks/useNavigation';
@@ -449,7 +450,7 @@ const HomePage = () => {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1"
                         >
-                          {enlace.icon}
+                          {getIcon(enlace.icon, { className: "size-3" })}
                           {enlace.tipo}
                         </a>
                       </Button>
@@ -489,7 +490,7 @@ const HomePage = () => {
                             whileHover={{ scale: 1.1, y: -2, rotate: 5 }}
                             whileTap={{ scale: 0.95 }}
                           >
-                            {React.createElement(social.icon, { className: "size-6" })}
+                            {getIcon(social.icon, { className: "size-6" })}
                           </motion.a>
                         ))}
                     </div>

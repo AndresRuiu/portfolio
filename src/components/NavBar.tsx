@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { DATOS } from "@/data/resumen";
 import { cn } from "@/lib/utils";
+import { getIcon } from '@/lib/iconResolver';
 import { Link, useLocation } from 'react-router-dom';
 
 // Componente individual para botones con animaciones suaves
@@ -350,7 +351,7 @@ export default function Navbar() {
                     href={social.url}
                     tooltip={name}
                   >
-                    {React.createElement(social.icon, { 
+                    {getIcon(social.icon, { 
                       className: "w-5 h-5 text-foreground/70 hover:text-foreground transition-colors" 
                     })}
                   </IconButton>
