@@ -37,7 +37,7 @@ const MobileNavButton: React.FC<{
       <Link
         to={item.href}
         className={cn(
-          "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300 active:scale-95",
+          "flex aspect-square w-10 h-10 items-center justify-center rounded-2xl transition-all duration-300 active:scale-95",
           "relative", // Added for proper positioning
           isActive 
             ? "bg-primary/20 text-primary shadow-lg" 
@@ -54,7 +54,7 @@ const MobileNavButton: React.FC<{
           }}
           transition={{ duration: 0.1 }}
         >
-          <item.icon className="w-5 h-5 flex-shrink-0" />
+          <item.icon className="w-4 h-4 flex-shrink-0" />
         </motion.div>
       </Link>
       {isActive && (
@@ -85,7 +85,7 @@ const MobileSocialButton: React.FC<{
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300",
+            "flex aspect-square w-10 h-10 items-center justify-center rounded-2xl transition-all duration-300",
             "text-foreground/70 active:scale-95 active:bg-muted/50 relative" // Added relative positioning
           )}
           onTouchStart={() => setIsPressed(true)}
@@ -100,7 +100,7 @@ const MobileSocialButton: React.FC<{
             transition={{ duration: 0.1 }}
           >
             {getIcon(icon, { 
-              className: "w-5 h-5 transition-colors flex-shrink-0" 
+              className: "w-4 h-4 transition-colors flex-shrink-0" 
             })}
           </motion.div>
         </a>
@@ -119,7 +119,7 @@ const MobileThemeButton: React.FC = () => {
       <TooltipTrigger asChild>
         <div
           className={cn(
-            "flex aspect-square w-11 h-11 items-center justify-center rounded-2xl transition-all duration-300",
+            "flex aspect-square w-10 h-10 items-center justify-center rounded-2xl transition-all duration-300",
             "text-foreground/70 active:scale-95 active:bg-muted/50 cursor-pointer relative" // Added relative positioning
           )}
           onTouchStart={() => setIsPressed(true)}
@@ -498,7 +498,7 @@ export default function Navbar() {
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           <motion.div 
-            className="mx-auto flex items-center justify-center gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl w-fit max-w-full"
+            className="mx-auto flex items-center justify-center gap-1 rounded-3xl border border-border/20 p-2 shadow-2xl w-fit max-w-full"
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               backdropFilter: "blur(20px)",
@@ -526,14 +526,14 @@ export default function Navbar() {
             
             {/* Separator */}
             <motion.div
-              className="flex items-center justify-center px-1"
+              className="flex items-center justify-center px-0.5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
               <Separator 
                 orientation="vertical" 
-                className="h-8 bg-border/30" 
+                className="h-6 bg-border/30" 
               />
             </motion.div>
             
@@ -557,14 +557,14 @@ export default function Navbar() {
               
             {/* Separator */}
             <motion.div
-              className="flex items-center justify-center px-1"
+              className="flex items-center justify-center px-0.5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
               <Separator 
                 orientation="vertical" 
-                className="h-8 bg-border/30" 
+                className="h-6 bg-border/30" 
               />
             </motion.div>
             
