@@ -9,6 +9,10 @@ interface AppState {
     reducedMotion: boolean;
     highContrast: boolean;
   };
+  ui: {
+    hasOpenModals: boolean;
+    openModalIds: Set<string>;
+  };
 }
 
 interface Notification {
@@ -24,7 +28,9 @@ type AppAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'ADD_NOTIFICATION'; payload: Omit<Notification, 'id' | 'timestamp'> }
   | { type: 'REMOVE_NOTIFICATION'; payload: string }
-  | { type: 'UPDATE_PREFERENCES'; payload: Partial<AppState['preferences']> };
+  | { type: 'UPDATE_PREFERENCES'; payload: Partial<AppState['preferences']> }
+  | { type: 'REGISTER_MODAL'; payload: string }
+  | { type: 'UNREGISTER_MODAL'; payload: string };
 
 // Initial state
 const initialState: AppState = {
@@ -34,6 +40,10 @@ const initialState: AppState = {
   preferences: {
     reducedMotion: false,
     highContrast: false,
+  },
+  ui: {
+    hasOpenModals: false,
+    openModalIds: new Set(),
   },
 };
 
@@ -70,6 +80,32 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         preferences: { ...state.preferences, ...action.payload },
       };
     
+    case 'REGISTER_MODAL': {
+      const newOpenModalIds = new Set(state.ui.openModalIds);
+      newOpenModalIds.add(action.payload);
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          hasOpenModals: true,
+          openModalIds: newOpenModalIds,
+        },
+      };
+    }
+    
+    case 'UNREGISTER_MODAL': {
+      const newOpenModalIds = new Set(state.ui.openModalIds);
+      newOpenModalIds.delete(action.payload);
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          hasOpenModals: newOpenModalIds.size > 0,
+          openModalIds: newOpenModalIds,
+        },
+      };
+    }
+    
     default:
       return state;
   }
@@ -84,6 +120,8 @@ interface AppContextType {
     addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
     removeNotification: (id: string) => void;
     updatePreferences: (preferences: Partial<AppState['preferences']>) => void;
+    registerModal: (modalId: string) => void;
+    unregisterModal: (modalId: string) => void;
   };
 }
 
@@ -115,6 +153,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     
     updatePreferences: (preferences: Partial<AppState['preferences']>) => {
       dispatch({ type: 'UPDATE_PREFERENCES', payload: preferences });
+    },
+    
+    registerModal: (modalId: string) => {
+      dispatch({ type: 'REGISTER_MODAL', payload: modalId });
+    },
+    
+    unregisterModal: (modalId: string) => {
+      dispatch({ type: 'UNREGISTER_MODAL', payload: modalId });
     },
   }), []);
 

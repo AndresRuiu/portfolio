@@ -8,6 +8,7 @@ import Layout from '@/components/Layout';
 import { SectionReveal, AnimateElements } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { Link } from 'react-router-dom';
+import type { Project } from '@/types';
 import { ProjectGallery } from '@/components/ProjectGallery';
 import { useProjects } from '@/hooks/usePortfolioData';
 import { ProjectCardSkeleton, FilterSkeleton, StatsCardSkeleton } from '@/components/skeletons/SkeletonComponents';
@@ -20,20 +21,6 @@ import {
 
 const ProjectModal = React.lazy(() => import('@/components/ProjectModal'));
 
-interface Project {
-  titulo: string;
-  imagen?: string;
-  video?: string;
-  tecnologias: readonly string[];
-  fechas: string;
-  descripcion?: string;
-  activo?: boolean;
-  enlaces: Array<{
-    tipo: string;
-    href: string;
-    icon: React.ReactElement;
-  }>;
-}
 
 const ProyectosPage = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -194,7 +181,7 @@ const ProyectosPage = () => {
             </motion.div>
           ) : (
             <ProjectGallery 
-              projects={filteredProjects as any} 
+              projects={filteredProjects} 
               onProjectClick={handleProjectClick}
             />
           )}
@@ -243,7 +230,7 @@ const ProyectosPage = () => {
         {selectedProject && (
           <Suspense fallback={<ModalSkeleton />}>
             <ProjectModal 
-              project={selectedProject as any} 
+              project={selectedProject} 
               onClose={() => setSelectedProject(null)} 
             />
           </Suspense>

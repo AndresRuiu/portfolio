@@ -24,7 +24,7 @@ import { DATOS } from '@/data/resumen';
 
 interface CommandItem {
   label: string;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
   action: () => void;
   shortcut?: string;
 }

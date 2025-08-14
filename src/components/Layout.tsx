@@ -22,35 +22,39 @@ const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
     easing: (t: number) => 1 - (1 - t) * (1 - t), // Easing más simple
   });
 
-  // Color dinámico de partículas basado en el tema
+  // Enhanced theme-aware particle colors for better visibility
   const getParticleColor = () => {
     if (theme === 'dark') {
-      return '#6b7280'; // Gris claro para modo oscuro
+      return '#93c5fd'; // Light blue for dark mode - better visibility
     } else if (theme === 'light') {
-      return '#374151'; // Gris oscuro para modo claro
+      return '#3b82f6'; // Vibrant blue for light mode - much better visibility
     } else {
-      // Sistema - detectar preferencia actual
+      // System - detect current preference
       if (typeof window !== 'undefined') {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        return prefersDark ? '#6b7280' : '#374151';
+        return prefersDark ? '#93c5fd' : '#3b82f6';
       }
-      return '#6b7280';
+      return '#3b82f6';
     }
   };
   
   return (
     <main className="flex flex-col min-h-[100dvh] items-center bg-background overflow-x-hidden">
-      {/* Particles Background - Reduced for performance */}
+      {/* Enhanced Particles Background - Full page coverage with better visibility */}
       {showParticles && (
         <Suspense fallback={<div />}>
           <Particles
             key={theme}
-            className="absolute inset-0 z-0"
-            quantity={75} // Reduced from 150
-            ease={90}
+            className="fixed inset-0"
+            quantity={typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 120} // Responsive quantity
+            ease={80}
             color={getParticleColor()}
-            refresh={false} // Disable refresh for performance
-            size={8} // Smaller size
+            refresh={false}
+            size={typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 6} // Responsive size
+            fullPage={true} // Enable full page coverage
+            vx={0.1} // Slight horizontal movement
+            vy={0.05} // Slight vertical movement
+            staticity={60} // Balanced responsiveness
           />
         </Suspense>
       )}

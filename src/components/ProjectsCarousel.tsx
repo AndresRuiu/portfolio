@@ -3,24 +3,10 @@ import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Code, ExternalLink, Github, Eye, Calendar, Sparkles } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { ProjectSkeleton } from './LoadingStates';
-
-interface Project {
-  titulo: string;
-  imagen?: string;
-  video?: string;
-  tecnologias: string[];
-  fechas: string;
-  descripcion?: string;
-  activo?: boolean;
-  enlaces: Array<{
-    tipo: string;
-    href: string;
-    icon: React.ReactElement;
-  }>;
-}
+import type { Project } from '@/types';
 
 interface ProjectsCarouselProps {
-  projects: Project[];
+  projects: readonly Project[];
   onProjectClick: (project: Project) => void;
   handleExternalLink: (url: string) => void;
 }

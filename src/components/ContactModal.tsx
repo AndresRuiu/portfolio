@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Phone, Mail, MessageCircle } from 'lucide-react';
 import { LoadingButton } from './LoadingStates';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useAppActions } from '@/contexts/AppContext';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ContactModalProps {
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledSubject }) => {
   const { success, error } = useNotifications();
+  const { registerModal, unregisterModal } = useAppActions();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,6 +22,23 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  
+  // Unique modal ID
+  const modalId = 'contact-modal';
+
+  // Register/unregister modal based on isOpen state
+  useEffect(() => {
+    if (isOpen) {
+      registerModal(modalId);
+    } else {
+      unregisterModal(modalId);
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      unregisterModal(modalId);
+    };
+  }, [isOpen, modalId, registerModal, unregisterModal]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -149,7 +168,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[10000] flex items-center justify-center p-4"
         onClick={onClose}
       >
         <motion.div

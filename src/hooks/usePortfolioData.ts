@@ -129,11 +129,11 @@ export const useSearch = (query: string) => {
       });
       
       // Buscar en servicios
-      DATOS.servicios.forEach((service: any) => {
+      DATOS.servicios.forEach((service: { titulo: string; descripcion: string; tecnologias: readonly string[] }) => {
         if (
-          service.titulo?.toLowerCase().includes(searchTerm) ||
-          service.descripcion?.toLowerCase().includes(searchTerm) ||
-          service.tecnologias?.some((tech: string) => tech.toLowerCase().includes(searchTerm))
+          service.titulo.toLowerCase().includes(searchTerm) ||
+          service.descripcion.toLowerCase().includes(searchTerm) ||
+          service.tecnologias.some((tech: string) => tech.toLowerCase().includes(searchTerm))
         ) {
           results.push({
             type: 'service',

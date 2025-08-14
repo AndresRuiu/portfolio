@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 export interface Project {
   titulo: string;
   fechas: string;
-  activo: boolean;
-  descripcion: string;
+  activo?: boolean;
+  descripcion?: string;
   tecnologias: readonly string[];
   enlaces: readonly {
     tipo: string;
@@ -12,6 +12,7 @@ export interface Project {
     icon: string;
   }[];
   imagen?: string;
+  video?: string;
 }
 
 export interface Navigation {

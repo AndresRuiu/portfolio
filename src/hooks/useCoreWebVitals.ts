@@ -129,9 +129,13 @@ export const useCoreWebVitals = () => {
       let clsValue = 0;
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+        entries.forEach((entry: PerformanceEntry) => {
+          const layoutShiftEntry = entry as PerformanceEntry & {
+            hadRecentInput?: boolean;
+            value?: number;
+          };
+          if (!layoutShiftEntry.hadRecentInput) {
+            clsValue += layoutShiftEntry.value || 0;
           }
         });
         updateVital('cls', clsValue);
@@ -161,9 +165,13 @@ export const useCoreWebVitals = () => {
     const measureINP = () => {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
-          if (entry.interactionId) {
-            const inp = entry.processingEnd - entry.startTime;
+        entries.forEach((entry: PerformanceEntry) => {
+          const eventEntry = entry as PerformanceEntry & {
+            interactionId?: number;
+            processingEnd?: number;
+          };
+          if (eventEntry.interactionId) {
+            const inp = (eventEntry.processingEnd || 0) - entry.startTime;
             updateVital('inp', inp);
           }
         });

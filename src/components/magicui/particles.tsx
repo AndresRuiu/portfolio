@@ -3,6 +3,13 @@
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
+// Extend Window interface for timeout properties
+declare global {
+  interface Window {
+    particleResizeTimeout?: NodeJS.Timeout;
+  }
+}
+
 interface Circle {
   x: number;
   y: number;
@@ -27,6 +34,7 @@ interface ParticlesProps {
   vx?: number;
   vy?: number;
   size?: number;
+  fullPage?: boolean; // New prop for full page coverage
 }
 
 export default function Particles({
@@ -39,6 +47,7 @@ export default function Particles({
   vx = 0,
   vy = 0,
   size = 2,
+  fullPage = false,
 }: ParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -55,13 +64,21 @@ export default function Particles({
     }
     initCanvas();
     animate();
-    window.addEventListener("resize", initCanvas);
+    
+    // Add event listeners - only for actual window resize, NOT scroll
+    const handleResize = () => {
+      clearTimeout(window.particleResizeTimeout);
+      window.particleResizeTimeout = setTimeout(initCanvas, 150);
+    };
+    
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener("resize", initCanvas);
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(window.particleResizeTimeout);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fullPage]);
 
   useEffect(() => {
     onMouseMove();
@@ -94,8 +111,16 @@ export default function Particles({
   const resizeCanvas = () => {
     if (canvasContainerRef.current && canvasRef.current && context.current) {
       circles.current.length = 0;
-      canvasSize.current.w = canvasContainerRef.current.offsetWidth;
-      canvasSize.current.h = canvasContainerRef.current.offsetHeight;
+      
+      // For full page coverage, use viewport dimensions only (fixed positioning)
+      if (fullPage) {
+        canvasSize.current.w = window.innerWidth;
+        canvasSize.current.h = window.innerHeight;
+      } else {
+        canvasSize.current.w = canvasContainerRef.current.offsetWidth;
+        canvasSize.current.h = canvasContainerRef.current.offsetHeight;
+      }
+      
       canvasRef.current.width = canvasSize.current.w * dpr;
       canvasRef.current.height = canvasSize.current.h * dpr;
       canvasRef.current.style.width = canvasSize.current.w + "px";
@@ -109,17 +134,29 @@ export default function Particles({
     const canvasW = canvas.w;
     const canvasH = canvas.h;
 
+    // Enhanced particle positioning for better distribution
     const x = Math.random() * canvasW;
-    const y = Math.random() * canvasH;
+    const y = Math.random() * canvasH; // Always use canvas height (viewport for fullPage)
+    
     const translateX = 0;
     const translateY = 0;
-    const particleSize = Math.random() * size + size * 0.5; // Usar la prop size
+    
+    // Varied particle sizes for visual interest
+    const sizeVariation = 0.3 + Math.random() * 0.7; // 0.3 to 1.0
+    const particleSize = size * sizeVariation;
+    
     const alpha = 0;
-    const targetAlpha = parseFloat((Math.random() * 0.8 + 0.2).toFixed(2)); // Mayor opacidad (0.2-1.0)
-    const dx = (Math.random() - 0.5) * 0.6 + vx; // Aumentado de 0.2 a 0.6
-    const dy = (Math.random() - 0.5) * 0.6 + vy; // Aumentado de 0.2 a 0.6
-    const magnetism = 0.1 + Math.random() * 0.4;
-    const smooth = 0.05 + Math.random() * 0.15; // Transición más suave
+    // Enhanced alpha for better visibility based on size
+    const baseAlpha = 0.3 + (sizeVariation * 0.4); // Larger particles more visible
+    const targetAlpha = parseFloat((Math.random() * baseAlpha + 0.2).toFixed(2));
+    
+    // Enhanced movement for full page coverage
+    const moveMultiplier = fullPage ? 0.3 : 0.6;
+    const dx = (Math.random() - 0.5) * moveMultiplier + vx;
+    const dy = (Math.random() - 0.5) * moveMultiplier + vy;
+    
+    const magnetism = 0.1 + Math.random() * 0.3;
+    const smooth = 0.03 + Math.random() * 0.12;
 
     return {
       x,
@@ -143,27 +180,41 @@ export default function Particles({
       context.current.beginPath();
       context.current.arc(x, y, size, 0, 2 * Math.PI);
       
-      // Manejar diferentes formatos de color
+      // Enhanced color handling with better visibility and theme support
       let fillColor = color;
+      let rgb: number[] = [107, 114, 128]; // Default gray
+      
       if (color.startsWith('hsl(')) {
-        // Convertir HSL a RGB para el canvas
+        // Convert HSL to RGB for canvas
         const hslMatch = color.match(/hsl\(([^)]+)\)/);
         if (hslMatch) {
           const [h, s, l] = hslMatch[1].split(',').map(v => parseFloat(v));
-          const rgb = hslToRgb(h, s, l);
-          fillColor = `rgba(${rgb.join(', ')}, ${alpha})`;
+          rgb = hslToRgb(h, s, l);
         }
       } else if (color.startsWith('#')) {
-        // Color hexadecimal
-        const rgb = hexToRgb(color);
-        fillColor = `rgba(${rgb.join(', ')}, ${alpha})`;
-      } else {
-        // Color por defecto
-        fillColor = `rgba(107, 114, 128, ${alpha})`;
+        // Hexadecimal color
+        rgb = hexToRgb(color);
+      } else if (color.startsWith('rgb')) {
+        // RGB color
+        const rgbMatch = color.match(/rgb\(([^)]+)\)/);
+        if (rgbMatch) {
+          rgb = rgbMatch[1].split(',').map(v => parseInt(v.trim()));
+        }
       }
       
+      // Enhanced alpha calculation for better visibility
+      const enhancedAlpha = Math.max(alpha * 0.8, 0.1); // Minimum visibility
+      fillColor = `rgba(${rgb.join(', ')}, ${enhancedAlpha})`;
+      
+      // Add subtle glow effect for better visibility
+      context.current.shadowColor = fillColor;
+      context.current.shadowBlur = size * 0.5;
       context.current.fillStyle = fillColor;
       context.current.fill();
+      
+      // Reset shadow
+      context.current.shadowColor = 'transparent';
+      context.current.shadowBlur = 0;
       context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       if (!update) {
@@ -301,11 +352,33 @@ export default function Particles({
   };
 
   return (
-    <div className={cn("absolute inset-0", className)} ref={canvasContainerRef}>
+    <div 
+      className={cn(
+        fullPage 
+          ? "fixed inset-0 pointer-events-none z-0" 
+          : "absolute inset-0", 
+        className
+      )} 
+      ref={canvasContainerRef}
+      style={fullPage ? { 
+        width: '100vw', 
+        height: '100vh',
+        top: 0,
+        left: 0,
+        position: 'fixed'
+      } : undefined}
+    >
       <canvas
         onMouseMove={handleMouseMove}
         ref={canvasRef}
-        className="h-full w-full"
+        className={cn(
+          "w-full h-full",
+          fullPage && "pointer-events-none"
+        )}
+        style={fullPage ? {
+          width: '100vw',
+          height: '100vh'
+        } : undefined}
       />
     </div>
   );

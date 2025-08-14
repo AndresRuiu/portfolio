@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
+import type { Project } from '@/types';
 import { 
   AnimatePresence, 
   motion, 
@@ -7,20 +8,6 @@ import {
 } from 'framer-motion';
 
 // Type definitions
-interface Project {
-  titulo: string;
-  imagen?: string;
-  video?: string;
-  tecnologias: string[];
-  fechas: string;
-  descripcion?: string;
-  activo?: boolean;
-  enlaces: Array<{
-    tipo: string;
-    href: string;
-    icon: React.ReactElement;
-  }>;
-}
 
 interface Servicio {
   titulo: string;
@@ -296,7 +283,7 @@ const Portfolio = () => {
               
               <Suspense fallback={<ProjectsSkeleton />}>
                 <ProjectsCarousel 
-                  projects={DATOS.proyectos as unknown as Project[]}
+                  projects={DATOS.proyectos}
                   onProjectClick={handleProjectClick}
                   handleExternalLink={handleExternalLink}
                 />

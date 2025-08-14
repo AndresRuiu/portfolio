@@ -5,6 +5,7 @@ import { Suspense, useState, useEffect } from 'react'
 import { AppLoader } from '@/components/AppLoader'
 import { Toaster } from 'sonner'
 import { SkeletonProvider } from '@/components/skeletons/SkeletonComponents'
+import { AppProvider } from '@/contexts/AppContext'
 
 // Lazy loading para las páginas
 import HomePage from '@/pages/HomePage'
@@ -26,33 +27,35 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <SkeletonProvider>
-          <TooltipProvider>
-            {isInitialLoading ? (
-              <AppLoader isLoading={true} minLoadTime={1500} />
-            ) : (
-              <Suspense fallback={<AppLoader isLoading={true} minLoadTime={800} />}>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/proyectos" element={<ProyectosPage />} />
-                  <Route path="/servicios" element={<ServiciosPage />} />
-                  <Route path="/educacion" element={<EducacionPage />} />
-                </Routes>
-              </Suspense>
-            )}
-            <Toaster 
-              position="top-right"
-              richColors
-              closeButton
-              expand
-              visibleToasts={4}
-              duration={4000}
-              className="toaster"
-            />
-          </TooltipProvider>
-        </SkeletonProvider>
-      </ThemeProvider>
+      <AppProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <SkeletonProvider>
+            <TooltipProvider>
+              {isInitialLoading ? (
+                <AppLoader isLoading={true} minLoadTime={1500} />
+              ) : (
+                <Suspense fallback={<AppLoader isLoading={true} minLoadTime={800} />}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/proyectos" element={<ProyectosPage />} />
+                    <Route path="/servicios" element={<ServiciosPage />} />
+                    <Route path="/educacion" element={<EducacionPage />} />
+                  </Routes>
+                </Suspense>
+              )}
+              <Toaster 
+                position="top-right"
+                richColors
+                closeButton
+                expand
+                visibleToasts={4}
+                duration={4000}
+                className="toaster"
+              />
+            </TooltipProvider>
+          </SkeletonProvider>
+        </ThemeProvider>
+      </AppProvider>
     </BrowserRouter>
   )
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { Project } from '@/types';
 import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -31,24 +32,9 @@ import {
 } from '@/components/ui/UnifiedCard';
 import { VideoPlayer } from '@/components/VideoPlayer';
 
-interface ProjectData {
-  titulo: string;
-  imagen?: string;
-  video?: string;
-  tecnologias: string[];
-  fechas: string;
-  descripcion?: string;
-  activo?: boolean;
-  enlaces: Array<{
-    tipo: string;
-    href: string;
-    icon: React.ReactElement;
-  }>;
-}
-
 interface ProjectGalleryProps {
-  projects: ProjectData[];
-  onProjectClick?: (project: ProjectData) => void;
+  projects: Project[];
+  onProjectClick?: (project: Project) => void;
 }
 
 export const ProjectGallery: React.FC<ProjectGalleryProps> = ({ 
@@ -70,7 +56,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
       height: 800,
     }));
 
-  const openLightbox = (project: ProjectData) => {
+  const openLightbox = (project: Project) => {
     const slideIndex = projects.findIndex(p => p.titulo === project.titulo);
     setLightboxIndex(slideIndex);
     setLightboxOpen(true);
@@ -161,13 +147,13 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
 
 // Componente individual de proyecto
 interface ProjectCardProps {
-  project: ProjectData;
+  project: Project;
   index: number;
   isHovered: boolean;
   onHover: () => void;
   onLeave: () => void;
   onImageClick: () => void;
-  onProjectClick?: (project: ProjectData) => void;
+  onProjectClick?: (project: Project) => void;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({

@@ -11,6 +11,7 @@ import { DATOS } from "@/data/resumen";
 import { cn } from "@/lib/utils";
 import { getIcon } from '@/lib/iconResolver';
 import { Link, useLocation } from 'react-router-dom';
+import { useAppState } from '@/contexts/AppContext';
 
 // Tipos para mejorar TypeScript
 interface NavItem {
@@ -373,29 +374,57 @@ const IconButton: React.FC<{
 export default function Navbar() {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const { ui } = useAppState();
 
   const isActive = (href: string) => {
     return location.pathname === href;
   };
 
-  // Navbar siempre visible - sin auto-hide
+  // Navbar visibility controlled by modal state
+  const shouldHideNavbar = ui.hasOpenModals;
 
   return (
-    <div
-      className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center px-4"
-      data-lenis-prevent
-      data-navbar
-      data-fixed
-      style={{
-        paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))',
-      }}
-    >
-        {/* Desktop version */}
+    <AnimatePresence mode="wait">
+      {!shouldHideNavbar && (
         <motion.div
-          className="hidden md:block relative w-full max-w-4xl"
-          layout
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          key="navbar"
+          className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center px-4"
+          data-lenis-prevent
+          data-navbar
+          data-fixed
+          style={{
+            paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))',
+          }}
+          initial={{ 
+            opacity: 1, 
+            y: 0,
+            scale: 1
+          }}
+          animate={{ 
+            opacity: 1, 
+            y: 0,
+            scale: 1
+          }}
+          exit={{ 
+            opacity: 0, 
+            y: 20,
+            scale: 0.95,
+            transition: {
+              duration: 0.2,
+              ease: "easeInOut"
+            }
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut"
+          }}
         >
+          {/* Desktop version */}
+          <motion.div
+            className="hidden md:block relative w-full max-w-4xl"
+            layout
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
           <motion.div
             className="mx-auto flex gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl w-fit max-w-full"
             style={{
@@ -578,6 +607,8 @@ export default function Navbar() {
             </motion.div>
           </motion.div>
         </motion.div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

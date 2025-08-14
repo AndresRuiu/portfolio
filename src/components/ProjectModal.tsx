@@ -1,33 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, ExternalLink, Github, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { useAppActions } from '@/contexts/AppContext';
+
+import type { Project } from '@/types';
 
 interface ProjectModalProps {
-  project: {
-    titulo: string;
-    descripcion?: string;
-    tecnologias: string[];
-    imagen?: string;
-    video?: string;
-    activo?: boolean;
-    enlaces: Array<{
-      tipo: string;
-      href: string;
-      icon: React.ReactElement;
-    }>;
-    fechas: string;
-  };
+  project: Project;
   onClose: () => void;
 }
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const { registerModal, unregisterModal } = useAppActions();
+  
+  // Generate unique modal ID
+  const modalId = `project-modal-${project.titulo.replace(/\s+/g, '-').toLowerCase()}`;
   
   const mediaArray = [
     ...(project.video ? [{ type: 'video', src: project.video }] : []),
     ...(project.imagen ? [{ type: 'image', src: project.imagen }] : [])
   ];
+
+  // Register modal on mount, unregister on unmount
+  useEffect(() => {
+    registerModal(modalId);
+    
+    return () => {
+      unregisterModal(modalId);
+    };
+  }, [modalId, registerModal, unregisterModal]);
 
   const handleNext = () => {
     setCurrentMediaIndex((prevIndex) => 
@@ -46,7 +49,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
     >
       <motion.div
