@@ -3,22 +3,32 @@ import { HomeIcon, NotebookIcon, Sparkles, GraduationCap } from "lucide-react";
 export const DATOS = {
   nombre: "Andrés Ruiu",	
   iniciales: "AR",
-  url: "",
+  url: "https://andresruiu.com",
   ubicacion: "San Miguel de Tucumán, Tucumán, Argentina",
-  description: "Desarrollador FullStack apasionado por la tecnología. Transformando ideas en soluciones digitales innovadoras, con un enfoque en crear aplicaciones que realmente marquen la diferencia",
+  description: "Desarrollador Full Stack especializado en crear soluciones digitales que impulsan el crecimiento empresarial. Combino expertise técnico con visión estratégica para desarrollar aplicaciones web modernas y escalables. Actualmente liderando el desarrollo de múltiples proyectos empresariales en producción.",
   resumen: 
-  "Al final de 2022, decidí dejar atrás mis estudios en Ingeniería Civil para dedicarme por completo a mi verdadera pasión: la programación. Actualmente estoy en el último año de la Tecnicatura Universitaria en Programación en la UTN - FRT. A lo largo de mi camino, he explorado diversas tecnologías y he participado en proyectos emocionantes que me han permitido crecer como desarrollador. Siempre estoy buscando aprender algo nuevo y aplicar mis habilidades para crear soluciones innovadoras que impacten positivamente en el mundo digital",
+  "Desarrollador Full Stack con sólida formación académica y experiencia práctica comprobada en proyectos reales. Mi background en ingeniería me aporta una perspectiva analítica única para resolver problemas complejos y diseñar arquitecturas eficientes. Especializado en el stack moderno de JavaScript/TypeScript, he desarrollado aplicaciones completas para diversos sectores empresariales, desde plataformas de gestión hasta portales médicos. Próximo a graduarme como Técnico Universitario en Programación (UTN-FRT), busco oportunidades que me permitan aplicar mi experiencia en desarrollo full stack y contribuir al crecimiento tecnológico de organizaciones innovadoras.",
   urlAvatar: "/yo.webp",
   habilidades: [
     "React",
     "Next.js",
     "TypeScript",
-    "Tailwind CSS",
     "Node.js",
-    "Electron",
-    "NestJs",
+    "NestJS",
+    "PostgreSQL",
     "MySQL",
-    "MongoDB"
+    "MongoDB",
+    "Prisma ORM",
+    "Tailwind CSS",
+    "shadcn/ui",
+    "Zustand",
+    "NextAuth.js",
+    "Strapi CMS",
+    "Docker",
+    "Vercel",
+    "Git & GitHub",
+    "REST APIs",
+    "Responsive Design"
   ],
   navegacion: [
     { href: "/", icon: HomeIcon, label: "Inicio" },
@@ -165,17 +175,53 @@ export const DATOS = {
   ],
   proyectos: [
     {
-      titulo: "Landing Page - Laboratorio Saguir Correa",
-      fechas: "Marzo 2025 - Junio 2025",
+      titulo: "Andrea Buadas Gabinete - Catálogo Digital de Estética",
+      fechas: "Enero 2025 - Presente",
       activo: true,
-      descripcion: "Desarrollo de una landing page completa para el Laboratorio de Análisis Clínicos Saguir Correa, incluyendo secciones de historia, servicios, contacto y visualización de resultados clínicos. El proyecto se mantiene activo con actualizaciones y mejoras continuas para optimizar la experiencia del usuario y la funcionalidad del sitio.",
+      descripcion: "Plataforma digital completa para un centro de estética y belleza que incluye catálogo de servicios y productos, sistema de reservas, integración con WhatsApp para consultas, y panel de administración con CMS. El proyecto consta de un frontend moderno desarrollado en Next.js con una experiencia de usuario elegante y un backend robusto construido con Strapi. Implementa funcionalidades avanzadas como gestión de contenido dinámico, sistema de favoritos, formularios de reserva multi-paso, y optimización SEO para búsquedas locales. Es uno de mis proyectos más ambiciosos y técnicamente desafiantes, combinando desarrollo full-stack con diseño UX/UI enfocado en conversión.",
       tecnologias: [
         "Next.js",
         "React",
+        "TypeScript",
         "Tailwind CSS",
-        "Framer Motion",
-        "Responsive Design",
-        "SEO"
+        "Shadcn/ui",
+        "Strapi",
+        "MySQL",
+        "Zustand",
+        "React Hook Form",
+        "Zod",
+        "Radix UI",
+        "Embla Carousel",
+        "WhatsApp Integration",
+        "SEO Optimization"
+      ],
+      enlaces: [
+        {
+          tipo: "Sitio Web",
+          href: "#",
+          icon: "website",
+        }
+      ],
+      imagen: "/img/andrea-gabinete.png",
+    },
+    {
+      titulo: "Laboratorio Saguir Correa - Portal Médico",
+      fechas: "Marzo 2025 - Presente",
+      activo: true,
+      descripcion: "Desarrollo integral de un portal web para el prestigioso Laboratorio de Análisis Clínicos Saguir Correa. El proyecto incluye un sitio web corporativo moderno con secciones institucionales, catálogo completo de servicios médicos, portal de pacientes para consulta de resultados clínicos, sistema de autenticación seguro, formularios de contacto integrados con EmailJS, y optimización avanzada para motores de búsqueda. Implementé un diseño responsive y elegante que refleja la profesionalidad del laboratorio, utilizando las últimas tecnologías web y mejores prácticas de desarrollo. El portal cuenta con funcionalidades de accesibilidad, animaciones suaves, y una arquitectura escalable que permite futuras expansiones.",
+      tecnologias: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "NextAuth.js",
+        "EmailJS",
+        "Motion",
+        "Radix UI",
+        "Lucide React",
+        "Vercel Analytics",
+        "SEO Optimization",
+        "Responsive Design"
       ],
       enlaces: [
         {
@@ -187,17 +233,19 @@ export const DATOS = {
       imagen: "/img/saguir-correa.png",
     },
     {
-      titulo: "Resired",
+      titulo: "Resired - Plataforma de Gestión de Consorcios",
       fechas: "Junio 2024 - Julio 2024",
-      activo: true,
-      descripcion: "Una plataforma web para gestión de consorcios que incluye un asistente de inteligencia artificial para facilitar tareas a administradores e inquilinos. Este proyecto me permitió aplicar tecnologías como Next.js y MongoDB.",
+      activo: false,
+      descripcion: "Innovadora plataforma web diseñada para revolucionar la gestión de consorcios mediante la integración de inteligencia artificial. El sistema permite a administradores e inquilinos gestionar eficientemente tareas cotidianas como el manejo de expensas, comunicaciones internas, reserva de espacios comunes y mantenimiento de instalaciones. Desarrollé un asistente de IA conversacional que proporciona respuestas instantáneas a consultas frecuentes, automatiza la generación de informes y facilita la toma de decisiones administrativas. La plataforma incluye un dashboard intuitivo, sistema de notificaciones en tiempo real, gestión de documentos digitales y herramientas de comunicación integradas que mejoran significativamente la experiencia tanto de administradores como residentes.",
       tecnologias: [
         "Next.js",
         "TypeScript",
         "MongoDB",
         "Tailwind CSS",
         "Shadcn UI",
-        "OpenAI",
+        "OpenAI API",
+        "Vercel",
+        "Auth.js"
       ],
       enlaces: [
         {
@@ -215,18 +263,20 @@ export const DATOS = {
       video: "",
     },
     {
-      titulo: "Gimnasio Palermo",
+      titulo: "Gimnasio Palermo - Sistema de Gestión Integral",
       fechas: "Octubre 2024 - Presente",
-      activo: true,
-      descripcion: "Modernización de un sistema de gestión para un gimnasio local, mejorando su interfaz y optimizando su base de datos. Este proyecto me ha desafiado a utilizar nuevas tecnologías como Electron y React.",
+      activo: false,
+      descripcion: "Completa modernización y rediseño del sistema de gestión para Gimnasio Palermo, transformando un sistema legacy en una solución tecnológica moderna y eficiente. Desarrollé una aplicación de escritorio multiplataforma utilizando Electron que integra gestión de membresías, control de acceso, seguimiento de rutinas personalizadas, manejo de pagos y facturación, y sistema de reportes analíticos. El proyecto incluye una interfaz web complementaria para que los socios puedan consultar sus rutinas, horarios de clases y estado de pagos. Implementé una arquitectura robusta con base de datos optimizada, API RESTful con NestJS, y un sistema de notificaciones automáticas que mejora significativamente la operación diaria del gimnasio y la experiencia de los usuarios.",
       tecnologias: [
         "Electron",
         "React",
         "TypeScript",
         "Tailwind CSS",
         "MySQL",
-        "NestJs",
-        "Trello"
+        "NestJS",
+        "JWT Authentication",
+        "Prisma ORM",
+        "Node.js"
       ],
       enlaces: [
         {
@@ -244,15 +294,18 @@ export const DATOS = {
       video: "",
     },
     {
-      titulo: "Dogtor - Veterinaria",
+      titulo: "Dogtor - Plataforma Veterinaria Digital",
       fechas: "Agosto 2023",
       activo: false,
-      descripcion: "Un sitio web desarrollado durante mi curso en RollingCode, donde los usuarios pueden crear perfiles para sus mascotas y reservar turnos.",
+      descripcion: "Plataforma web integral desarrollada como proyecto final del bootcamp en RollingCode School, diseñada para revolucionar la experiencia de atención veterinaria. El sistema permite a los propietarios crear perfiles detallados para sus mascotas, incluyendo historial médico, vacunas, y datos importantes. Los usuarios pueden agendar citas online, recibir recordatorios automáticos, y acceder a un portal personalizado donde consultar el historial de consultas y tratamientos de sus mascotas. Implementé un sistema de gestión para veterinarios que incluye calendario de citas, fichas médicas digitales, y herramientas de comunicación con los propietarios. Este proyecto marcó mi transición hacia el desarrollo profesional y demostró mi capacidad para trabajar en equipo en un entorno ágil.",
       tecnologias: [
         "React",
         "Vite",
-        "CSS",
-        "Trello",
+        "CSS Modules",
+        "JavaScript",
+        "Bootstrap",
+        "Local Storage",
+        "Responsive Design"
       ],
       enlaces: [
         {
@@ -270,14 +323,18 @@ export const DATOS = {
       video: "",
     },
     {
-      titulo: "Ristretto Coffee Shop",
+      titulo: "Ristretto Coffee Shop - Experiencia Digital Inmersiva",
       fechas: "Octubre 2023 - Noviembre 2023",
       activo: false,
-      descripcion: "Landing page para cafetería diseñada para modernizar un sitio tradicional, utilizando imágenes generadas por IA como ejemplos de café.",
+      descripcion: "Elegante landing page diseñada para transformar la presencia digital de una cafetería tradicional en una experiencia web moderna y atractiva. El proyecto se enfoca en crear una atmósfera visual que refleje la calidez y el ambiente acogedor de una cafetería artesanal. Implementé un diseño responsive que destaca la marca, muestra el menú de manera atractiva, e incluye información de ubicación y horarios. Utilicé imágenes generadas por IA de alta calidad para crear un catálogo visual consistente y profesional que presenta los productos de café de manera apetitosa. El sitio incluye animaciones suaves, efectos de hover interactivos, y una paleta de colores cálidos que evocan la experiencia sensorial del café, logrando aumentar significativamente el engagement y las visitas al local físico.",
       tecnologias: [
-        "HTML",
+        "HTML5",
         "Tailwind CSS",
         "JavaScript",
+        "CSS Animations",
+        "Responsive Design",
+        "AI Generated Content",
+        "Performance Optimization"
       ],
       enlaces: [
         {
@@ -295,10 +352,10 @@ export const DATOS = {
       video: "",
     },
     {
-      titulo: "CV Generator",
+      titulo: "CV Generator - Creador de Currículos Profesionales",
       fechas: "Diciembre 2024",
-      activo: true,
-      descripcion: "Una aplicación web integral para la generación y personalización de currículos profesionales. El proyecto ofrece una experiencia de usuario intuitiva que permite a los usuarios diseñar, editar y exportar sus CVs de manera completamente personalizada. Desarrollé características avanzadas como guardado automático en localStorage, selección de paletas de color, vista previa en tiempo real, y exportación a PDF. La aplicación está construida con React y Tailwind CSS, implementando animaciones con Framer Motion para mejorar la interactividad y la experiencia de usuario.",
+      activo: false,
+      descripcion: "Aplicación web integral y sofisticada para la creación, personalización y gestión de currículos profesionales de alta calidad. La plataforma ofrece una experiencia de usuario excepcional que permite a profesionales de cualquier sector diseñar CVs impactantes y competitivos. Desarrollé un sistema completo que incluye múltiples plantillas prediseñadas, editor visual en tiempo real, gestión avanzada de secciones personalizables, sistema de temas con paletas de colores profesionales, y funcionalidad de exportación a PDF de alta resolución. La aplicación implementa guardado automático en localStorage, historial de versiones, preview interactivo, y herramientas de optimización que sugieren mejoras en el contenido. Incluye características como importación de datos desde LinkedIn, sistema de puntuación de CV, y templates específicos por industria que ayudan a los usuarios a destacar en procesos de selección.",
       tecnologias: [
         "React",
         "TypeScript",
@@ -306,7 +363,9 @@ export const DATOS = {
         "Framer Motion",
         "React PDF",
         "React Router",
-        "Shadcn UI"
+        "Shadcn UI",
+        "Local Storage",
+        "PDF Generation"
       ],
       enlaces: [
         {
@@ -324,15 +383,19 @@ export const DATOS = {
       video: "",
     },
     {
-      titulo: "Selector de Agentes",
+      titulo: "Selector de Agentes - Herramienta de Análisis de IA",
       fechas: "Noviembre 2024",
-      activo: true,
-      descripcion: "Una aplicación de escritorio desarrollada con PySide6 para explorar y seleccionar agentes, con carga dinámica de datos y caché de imágenes.",
+      activo: false,
+      descripcion: "Aplicación de escritorio especializada desarrollada en Python para la exploración, análisis y selección inteligente de agentes de inteligencia artificial. La herramienta está diseñada para profesionales y desarrolladores que necesitan evaluar y comparar diferentes modelos de IA para sus proyectos específicos. Implementé un sistema robusto de carga dinámica de datos que se conecta con APIs externas para obtener información actualizada sobre diversos agentes de IA, incluyendo sus capacidades, rendimiento, y casos de uso óptimos. La aplicación incluye un sistema avanzado de caché de imágenes para mejorar la performance, filtros de búsqueda personalizables, comparación lado a lado de agentes, y herramientas de análisis que ayudan a tomar decisiones informadas. La interfaz gráfica intuitiva permite una navegación fluida entre diferentes categorías de agentes y proporciona métricas detalladas de cada modelo.",
       tecnologias: [
         "Python",
         "PySide6",
-        "Requests",
-        "Magic Loops API"
+        "Qt Framework",
+        "HTTP Requests",
+        "Magic Loops API",
+        "Caching System",
+        "JSON Processing",
+        "Threading"
       ],
       enlaces: [
         {

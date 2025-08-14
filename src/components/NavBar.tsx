@@ -392,12 +392,12 @@ export default function Navbar() {
     >
         {/* Desktop version */}
         <motion.div
-          className="hidden md:block relative"
+          className="hidden md:block relative w-full max-w-4xl"
           layout
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           <motion.div
-            className="mx-auto flex gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl"
+            className="mx-auto flex gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl w-fit max-w-full"
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               backdropFilter: "blur(20px)",
@@ -493,12 +493,12 @@ export default function Navbar() {
         
         {/* Mobile version - Same structure as desktop */}
         <motion.div
-          className="md:hidden relative"
+          className="md:hidden relative w-full max-w-md"
           layout
           transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           <motion.div 
-            className="w-full max-w-md mx-auto flex items-center justify-center gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl"
+            className="mx-auto flex items-center justify-center gap-2 rounded-3xl border border-border/20 p-3 shadow-2xl w-fit max-w-full"
             style={{
               background: "rgba(255, 255, 255, 0.08)",
               backdropFilter: "blur(20px)",
