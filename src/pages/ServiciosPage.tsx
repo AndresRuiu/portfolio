@@ -2,7 +2,6 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { ArrowLeft, CheckCircle, MessageCircle, Star, Clock, Users, Award } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DATOS } from "@/data/resumen";
 import { 
   UnifiedCard, 
   UnifiedCardHeader, 
@@ -16,23 +15,24 @@ import Layout from '@/components/Layout';
 import { SectionReveal, AnimateElements, AnimatedElement } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { Link } from 'react-router-dom';
+import { useServices, useTestimonios } from '@/hooks/usePortfolioSupabase';
+import { adapters } from '@/lib/adapters';
 
 const ContactModal = React.lazy(() => import('@/components/ContactModal'));
-
-interface Servicio {
-  titulo: string;
-  descripcion: string;
-  icono: string;
-  tecnologias: string[];
-  incluye: string[];
-  entregables: string;
-}
 
 const ServiciosPage = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | null>(null);
   
-  const servicios = DATOS.servicios as unknown as Servicio[];
+  // Obtener datos desde Supabase
+  const { data: serviciosSupabase } = useServices({ onlyActive: true });
+  const { data: testimoniosSupabase } = useTestimonios({ onlyActive: true });
+  
+  // Convertir datos de Supabase a tipos del frontend
+  const servicios = serviciosSupabase ? adapters.services(serviciosSupabase) : [];
+  const testimonials = testimoniosSupabase ? adapters.testimonios(testimoniosSupabase) : [];
+  
+  // Removed unused variables isLoading and hasError
 
   const handleContactClick = (serviceTitle?: string) => {
     setSelectedService(serviceTitle || null);
@@ -43,7 +43,7 @@ const ServiciosPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const testimonials = DATOS.testimonios;
+  // Solo mostrar contenido, sin loaders adicionales
 
   return (
     <Layout>

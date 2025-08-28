@@ -3,15 +3,16 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Suspense, useState, useEffect } from 'react'
 import { AppLoader } from '@/components/AppLoader'
-import { Toaster } from 'sonner'
+// const Toaster = lazy(() => import('sonner').then(module => ({ default: module.Toaster })))
 import { SkeletonProvider } from '@/components/skeletons/SkeletonComponents'
 import { AppProvider } from '@/contexts/AppContext'
-
+import { Analytics } from '@vercel/analytics/react'
 // Lazy loading para las páginas
 import HomePage from '@/pages/HomePage'
 import ProyectosPage from '@/pages/ProyectosPage'
 import ServiciosPage from '@/pages/ServiciosPage'
 import EducacionPage from '@/pages/EducacionPage'
+
 
 export default function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -43,15 +44,18 @@ export default function App() {
                   </Routes>
                 </Suspense>
               )}
-              <Toaster 
-                position="top-right"
-                richColors
-                closeButton
-                expand
-                visibleToasts={4}
-                duration={4000}
-                className="toaster"
-              />
+              {/* <Suspense fallback={null}>
+                <Toaster 
+                  position="top-right"
+                  richColors
+                  closeButton
+                  expand
+                  visibleToasts={4}
+                  duration={4000}
+                  className="toaster"
+                />
+              </Suspense> */}
+              <Analytics />
             </TooltipProvider>
           </SkeletonProvider>
         </ThemeProvider>

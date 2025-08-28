@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import NavBar from '@/components/NavBar';
 import ScrollProgress from '@/components/ScrollProgress';
 import { CommandPalette, useCommandPalette } from '@/components/CommandPalette';
-import { useSmoothScrolling } from '@/hooks/useSmoothScrolling';
 import { useTheme } from '@/components/theme-provider';
 
 const Particles = React.lazy(() => import('@/components/magicui/particles'));
@@ -12,15 +11,12 @@ interface LayoutProps {
   showParticles?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
+const Layout: React.FC<LayoutProps> = ({ 
+  children, 
+  showParticles = true
+}) => {
   const { open, setOpen } = useCommandPalette();
   const { theme } = useTheme();
-  
-  // Configurar smooth scrolling con Lenis - Optimizado para mobile
-  useSmoothScrolling({
-    duration: 0.8, // Más rápido
-    easing: (t: number) => 1 - (1 - t) * (1 - t), // Easing más simple
-  });
 
   // Enhanced theme-aware particle colors for better visibility
   const getParticleColor = () => {
@@ -39,28 +35,38 @@ const Layout: React.FC<LayoutProps> = ({ children, showParticles = true }) => {
   };
   
   return (
-    <main className="flex flex-col min-h-[100dvh] items-center bg-background overflow-x-hidden">
+    <main className="flex flex-col min-h-[100dvh] items-center bg-background overflow-x-hidden magnetic-environment">
       {/* Enhanced Particles Background - Full page coverage with better visibility */}
       {showParticles && (
         <Suspense fallback={<div />}>
           <Particles
             key={theme}
-            className="fixed inset-0"
-            quantity={typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 120} // Responsive quantity
-            ease={80}
+            className="fixed inset-0 pointer-events-none"
+            quantity={10} // Solo 10 partículas para máximo rendimiento
+            ease={80} // Reducir aún más la responsividad
             color={getParticleColor()}
             refresh={false}
-            size={typeof window !== 'undefined' && window.innerWidth < 768 ? 4 : 6} // Responsive size
-            fullPage={true} // Enable full page coverage
-            vx={0.1} // Slight horizontal movement
-            vy={0.05} // Slight vertical movement
-            staticity={60} // Balanced responsiveness
+            size={typeof window !== 'undefined' && window.innerWidth < 768 ? 3 : 4} // Partículas más pequeñas
+            fullPage={true}
+            vx={0.05} // Reducir movimiento horizontal
+            vy={0.025} // Reducir movimiento vertical
+            staticity={80} // Mayor estabilidad
           />
         </Suspense>
       )}
       
       {/* Scroll Progress Indicator */}
       <ScrollProgress />
+      
+      {/* Environmental Effects - DESHABILITADO por performance */}
+      {/* {showEnvironmentalEffects && (
+        <EnvironmentalEffects
+          intensity={environmentalIntensity}
+          enableDistortionField={true}
+          enableQuantumFluctuations={true}
+          enableEnergyWaves={false}
+        />
+      )} */}
       
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background/80 z-[1]" />

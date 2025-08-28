@@ -1,0 +1,1046 @@
+/* Estilos CSS optimizados para animaciones GSAP */
+
+/* Performance optimizations - reduced will-change for 60fps */
+.gsap-hero-title,
+.gsap-hero-desc {
+  will-change: auto; /* Only when animating */
+  backface-visibility: hidden;
+  transform: translateZ(0); /* Force hardware acceleration */
+}
+
+.gsap-avatar,
+.gsap-magnetic-btn {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Performance-optimized base classes */
+.performance-optimized {
+  contain: layout style paint;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimized transitions for 60fps */
+.smooth-60fps {
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition-duration: 0.3s;
+}
+
+/* Force hardware acceleration on interactive elements */
+.morphing-button,
+.magnetic-hover,
+.liquid-morph,
+.elastic-morph {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+/* Optimized parallax performance */
+.parallax-optimized {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  contain: layout style paint;
+}
+
+/* Hero title styling - Enhanced visual style */
+.gsap-hero-title {
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  opacity: 1;
+  visibility: visible;
+  font-weight: 900;
+  position: relative;
+  /* Gradient effect aplicado correctamente */
+  background: linear-gradient(135deg, 
+    hsl(var(--foreground)), 
+    hsl(var(--primary)), 
+    hsl(var(--foreground))
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: hsl(var(--foreground));
+  /* Solo usar transparent después de la animación */
+}
+
+/* Aplicar gradient solo cuando no está animando */
+.gsap-hero-title:not(.scrambling) {
+  -webkit-text-fill-color: transparent;
+  /* SAFETY: Asegurar visibilidad post-animación */
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  z-index: 10 !important;
+}
+
+/* Durante scrambling, mantener texto visible */
+.gsap-hero-title.scrambling {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  color: hsl(var(--foreground));
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* CRITICAL FIX: Fuerza final para título */
+.gsap-hero-title {
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Glowing effect for title */
+.gsap-hero-title::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, 
+    hsl(var(--primary)), 
+    hsl(var(--accent)), 
+    hsl(var(--primary))
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  filter: blur(1px);
+}
+
+.gsap-hero-title:hover::before {
+  opacity: 0.7;
+}
+
+/* Character animation styles */
+.gsap-hero-title .char {
+  display: inline-block;
+  transform-origin: center bottom;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Scramble effect styling - optimized */
+.scrambling {
+  position: relative;
+}
+
+.scrambling .char {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  text-shadow: 0 0 5px currentColor; /* Reduced blur */
+  animation: glitch 0.2s infinite linear alternate-reverse; /* Slower animation */
+}
+
+/* Individual character scrambling effect - simplified */
+.char-scrambling {
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  color: hsl(var(--primary)) !important;
+  -webkit-text-fill-color: hsl(var(--primary)) !important;
+  text-shadow: 0 0 8px currentColor !important; /* Reduced blur */
+  animation: charGlitch 0.1s infinite linear !important; /* Slower animation */
+  transform: scale(1.05) !important; /* Smaller scale */
+  background: none !important;
+}
+
+@keyframes charGlitch {
+  0%, 100% { 
+    opacity: 1;
+    transform: translateX(0) scale(1.1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: translateX(1px) scale(1.05);
+  }
+}
+
+@keyframes glitch {
+  0% { 
+    text-shadow: 0.05em 0 0 hsl(var(--primary)), -0.05em -0.025em 0 hsl(var(--accent)), 0.025em 0.05em 0 hsl(var(--secondary));
+  }
+  15% { 
+    text-shadow: 0.05em 0 0 hsl(var(--primary)), -0.05em -0.025em 0 hsl(var(--accent)), 0.025em 0.05em 0 hsl(var(--secondary));
+  }
+  16% { 
+    text-shadow: -0.05em -0.025em 0 hsl(var(--primary)), 0.025em 0.025em 0 hsl(var(--accent)), -0.05em -0.05em 0 hsl(var(--secondary));
+  }
+  49% { 
+    text-shadow: -0.05em -0.025em 0 hsl(var(--primary)), 0.025em 0.025em 0 hsl(var(--accent)), -0.05em -0.05em 0 hsl(var(--secondary));
+  }
+  50% { 
+    text-shadow: 0.025em 0.05em 0 hsl(var(--primary)), 0.05em 0 0 hsl(var(--accent)), 0 -0.05em 0 hsl(var(--secondary));
+  }
+  99% { 
+    text-shadow: 0.025em 0.05em 0 hsl(var(--primary)), 0.05em 0 0 hsl(var(--accent)), 0 -0.05em 0 hsl(var(--secondary));
+  }
+  100% { 
+    text-shadow: -0.025em 0 0 hsl(var(--primary)), -0.025em -0.025em 0 hsl(var(--accent)), -0.025em -0.05em 0 hsl(var(--secondary));
+  }
+}
+
+/* Descripción del hero */
+.gsap-hero-desc {
+  /* Sin estilos adicionales */
+}
+
+/* Cursor magnético - CURSOR RESTAURADO */
+.gsap-magnetic-btn {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.gsap-magnetic-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.gsap-magnetic-btn:hover::before {
+  opacity: 1;
+}
+
+/* Avatar styling */
+.gsap-avatar {
+  position: relative;
+  z-index: 1;
+}
+
+.gsap-avatar::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: conic-gradient(from 0deg, 
+    var(--primary), 
+    var(--secondary), 
+    var(--primary)
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  animation: rotate 3s linear infinite;
+}
+
+.gsap-avatar:hover::after {
+  opacity: 0.5;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scramble text styling */
+.gsap-scramble {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ScrollTrigger Section Animations */
+.scroll-section {
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  will-change: opacity, transform;
+}
+
+.scroll-section.animate {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Text reveal animations */
+.text-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  clip-path: inset(0 100% 0 0);
+}
+
+.text-reveal.animate {
+  opacity: 1;
+  transform: translateY(0);
+  clip-path: inset(0 0% 0 0);
+}
+
+/* Grid reveal animations */
+.grid-reveal {
+  opacity: 0;
+  transform: translateY(80px) rotateX(-15deg);
+  transform-origin: center bottom;
+}
+
+.grid-reveal.animate {
+  opacity: 1;
+  transform: translateY(0) rotateX(0deg);
+}
+
+/* Badge animations */
+.badge {
+  will-change: transform, opacity;
+  transition: all 0.3s ease;
+}
+
+.badge:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Magnetic elements */
+.magnetic-element {
+  will-change: transform;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* FLIP animations */
+.project-card {
+  will-change: transform, opacity, filter;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform-origin: center center;
+}
+
+/* Modal animations */
+.modal-backdrop {
+  backdrop-filter: blur(0px);
+  transition: backdrop-filter 0.4s ease;
+}
+
+.modal-backdrop.open {
+  backdrop-filter: blur(12px);
+}
+
+.modal-content {
+  will-change: transform, opacity, filter;
+  transform-origin: center center;
+}
+
+/* Custom scrollbar for modal */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* FLIP layout transition styles */
+.flip-container {
+  position: relative;
+}
+
+.flip-element {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Cinematic hover effects */
+.cinematic-hover {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.cinematic-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.6s;
+  pointer-events: none;
+}
+
+.cinematic-hover:hover::before {
+  left: 100%;
+}
+
+/* Enhanced card animations */
+.enhanced-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.enhanced-card:hover {
+  transform: rotateY(5deg) rotateX(5deg) scale(1.05);
+}
+
+.enhanced-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.enhanced-card:hover::after {
+  opacity: 1;
+}
+
+/* Magnetic Cursor Styles */
+.magnetic-cursor {
+  pointer-events: none;
+  mix-blend-mode: difference;
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.magnetic-cursor.active {
+  transform: scale(1.5);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.magnetic-cursor-dot {
+  background: hsl(var(--primary));
+  box-shadow: 0 0 10px hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.magnetic-cursor-trail {
+  mix-blend-mode: difference;
+  border-radius: 50%;
+  transition: all 0.1s ease-out;
+}
+
+/* Magnetic Elements - CURSOR RESTAURADO */
+.magnetic-element {
+  cursor: pointer;
+  will-change: transform;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.magnetic-element:hover {
+  transform-origin: center center;
+}
+
+.magnetic-environment {
+  cursor: default;
+}
+
+/* Attractive Elements */
+.attractive-element {
+  position: relative;
+  will-change: transform, filter;
+}
+
+/* Efectos WOW adicionales para mayor impacto */
+.project-card {
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center center;
+}
+
+.project-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05);
+}
+
+.unified-card {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.unified-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.badge {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.badge:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Efectos de glow para elementos importantes */
+button:hover, .gsap-magnetic-btn:hover {
+  box-shadow: 0 0 20px rgba(var(--primary-rgb, 0, 0, 0), 0.3);
+}
+
+/* Animación de pulso sutil para llamar atención */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(var(--primary-rgb, 0, 0, 0), 0.3); }
+  50% { box-shadow: 0 0 20px rgba(var(--primary-rgb, 0, 0, 0), 0.6); }
+}
+
+.pulse-on-scroll {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.attractive-element::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.attractive-element:hover::before {
+  opacity: 1;
+}
+
+/* Glitch Effects */
+.glitch-element {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-element.glitching {
+  animation: glitchShake 0.1s infinite;
+}
+
+@keyframes glitchShake {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  10% { transform: translateX(-1px) translateY(-1px); }
+  20% { transform: translateX(1px) translateY(1px); }
+  30% { transform: translateX(-1px) translateY(1px); }
+  40% { transform: translateX(1px) translateY(-1px); }
+  50% { transform: translateX(-1px) translateY(-1px); }
+  60% { transform: translateX(1px) translateY(1px); }
+  70% { transform: translateX(-1px) translateY(1px); }
+  80% { transform: translateX(1px) translateY(-1px); }
+  90% { transform: translateX(-1px) translateY(-1px); }
+}
+
+/* Glitch Layers */
+.glitch-layer {
+  will-change: transform;
+}
+
+.glitch-red {
+  color: #ff0040 !important;
+  mix-blend-mode: screen;
+}
+
+.glitch-green {
+  color: #00ff41 !important;
+  mix-blend-mode: screen;
+}
+
+.glitch-blue {
+  color: #004cff !important;
+  mix-blend-mode: screen;
+}
+
+/* Glitch Scanlines */
+.glitch-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  animation: scanlineMove 0.1s linear infinite;
+}
+
+@keyframes scanlineMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Distortion Effects */
+.distortion-effect {
+  filter: blur(0px);
+  transition: all 0.3s ease;
+}
+
+.distortion-effect:hover {
+  filter: blur(1px) hue-rotate(10deg) saturate(1.2);
+  transform: scale(1.02) skewX(1deg);
+}
+
+/* Enhanced Hover States - Magnetic Light Effects */
+.magnetic-hover {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.magnetic-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(255, 255, 255, 0.06) 0%, 
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.magnetic-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(var(--primary-rgb, 255, 255, 255), 0.1) 0%, 
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+.magnetic-hover:hover::before {
+  opacity: 1;
+}
+
+.magnetic-hover:hover::after {
+  opacity: 1;
+}
+
+/* Enhanced Magnetic Light for Primary Buttons */
+.magnetic-primary {
+  --primary-rgb: 220, 38, 38; /* Red primary */
+}
+
+.magnetic-primary::after {
+  background: radial-gradient(
+    250px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(220, 38, 38, 0.15) 0%, 
+    rgba(220, 38, 38, 0.05) 30%,
+    transparent 60%
+  );
+}
+
+/* Magnetic Light for Secondary Elements */
+.magnetic-secondary::after {
+  background: radial-gradient(
+    350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(255, 255, 255, 0.08) 0%, 
+    rgba(255, 255, 255, 0.02) 40%,
+    transparent 70%
+  );
+}
+
+/* Chromatic Aberration */
+.chromatic-aberration {
+  position: relative;
+}
+
+.chromatic-aberration::before,
+.chromatic-aberration::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.chromatic-aberration::before {
+  color: #ff0040;
+  z-index: -1;
+  animation: chromatic-red 0.1s ease-in-out infinite alternate;
+}
+
+.chromatic-aberration::after {
+  color: #004cff;
+  z-index: -2;
+  animation: chromatic-blue 0.1s ease-in-out infinite alternate;
+}
+
+@keyframes chromatic-red {
+  0% { transform: translateX(-2px); }
+  100% { transform: translateX(2px); }
+}
+
+@keyframes chromatic-blue {
+  0% { transform: translateX(2px); }
+  100% { transform: translateX(-2px); }
+}
+
+/* Special Interactive States */
+.glitch-title {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.glitch-title:hover {
+  animation: titleGlitch 0.3s ease-in-out;
+}
+
+@keyframes titleGlitch {
+  0%, 100% {
+    transform: translateX(0);
+    filter: hue-rotate(0deg);
+  }
+  10% {
+    transform: translateX(-2px) skewX(-2deg);
+    filter: hue-rotate(90deg);
+  }
+  20% {
+    transform: translateX(2px) skewX(2deg);
+    filter: hue-rotate(180deg);
+  }
+  30% {
+    transform: translateX(-1px) skewX(-1deg);
+    filter: hue-rotate(270deg);
+  }
+  40% {
+    transform: translateX(1px) skewX(1deg);
+    filter: hue-rotate(0deg);
+  }
+}
+
+/* Morphing Button States - Smooth Shape Transitions */
+.morphing-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+  border-radius: 12px;
+}
+
+.morphing-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit;
+  border-radius: inherit;
+  transform: scaleX(1) scaleY(1);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: -1;
+}
+
+.morphing-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-radius: 16px;
+}
+
+.morphing-button:hover::before {
+  transform: scaleX(1.05) scaleY(1.1);
+}
+
+.morphing-button:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* Primary Morphing Button */
+.morphing-primary {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary)) 0%, 
+    hsl(var(--primary) / 0.9) 100%
+  );
+  box-shadow: 0 4px 20px rgba(var(--primary-rgb, 220, 38, 38), 0.3);
+}
+
+.morphing-primary:hover {
+  background: linear-gradient(135deg, 
+    hsl(var(--primary) / 0.9) 0%, 
+    hsl(var(--primary)) 100%
+  );
+  box-shadow: 0 8px 30px rgba(var(--primary-rgb, 220, 38, 38), 0.4);
+  border-radius: 20px;
+}
+
+/* Secondary Morphing Button */
+.morphing-secondary {
+  background: linear-gradient(135deg, 
+    hsl(var(--muted)) 0%, 
+    hsl(var(--muted) / 0.8) 100%
+  );
+  border: 1px solid hsl(var(--border));
+}
+
+.morphing-secondary:hover {
+  background: linear-gradient(135deg, 
+    hsl(var(--muted) / 0.8) 0%, 
+    hsl(var(--muted)) 100%
+  );
+  border-color: hsl(var(--primary) / 0.5);
+}
+
+/* Liquid Morphing Effect */
+.liquid-morph {
+  border-radius: 12px;
+  transition: border-radius 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-morph::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.liquid-morph:hover {
+  border-radius: 50px;
+}
+
+.liquid-morph:hover::after {
+  width: 100%;
+  height: 100%;
+}
+
+/* Pulse Morphing Effect */
+.pulse-morph {
+  animation: none;
+  transition: all 0.3s ease;
+}
+
+.pulse-morph:hover {
+  animation: morphPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes morphPulse {
+  0%, 100% {
+    transform: scale(1);
+    border-radius: 12px;
+  }
+  50% {
+    transform: scale(1.05);
+    border-radius: 20px;
+  }
+}
+
+/* Skew Morphing Effect */
+.skew-morph {
+  transform: skewX(0deg) skewY(0deg);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.skew-morph:hover {
+  transform: skewX(-2deg) skewY(1deg) scale(1.02);
+  border-radius: 16px 8px 16px 8px;
+}
+
+/* Elastic Morphing Effect */
+.elastic-morph {
+  transform: scale(1);
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.elastic-morph:hover {
+  transform: scale(1.1);
+}
+
+.elastic-morph:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+/* Glow Morphing Effect */
+.glow-morph {
+  box-shadow: 0 0 0 rgba(var(--primary-rgb, 220, 38, 38), 0);
+  transition: all 0.4s ease;
+}
+
+.glow-morph:hover {
+  box-shadow: 
+    0 0 20px rgba(var(--primary-rgb, 220, 38, 38), 0.3),
+    0 0 40px rgba(var(--primary-rgb, 220, 38, 38), 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Icon Morphing in Buttons */
+.morphing-button .icon-morph {
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: rotate(0deg) scale(1);
+}
+
+.morphing-button:hover .icon-morph {
+  transform: rotate(5deg) scale(1.1);
+}
+
+.morphing-button:active .icon-morph {
+  transform: rotate(-5deg) scale(0.9);
+}
+
+/* Text Morphing in Buttons */
+.morphing-button .text-morph {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.morphing-button:hover .text-morph {
+  letter-spacing: 0.5px;
+  transform: translateY(-1px);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .gsap-hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .gsap-magnetic-btn {
+    cursor: pointer; /* Fallback para mobile */
+  }
+  
+  .gsap-magnetic-btn::before {
+    display: none; /* Ocultar cursor custom en mobile */
+  }
+  
+  /* Reduce motion complexity on mobile */
+  .scroll-section {
+    transform: translateY(30px) scale(0.98);
+  }
+  
+  .grid-reveal {
+    transform: translateY(40px);
+  }
+  
+  /* Disable complex hover effects on mobile */
+  .project-card:hover,
+  .enhanced-card:hover,
+  .cinematic-hover:hover {
+    transform: none;
+  }
+  
+  /* Disable morphing effects on mobile for performance */
+  .morphing-button,
+  .liquid-morph,
+  .skew-morph,
+  .elastic-morph {
+    transition: none;
+  }
+  
+  .morphing-button:hover,
+  .liquid-morph:hover,
+  .skew-morph:hover,
+  .elastic-morph:hover {
+    transform: none;
+    border-radius: inherit;
+    animation: none;
+  }
+  
+  .pulse-morph:hover {
+    animation: none;
+  }
+  
+  .cinematic-hover::before,
+  .enhanced-card::after {
+    display: none;
+  }
+  
+  /* Disable magnetic and glitch effects on mobile */
+  .magnetic-cursor,
+  .magnetic-cursor-trail {
+    display: none !important;
+  }
+  
+  .magnetic-element,
+  .attractive-element {
+    cursor: pointer;
+  }
+  
+  .glitch-element:hover,
+  .glitch-title:hover {
+    animation: none;
+  }
+  
+  .chromatic-aberration::before,
+  .chromatic-aberration::after {
+    display: none;
+  }
+  
+  .distortion-effect:hover {
+    filter: none;
+    transform: none;
+  }
+}

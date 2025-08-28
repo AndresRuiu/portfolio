@@ -236,15 +236,17 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   description,
   color = "text-primary",
   delay = 0,
-}) => (
-  <UnifiedCard variant="subtle" size="sm" delay={delay} className="text-center">
-    <Icon className={cn("w-6 h-6 mx-auto mb-2", color)} />
-    <div className={cn("text-2xl font-bold mb-1", color)}>{value}</div>
-    <div className="text-sm font-medium mb-1">{label}</div>
-    {description && (
-      <div className="text-xs text-muted-foreground">{description}</div>
-    )}
-  </UnifiedCard>
-);
+}) => {
+  return (
+    <UnifiedCard variant="subtle" size="sm" delay={delay} className="text-center">
+      <Icon className={cn("w-6 h-6 mx-auto mb-2", color)} />
+      <div className={cn("text-2xl font-bold mb-1", color)}>{value}</div>
+      <div className="text-sm font-medium mb-1">{label}</div>
+      {description && (
+        <div className="text-xs text-muted-foreground">{description}</div>
+      )}
+    </UnifiedCard>
+  );
+};
 
 export default UnifiedCard;

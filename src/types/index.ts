@@ -63,3 +63,43 @@ export interface ComponentProps {
   children?: ReactNode;
   className?: string;
 }
+
+// Tipos para Supabase
+export interface DatabaseProject {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  tecnologias: string[];
+  imagen_url?: string;
+  video_url?: string;
+  fechas: string;
+  activo: boolean;
+  enlaces: {
+    tipo: string;
+    href: string;
+    icon: string;
+  }[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseUser {
+  id: string;
+  email: string;
+  nombre: string;
+  avatar_url?: string;
+  bio?: string;
+  ubicacion?: string;
+  habilidades: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DatabaseMessage {
+  id: string;
+  nombre: string;
+  email: string;
+  mensaje: string;
+  leido: boolean;
+  created_at: string;
+}

@@ -3,14 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Activity, ArrowLeft } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DATOS } from "@/data/resumen";
 import Layout from '@/components/Layout';
 import { SectionReveal, AnimateElements } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { Link } from 'react-router-dom';
 import type { Project } from '@/types';
 import { ProjectGallery } from '@/components/ProjectGallery';
-import { useProjects } from '@/hooks/usePortfolioData';
+import { useProjects } from '@/hooks/usePortfolioSupabase';
+import { adapters } from '@/lib/adapters';
 import { ProjectCardSkeleton, FilterSkeleton, StatsCardSkeleton } from '@/components/skeletons/SkeletonComponents';
 import { 
   UnifiedCard, 
@@ -28,11 +28,11 @@ const ProyectosPage = () => {
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [showActiveOnly, setShowActiveOnly] = useState(false);
   
-  // Usar React Query para obtener los proyectos
-  const { data: proyectos, isLoading } = useProjects();
+  // Usar hook de Supabase para obtener los proyectos
+  const { data: proyectosSupabase, isLoading } = useProjects({ onlyActive: false });
   
-  // Fallback a datos estáticos si hay error
-  const proyectosData = proyectos || DATOS.proyectos as unknown as Project[];
+  // Convertir datos de Supabase a tipos del frontend
+  const proyectosData = proyectosSupabase ? adapters.projects(proyectosSupabase) : [];
 
   // Obtener todas las tecnologías únicas
   const allTechnologies = Array.from(
@@ -62,6 +62,8 @@ const ProyectosPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Solo mostrar contenido, sin loaders adicionales
 
   return (
     <Layout>
@@ -231,6 +233,7 @@ const ProyectosPage = () => {
           <Suspense fallback={<ModalSkeleton />}>
             <ProjectModal 
               project={selectedProject} 
+              isOpen={!!selectedProject}
               onClose={() => setSelectedProject(null)} 
             />
           </Suspense>

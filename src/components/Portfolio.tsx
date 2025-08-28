@@ -22,7 +22,7 @@ import BlurFade from "@/components/magicui/blur-fade";
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DATOS } from "@/data/resumen";
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 import { getIcon } from '@/lib/iconResolver';
 import Navbar from '@/components/NavBar';
 import { Icons } from './ui/icons';
@@ -43,6 +43,25 @@ const BLUR_FADE_DELAY = 0.02;
 const Portfolio = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  
+  // Obtener datos desde Supabase
+  const {
+    // Datos personales (estáticos)
+    nombre,
+    description,
+    resumen,
+    habilidades,
+    contacto,
+    urlAvatar,
+    iniciales,
+    // Datos dinámicos desde Supabase
+    proyectos,
+    servicios,
+    educacion,
+    // Estados de carga
+    isLoading,
+    hasError
+  } = usePortfolioCompleto();
   const heroRef = useRef(null);
   const { scrollToSection } = useSmoothScroll();
   
@@ -86,6 +105,40 @@ const Portfolio = () => {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Mostrar loading si los datos están cargando
+  if (isLoading) {
+    return (
+      <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
+        <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[85%] xl:max-w-[75%] px-4 pb-16 relative z-10">
+          <Navbar />
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <div className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground">Cargando datos desde Supabase...</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Mostrar error si hay problemas
+  if (hasError) {
+    return (
+      <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
+        <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[85%] xl:max-w-[75%] px-4 pb-16 relative z-10">
+          <Navbar />
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <div className="text-center space-y-4">
+              <div className="text-destructive text-xl">⚠️</div>
+              <p className="text-muted-foreground">Error al cargar datos. Verifica tu conexión a Supabase.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
@@ -132,7 +185,7 @@ const Portfolio = () => {
                       transition={{ duration: 0.5 }}
                       className="text-4xl font-bold tracking-tighter xl:text-6xl bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
                     >
-                      {`Hola, soy ${DATOS.nombre.split(" ")[0]}`}
+                      {`Hola, soy ${nombre.split(" ")[0]}`}
                     </motion.h1>
                     <motion.img 
                       src="https://fonts.gstatic.com/s/e/notoemoji/15.1/1faf0/72.png" 
@@ -154,7 +207,7 @@ const Portfolio = () => {
                   <BlurFadeText
                     className="max-w-[600px] text-sm md:text-base text-muted-foreground text-center md:text-left leading-relaxed"
                     delay={BLUR_FADE_DELAY}
-                    text={DATOS.description}
+                    text={description}
                   />
                   
                   {/* Enhanced CTA Buttons */}
@@ -202,8 +255,8 @@ const Portfolio = () => {
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <Avatar className="size-48 border-2 border-primary/20 shadow-2xl">
-                      <AvatarImage alt={DATOS.nombre} src={DATOS.urlAvatar} loading="lazy" />
-                      <AvatarFallback>{DATOS.iniciales}</AvatarFallback>
+                      <AvatarImage alt={nombre} src={urlAvatar} loading="lazy" />
+                      <AvatarFallback>{iniciales}</AvatarFallback>
                     </Avatar>
                   </motion.div>
                 </BlurFade>
@@ -223,7 +276,7 @@ const Portfolio = () => {
             <AnimatedElement delay={0.1}>
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
                 <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base">
-                  {DATOS.resumen}
+                  {resumen}
                 </p>
               </div>
             </AnimatedElement>
@@ -240,7 +293,7 @@ const Portfolio = () => {
             </AnimatedElement>
             <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                {DATOS.habilidades.map((skill, index) => (
+                {habilidades.map((skill, index) => (
                   <AnimatedElement key={skill} delay={index * 0.05}>
                     <motion.div
                       whileHover={{ scale: 1.05, y: -2 }}
@@ -263,7 +316,7 @@ const Portfolio = () => {
         {/* Services Section */}
         <Suspense fallback={<ServicesSkeleton />}>
           <ServiciosSection
-            servicios={DATOS.servicios as unknown as Servicio[]}
+            servicios={servicios as unknown as Servicio[]}
             onContactClick={handleContactClick}
           />
         </Suspense>
@@ -283,7 +336,7 @@ const Portfolio = () => {
               
               <Suspense fallback={<ProjectsSkeleton />}>
                 <ProjectsCarousel 
-                  projects={DATOS.proyectos}
+                  projects={proyectos}
                   onProjectClick={handleProjectClick}
                   handleExternalLink={handleExternalLink}
                 />
@@ -306,7 +359,7 @@ const Portfolio = () => {
                 </BlurFade>
                 
                 <div className="w-full space-y-12">
-                  {DATOS.educacion.map((edu, index) => (
+                  {educacion.map((edu, index) => (
                     <BlurFade 
                       key={edu.titulo} 
                       delay={BLUR_FADE_DELAY * 6 + index * 0.1}
@@ -423,7 +476,7 @@ const Portfolio = () => {
                     <div className="flex flex-col items-center space-y-6">
                       {/* Social Links */}
                       <div className="flex justify-center space-x-6">
-                        {Object.values(DATOS.contacto.social)
+                        {Object.values(contacto.social)
                           .filter(social => social.navbar)
                           .map((social) => (
                             <motion.a
@@ -447,18 +500,18 @@ const Portfolio = () => {
                           whileHover={{ scale: 1.02 }}
                         >
                           <Icons.email className="size-5 text-primary" />
-                          <span className="text-sm font-medium">{DATOS.contacto.email}</span>
+                          <span className="text-sm font-medium">{contacto.email}</span>
                         </motion.div>
 
                         <motion.a
-                          href={`https://wa.me/54${DATOS.contacto.tel}`}
+                          href={`https://wa.me/54${contacto.tel}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-green-500/20 transition-colors"
                           whileHover={{ scale: 1.02 }}
                         >
                           <Icons.whatsapp className="size-5 text-green-500" />
-                          <span className="text-sm font-medium">{DATOS.contacto.tel}</span>
+                          <span className="text-sm font-medium">{contacto.tel}</span>
                         </motion.a>
                       </div>
 
@@ -499,6 +552,7 @@ const Portfolio = () => {
             <Suspense fallback={<ModalSkeleton />}>
               <ProjectModal 
                 project={selectedProject} 
+                isOpen={!!selectedProject}
                 onClose={() => setSelectedProject(null)} 
               />
             </Suspense>

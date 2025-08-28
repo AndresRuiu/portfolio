@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, MapPin, ExternalLink, Award, Star, Trophy, CheckCircle, Clock, BookOpen, Sparkles } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DATOS } from "@/data/resumen";
 import { 
   UnifiedCard, 
   UnifiedCardHeader, 
@@ -16,8 +15,20 @@ import {
 import Layout from '@/components/Layout';
 import { SectionReveal, AnimatedElement } from '@/components/SectionReveal';
 import { Link } from 'react-router-dom';
+import { useEducacion, useCertificados } from '@/hooks/usePortfolioSupabase';
+import { adapters } from '@/lib/adapters';
 
 const EducacionPage = () => {
+  // Obtener datos desde Supabase
+  const { data: educacionSupabase } = useEducacion({ onlyActive: true });
+  const { data: certificadosSupabase } = useCertificados({ onlyActive: true });
+  
+  // Convertir datos de Supabase a tipos del frontend
+  const educacion = educacionSupabase ? adapters.educacion(educacionSupabase) : [];
+  const certificados = certificadosSupabase ? adapters.certificados(certificadosSupabase) : [];
+  
+  // Removed unused variables isLoading and hasError
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -49,6 +60,7 @@ const EducacionPage = () => {
     }
   };
 
+  // Solo mostrar contenido, sin loaders adicionales
 
   return (
     <Layout>
@@ -115,7 +127,7 @@ const EducacionPage = () => {
               <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-muted-foreground/30 to-transparent transform -translate-x-1/2"></div>
               
               <div className="space-y-12">
-                {DATOS.educacion.map((edu, index) => (
+                {educacion.map((edu, index) => (
                   <AnimatedElement key={edu.titulo} delay={index * 0.2}>
                     <div className={`
                       relative 
@@ -153,8 +165,8 @@ const EducacionPage = () => {
                         }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getStatusColor(edu.estado)}`}>
-                          {getStatusIcon(edu.estado)}
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getStatusColor('Completado')}`}>
+                          {getStatusIcon('Completado')}
                         </div>
                       </motion.div>
 
@@ -181,9 +193,9 @@ const EducacionPage = () => {
                                   whileHover={{ scale: 1.1, rotate: 5 }}
                                 />
                               )}
-                              <Badge className={getStatusColor(edu.estado)}>
-                                {getStatusIcon(edu.estado)}
-                                <span className="ml-1">{edu.estado}</span>
+                              <Badge className={getStatusColor('Completado')}>
+                                {getStatusIcon('Completado')}
+                                <span className="ml-1">Completado</span>
                               </Badge>
                             </div>
                             
@@ -248,7 +260,7 @@ const EducacionPage = () => {
             </h2>
             
             <UnifiedGrid columns={3} gap="md">
-              {DATOS.certificados.map((cert, index) => (
+              {certificados.map((cert, index) => (
                 <UnifiedCard
                   key={cert.titulo}
                   variant="default"
@@ -257,10 +269,10 @@ const EducacionPage = () => {
                   hover={true}
                   className="h-full group overflow-hidden"
                 >
-                  {cert.imagen && (
+                  {cert.imagen_url && (
                     <div className="relative overflow-hidden -m-6 mb-4">
                       <img 
-                        src={cert.imagen} 
+                        src={cert.imagen_url} 
                         alt={cert.titulo}
                         className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
@@ -287,18 +299,20 @@ const EducacionPage = () => {
                       {cert.descripcion}
                     </UnifiedCardDescription>
                     
-                    <div className="flex flex-wrap gap-2">
-                      {cert.tecnologias.slice(0, 3).map((tech) => (
-                        <Badge key={tech} variant="secondary" className="text-xs">
-                          {tech}
-                        </Badge>
-                      ))}
-                      {cert.tecnologias.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{cert.tecnologias.length - 3}
-                        </Badge>
-                      )}
-                    </div>
+                    {cert.tecnologias && cert.tecnologias.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {cert.tecnologias.slice(0, 3).map((tech) => (
+                          <Badge key={tech} variant="secondary" className="text-xs">
+                            {tech}
+                          </Badge>
+                        ))}
+                        {cert.tecnologias.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{cert.tecnologias.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </UnifiedCardContent>
                   
                   {cert.enlace && cert.enlace !== "#" && (

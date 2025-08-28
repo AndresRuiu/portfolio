@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Code2, Rocket, Zap } from 'lucide-react';
+import { Code2 } from 'lucide-react';
+import { loadingSteps } from '@/lib/constants';
 
 interface AppLoaderProps {
   isLoading?: boolean;
@@ -15,11 +16,6 @@ export const AppLoader: React.FC<AppLoaderProps> = ({
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
 
-  const loadingSteps = [
-    { icon: Code2, text: "Cargando componentes...", color: "text-blue-500" },
-    { icon: Zap, text: "Optimizando rendimiento...", color: "text-yellow-500" },
-    { icon: Rocket, text: "Preparando experiencia...", color: "text-green-500" },
-  ];
 
   useEffect(() => {
     if (!isLoading) {

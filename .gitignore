@@ -22,3 +22,22 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude AI files
+.claude/
+*.claude.md
+
+# Documentation and notes (non-project)
+docs/
+*.md
+!README.md
+!CHANGELOG.md
+
+# Cursor IDE
+.cursor/
+
+# Backup files
+*.backup*
+
+# Development notes
+gsap_ideas.md
