@@ -389,7 +389,7 @@ const HomePage = () => {
         </h2>
         <UnifiedCard variant="gradient" size="lg">
           <UnifiedCardContent>
-            <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base">
+            <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base no-word-break">
               {resumen}
             </p>
           </UnifiedCardContent>

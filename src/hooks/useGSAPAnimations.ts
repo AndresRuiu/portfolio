@@ -61,8 +61,36 @@ export function useGSAPResponsive() {
     
     try {
       return new SplitText(element, {
-        type: isMobile ? "words" : "chars", // Solo caracteres, no words para evitar saltos de línea
-        charsClass: "char", // Clase específica para los caracteres
+        type: "words", // Siempre usar words para preservar word-break
+        wordsClass: "word", // Clase específica para las palabras
+        ...options
+      });
+    } catch (error) {
+      console.warn('SplitText failed:', error);
+      return null;
+    }
+  }, [isMobile, prefersReducedMotion]);
+
+  // Versión específica para títulos que necesita caracteres para scramble
+  const createSplitTextForTitle = useCallback((target: string | Element, options?: SplitText.Vars) => {
+    if (prefersReducedMotion) {
+      return null; // No split para reduced motion
+    }
+    
+    // Verificar que el target existe y es válido
+    if (!target) return null;
+    
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+    if (!element || !(element instanceof Element)) return null;
+    
+    // Verificar que el elemento tiene contenido
+    if (!element.textContent || element.textContent.trim().length === 0) return null;
+    
+    try {
+      return new SplitText(element, {
+        type: isMobile ? "words" : "chars", // Chars para scramble en desktop, words en móvil
+        charsClass: "char", // Para scramble effect
+        wordsClass: "word",
         ...options
       });
     } catch (error) {
@@ -121,6 +149,7 @@ export function useGSAPResponsive() {
     createTimeline,
     createScrollTrigger,
     createSplitText,
+    createSplitTextForTitle, // Nueva función para títulos
     magneticEffect,
     gsap,
     ScrollTrigger,
@@ -133,7 +162,7 @@ export function useGSAPResponsive() {
  * Hook específico para animaciones de texto avanzadas
  */
 export function useTextAnimations() {
-  const { createSplitText, isMobile, prefersReducedMotion } = useGSAPResponsive();
+  const { createSplitText, createSplitTextForTitle, isMobile, prefersReducedMotion } = useGSAPResponsive();
 
   const scrambleReveal = useCallback((target: string | Element) => {
     // Verificar que el target existe y tiene contenido
@@ -174,7 +203,7 @@ export function useTextAnimations() {
       );
     }
 
-    const split = createSplitText(element);
+    const split = createSplitTextForTitle(element);
     if (!split || !split.chars) {
       console.warn('scrambleReveal: SplitText failed, using fallback animation');
       // Fallback to simple animation if SplitText fails
@@ -347,7 +376,7 @@ export function useTextAnimations() {
     }
 
     const split = createSplitText(element);
-    if (!split || !split.chars) {
+    if (!split || !split.words) {
       console.warn('typewriterReveal: SplitText failed, using fallback animation');
       // Fallback animation
       return gsap.fromTo(element, 
@@ -356,24 +385,24 @@ export function useTextAnimations() {
       );
     }
 
-    const chars = split.chars;
-    if (chars.length === 0) {
-      console.warn('typewriterReveal: No characters found after split');
+    const words = split.words;
+    if (words.length === 0) {
+      console.warn('typewriterReveal: No words found after split');
       return gsap.fromTo(element, 
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
       );
     }
 
-    // Ensure all chars are visible and positioned inline initially
-    gsap.set(chars, { 
+    // Ensure all words are visible and positioned inline initially
+    gsap.set(words, { 
       opacity: 1, 
       visibility: 'visible',
       display: 'inline-block',
-      whiteSpace: 'nowrap'
+      marginRight: '0.25em' // Espaciado entre palabras
     });
 
-    return gsap.fromTo(chars, 
+    return gsap.fromTo(words, 
       { 
         opacity: 0,
         rotationX: -90,
@@ -382,8 +411,8 @@ export function useTextAnimations() {
       { 
         opacity: 1, 
         rotationX: 0,
-        stagger: 0.02,
-        duration: 0.8,
+        stagger: 0.08, // Más lento que chars para words
+        duration: 0.6,
         ease: "back.out(1.4)"
       }
     );

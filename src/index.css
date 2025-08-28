@@ -94,6 +94,16 @@
 }
 
 @layer utilities {
+  /* Prevent word breaking in text */
+  .no-word-break {
+    hyphens: none !important;
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+    -webkit-hyphens: none !important;
+    -moz-hyphens: none !important;
+    -ms-hyphens: none !important;
+  }
+  
   /* Glass effect for cards */
   .glass-effect {
     background: rgba(255, 255, 255, 0.05);

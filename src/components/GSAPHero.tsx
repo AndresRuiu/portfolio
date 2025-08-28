@@ -41,6 +41,11 @@ export default function GSAPHero({
         opacity: 1,
         visibility: 'visible'
       });
+      
+      // Asegurar que la clase no-word-break esté aplicada desde el inicio
+      if (heroDescRef.current) {
+        heroDescRef.current.classList.add('no-word-break');
+      }
 
       // Timeline principal con animaciones originales
       const tl = gsap.timeline({ delay: 0.3 });
@@ -115,16 +120,26 @@ export default function GSAPHero({
         }
       }
 
-      // Descripción - usar typewriter effect
+      // Descripción - usar typewriter effect con WORDS (preserva word-break)
       if (heroDescRef.current) {
         const typewriterAnim = typewriterReveal(heroDescRef.current);
         if (typewriterAnim) {
           tl.add(typewriterAnim, isMobile ? 0.4 : 0.8);
         } else {
-          // Fallback
+          // Fallback con preservación de word-break
           tl.fromTo(heroDescRef.current,
             { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+            { 
+              opacity: 1, 
+              y: 0, 
+              duration: 0.8, 
+              ease: "power2.out",
+              onComplete: () => {
+                if (heroDescRef.current) {
+                  heroDescRef.current.classList.add('no-word-break');
+                }
+              }
+            },
             isMobile ? 0.4 : 0.8
           );
         }
@@ -239,7 +254,7 @@ export default function GSAPHero({
       className="container mx-auto px-4 py-12 relative min-h-screen flex items-center justify-center"
     >
       
-      <div className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Mobile Layout */}
         <div className="md:hidden flex flex-col items-center space-y-8 text-center">
           {/* Avatar First on Mobile */}
@@ -267,7 +282,7 @@ export default function GSAPHero({
             
             <p 
               ref={heroDescRef}
-              className="text-sm text-muted-foreground leading-relaxed px-4 gsap-hero-desc"
+              className="text-sm text-muted-foreground leading-relaxed px-2 gsap-hero-desc no-word-break"
             >
               {description}
             </p>
@@ -298,7 +313,7 @@ export default function GSAPHero({
 
         {/* Desktop Layout */}
         <div className="hidden md:flex gap-8 justify-between items-center">
-          <div className="flex-col flex flex-1 space-y-8 text-left">
+          <div className="flex-col flex flex-1 space-y-8 text-left max-w-none">
             <h1 
               ref={heroTitleRef}
               className="text-6xl xl:text-7xl font-bold tracking-tighter gsap-hero-title"
@@ -314,7 +329,7 @@ export default function GSAPHero({
             
             <p 
               ref={heroDescRef}
-              className="max-w-[600px] text-lg text-muted-foreground leading-relaxed gsap-hero-desc"
+              className="max-w-[700px] text-lg text-muted-foreground leading-relaxed gsap-hero-desc no-word-break"
               style={{
                 opacity: 1,
                 visibility: 'visible',

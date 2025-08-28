@@ -25,64 +25,21 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        // Estrategia de chunking más inteligente
+        // Estrategia de chunking ultra-simple para evitar ALL dependencias circulares
         manualChunks: (id) => {
-          // Vendor chunks por categoría
+          // Vendor chunks
           if (id.includes('node_modules')) {
-            // React ecosystem
+            // React core
             if (id.includes('react') || id.includes('react-dom')) {
-              return 'react';
+              return 'react-vendor';
             }
-            // Animations y motion
-            if (id.includes('framer-motion') || id.includes('lenis')) {
-              return 'animations';
-            }
-            // UI libraries
-            if (id.includes('@radix-ui') || id.includes('cmdk') || id.includes('sonner')) {
-              return 'ui';
-            }
-            // Icons y assets
-            if (id.includes('lucide-react') || id.includes('react-loading-skeleton')) {
-              return 'icons';
-            }
-            // React Query y state management
-            if (id.includes('@tanstack/react-query') || id.includes('react-helmet-async')) {
-              return 'data';
-            }
-            // Lightbox y media
-            if (id.includes('yet-another-react-lightbox')) {
-              return 'media';
-            }
-            // Utilities
-            if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
-              return 'utils';
-            }
-            // Router
-            if (id.includes('react-router')) {
-              return 'router';
-            }
-            // Resto de vendor dependencies
+            // Todo lo demás en un solo vendor chunk
             return 'vendor';
           }
 
-          // App chunks por feature
-          if (id.includes('src/pages')) {
-            if (id.includes('HomePage')) return 'page-home';
-            if (id.includes('ProjectsPage') || id.includes('ProjectGallery')) return 'page-projects';
-            if (id.includes('ServiciosPage')) return 'page-services';
-            if (id.includes('EducacionPage')) return 'page-education';
-          }
-
-          // Components chunks
-          if (id.includes('src/components')) {
-            if (id.includes('ui/') || id.includes('UnifiedCard')) return 'ui-components';
-            if (id.includes('magicui/')) return 'magic-ui';
-            if (id.includes('SectionReveal') || id.includes('OptimizedImage')) return 'common-components';
-          }
-
-          // Hooks y utilities
-          if (id.includes('src/hooks') || id.includes('src/lib')) {
-            return 'app-utils';
+          // App code - todo junto para evitar dependencias circulares
+          if (id.includes('src/')) {
+            return 'app';
           }
         },
         // Optimizar nombres de archivos
@@ -143,13 +100,14 @@ export default defineConfig({
       allow: ['..']
     }
   },
-  // Preload critical modules
+  // Configuración de esbuild balanceada - funcional pero optimizada
   esbuild: {
     target: 'es2020',
+    // Solo minificaciones seguras
     keepNames: false,
-    minifyIdentifiers: true,
-    minifySyntax: true,
-    minifyWhitespace: true,
+    minifyIdentifiers: false, // Mantener deshabilitado para evitar problemas de referencia
+    minifySyntax: true,       // Seguro - optimiza sintaxis
+    minifyWhitespace: true,   // Seguro - remueve espacios
     // Remover console.log en producción
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
