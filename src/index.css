@@ -1,6 +1,8 @@
 /* index.css */
 /* Import GSAP styles */
 @import './styles/gsap.css';
+/* Import Search Modal styles */
+@import './styles/search-modal.css';
 
 @tailwind base;
 @tailwind components;
@@ -109,6 +111,68 @@
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Search modal enhancements - glassmorphism backdrop y centrado perfecto */
+  .search-modal-backdrop {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 2rem !important;
+    padding-top: 4rem !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Theme-specific backdrop colors */
+  .dark .search-modal-backdrop {
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+  
+  html:not(.dark) .search-modal-backdrop {
+    background: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .search-modal-text-shadow {
+    text-shadow: none;
+  }
+
+  .search-modal-content {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 
+      0 25px 50px -12px hsl(var(--foreground) / 0.1),
+      0 8px 16px -4px hsl(var(--foreground) / 0.05);
+  }
+
+  /* Modal responsive - ahora manejado por flexbox centrado */
+  .search-modal-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+
+  .search-modal-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .search-modal-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  .search-modal-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground));
+    border-radius: 3px;
+  }
+
+  .search-modal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
   }
   
   /* Gradient backgrounds */

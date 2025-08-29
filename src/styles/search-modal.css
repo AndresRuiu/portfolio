@@ -1,0 +1,360 @@
+/* Search Modal Enhanced Styles */
+
+.search-modal-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Dark theme backdrop adjustments */
+.dark .search-modal-backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Light theme backdrop adjustments */
+.search-modal-backdrop:not(.dark) {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.search-modal-content {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 25px 50px -12px hsl(var(--foreground) / 0.1),
+    0 10px 20px hsl(var(--foreground) / 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+  max-height: 60vh;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  max-width: 56rem;
+  border-radius: 12px;
+}
+
+.search-modal-text-shadow {
+  text-shadow: none;
+}
+
+.search-modal-input {
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+.search-modal-input:focus {
+  background: hsl(var(--background));
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 0 3px hsl(var(--primary) / 0.1),
+    0 0 20px hsl(var(--primary) / 0.2);
+}
+
+.search-modal-results-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary)) transparent;
+}
+
+.search-modal-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: hsl(var(--card));
+  z-index: 10;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.search-modal-chip {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-modal-chip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary) / 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.search-modal-chip:hover {
+  transform: scale(1.05) translateY(-1px);
+  background: hsl(var(--accent));
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 4px 12px hsl(var(--foreground) / 0.1),
+    0 0 0 1px hsl(var(--primary));
+}
+
+.search-modal-chip:hover::before {
+  left: 100%;
+}
+
+.search-modal-chip.active {
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.search-modal-result-item {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-modal-result-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary) / 0.1),
+    transparent
+  );
+  transition: left 0.4s ease;
+}
+
+.search-modal-result-item:hover {
+  background: hsl(var(--accent));
+  border-color: hsl(var(--primary));
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px hsl(var(--foreground) / 0.1),
+    0 0 0 1px hsl(var(--primary));
+}
+
+.search-modal-result-item:hover::before {
+  left: 100%;
+}
+
+.search-modal-stats {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Header del modal que permanece fijo */
+.search-modal-header {
+  flex-shrink: 0;
+  background: hsl(var(--card));
+  z-index: 10;
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Contenedor de resultados scrolleable */
+.search-modal-results-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 1.5rem 1.5rem;
+  min-height: 0;
+  border-radius: 0 0 12px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.3) transparent;
+}
+
+/* Scrollbar estilizada para WebKit */
+.search-modal-results-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-modal-results-container::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.2);
+  border-radius: 4px;
+  margin: 0.5rem;
+}
+
+.search-modal-results-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, 
+    hsl(var(--primary) / 0.6) 0%, 
+    hsl(var(--primary) / 0.4) 50%, 
+    hsl(var(--primary) / 0.6) 100%);
+  border-radius: 4px;
+  border: 1px solid hsl(var(--primary) / 0.2);
+  transition: all 0.3s ease;
+}
+
+.search-modal-results-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, 
+    hsl(var(--primary) / 0.8) 0%, 
+    hsl(var(--primary) / 0.6) 50%, 
+    hsl(var(--primary) / 0.8) 100%);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 0 8px hsl(var(--primary) / 0.3);
+}
+
+.search-modal-results-container::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--primary) / 0.9);
+  border-color: hsl(var(--primary) / 0.6);
+}
+
+/* Sin resultados cuando el contenedor está vacío */
+.search-modal-results-container:empty::after {
+  content: '';
+  display: block;
+  height: 0;
+}
+
+/* Estilos específicos para desktop */
+@media (min-width: 769px) {
+  .search-modal-content {
+    max-width: 64rem;
+    height: 70vh;
+    max-height: 70vh;
+  }
+  
+  .search-modal-backdrop {
+    padding: 2rem;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Responsive mobile full-screen */
+@media (max-width: 768px) {
+  .search-modal-backdrop {
+    padding: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-modal-content {
+    height: 80vh;
+    max-height: 80vh;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+  
+  .search-modal-header {
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+  }
+
+  /* Enhanced mobile input */
+  .search-modal-input {
+    height: 3.5rem;
+    font-size: 1rem;
+  }
+
+  /* Mobile chip adjustments */
+  .search-modal-chip {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  /* Mobile results scrolling */
+  .search-modal-scrollbar {
+    max-height: 30vh;
+  }
+}
+
+/* Animation keyframes for enhanced interactions */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.search-modal-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary) / 0.2),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Focus ring improvements */
+.search-modal-focus-ring {
+  position: relative;
+}
+
+.search-modal-focus-ring::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  transition: border-color 0.2s ease;
+  pointer-events: none;
+}
+
+.search-modal-focus-ring:focus-within::after {
+  border-color: hsl(var(--primary));
+}
+
+/* Pulse animation for active elements */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.8);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+.search-modal-pulse {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Enhanced scrollbar for results */
+.search-modal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary)) transparent;
+}
+
+.search-modal-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.search-modal-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-modal-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 2px;
+}
+
+.search-modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}

@@ -194,7 +194,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 search-modal-backdrop"
         onClick={() => onOpenChange(false)}
       >
         <motion.div
@@ -202,15 +202,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
           transition={{ duration: 0.2 }}
-          className="fixed top-[20%] left-1/2 -translate-x-1/2 w-full max-w-2xl mx-4"
+          className="w-full max-w-2xl search-modal-content"
           onClick={(e) => e.stopPropagation()}
         >
-          <Command className="rounded-2xl border shadow-2xl bg-background">
-            <Command.Input 
-              placeholder="Buscar comandos... (Escape para cerrar)" 
-              className="px-4 py-3 text-lg border-none outline-none bg-transparent placeholder:text-muted-foreground"
-            />
-            <Command.List className="max-h-80 overflow-y-auto">
+          <Command className="rounded-2xl border shadow-2xl bg-card h-full">
+            <div className="search-modal-header">
+              <Command.Input 
+                placeholder="Buscar comandos... (Escape para cerrar)" 
+                className="px-4 py-3 text-lg border-none outline-none bg-card placeholder:text-muted-foreground search-modal-input"
+              />
+            </div>
+            <Command.List className="search-modal-results-container search-modal-scrollbar">
               <Command.Empty>
                 <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
                   <Search className="w-8 h-8" />

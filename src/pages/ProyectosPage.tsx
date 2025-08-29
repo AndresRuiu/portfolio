@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Activity, ArrowLeft } from 'lucide-react';
+import { Search, Activity, ArrowLeft, Hash, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import SearchCommand from '@/components/SearchCommand';
 import Layout from '@/components/Layout';
 import { SectionReveal, AnimateElements } from '@/components/SectionReveal';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
@@ -11,7 +11,7 @@ import type { Project } from '@/types';
 import { ProjectGallery } from '@/components/ProjectGallery';
 import { useProjects } from '@/hooks/usePortfolioSupabase';
 import { adapters } from '@/lib/adapters';
-import { ProjectCardSkeleton, FilterSkeleton, StatsCardSkeleton } from '@/components/skeletons/SkeletonComponents';
+import { ProjectCardSkeleton, StatsCardSkeleton } from '@/components/skeletons/SkeletonComponents';
 import { 
   UnifiedCard, 
   UnifiedCardHeader, 
@@ -39,10 +39,44 @@ const ProyectosPage = () => {
     new Set(proyectosData.flatMap(proyecto => [...proyecto.tecnologias]))
   ).sort();
 
-  // Filtrar proyectos
+  // Filtrar proyectos con búsqueda mejorada en tecnologías
   const filteredProjects = proyectosData.filter(proyecto => {
-    const matchesSearch = proyecto.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         proyecto.descripcion?.toLowerCase().includes(searchTerm.toLowerCase());
+    let matchesSearch = true;
+    
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
+      
+      // Buscar en título
+      const titleMatch = proyecto.titulo.toLowerCase().includes(term);
+      
+      // Buscar en descripción
+      const descriptionMatch = proyecto.descripcion 
+        ? proyecto.descripcion.toLowerCase().includes(term)
+        : false;
+      
+      // Buscar en tecnologías con variantes
+      const techMatch = proyecto.tecnologias.some(tech => {
+        const techLower = tech.toLowerCase();
+        // Coincidencia exacta o parcial
+        if (techLower.includes(term) || term.includes(techLower)) {
+          return true;
+        }
+        // Búsquedas comunes (Next.js, NextJS, nextjs, etc.)
+        if (term === 'nextjs' || term === 'next.js' || term === 'next') {
+          return techLower.includes('next');
+        }
+        if (term === 'reactjs' || term === 'react.js') {
+          return techLower.includes('react');
+        }
+        if (term === 'nodejs' || term === 'node.js') {
+          return techLower.includes('node');
+        }
+        return false;
+      });
+      
+      matchesSearch = titleMatch || descriptionMatch || techMatch;
+    }
+    
     const matchesTech = !selectedTech || [...proyecto.tecnologias].includes(selectedTech);
     const matchesActive = !showActiveOnly || proyecto.activo;
     
@@ -88,74 +122,64 @@ const ProyectosPage = () => {
           </div>
         </SectionReveal>
 
-        {/* Filtros */}
+        {/* Búsqueda compacta */}
         <SectionReveal delay={0.2}>
-          {isLoading ? (
-            <FilterSkeleton />
-          ) : (
-            <UnifiedCard variant="glass" size="lg" className="mb-8">
-              <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
-              {/* Búsqueda */}
-              <div className="relative flex-1 min-w-0">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar proyectos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-
-              {/* Filtro por tecnología */}
-              <div className="flex flex-wrap gap-2">
-                {allTechnologies.slice(0, 6).map((tech) => (
-                  <Button
-                    key={tech}
-                    variant={selectedTech === tech ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedTech(selectedTech === tech ? null : tech)}
-                    className="text-xs"
-                  >
-                    {tech}
-                  </Button>
-                ))}
-              </div>
-
-              {/* Filtros adicionales */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={showActiveOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowActiveOnly(!showActiveOnly)}
-                  className="flex items-center gap-2"
-                >
-                  <Activity className="w-4 h-4" />
-                  Solo activos
-                </Button>
-
-                {(searchTerm || selectedTech || showActiveOnly) && (
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4 flex-1">
+              <SearchCommand
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedTech={selectedTech}
+                setSelectedTech={setSelectedTech}
+                showActiveOnly={showActiveOnly}
+                setShowActiveOnly={setShowActiveOnly}
+                clearFilters={clearFilters}
+                allTechnologies={allTechnologies}
+                filteredProjects={filteredProjects}
+                allProjects={proyectosData}
+                totalProjects={proyectosData.length}
+                activeProjects={proyectosData.filter(p => p.activo).length}
+                onProjectClick={handleProjectClick}
+              />
+              
+              {/* Indicadores de búsqueda activa */}
+              {(searchTerm || selectedTech || showActiveOnly) && (
+                <div className="flex items-center gap-2">
+                  {searchTerm && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                      <Search className="w-3 h-3" />
+                      <span>"{searchTerm}"</span>
+                    </div>
+                  )}
+                  {selectedTech && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-blue-500/10 text-blue-500 text-xs rounded-full">
+                      <Hash className="w-3 h-3" />
+                      <span>{selectedTech}</span>
+                    </div>
+                  )}
+                  {showActiveOnly && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-green-500/10 text-green-500 text-xs rounded-full">
+                      <Activity className="w-3 h-3" />
+                      <span>Activos</span>
+                    </div>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={clearFilters}
-                    className="text-muted-foreground"
+                    className="h-6 w-6 p-0 hover:bg-destructive/10"
                   >
-                    Limpiar
+                    <X className="h-3 w-3" />
                   </Button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             
-            {/* Estadísticas */}
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/50">
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                <span>Total: {proyectosData.length} proyectos</span>
-                <span>Activos: {proyectosData.filter(p => p.activo).length}</span>
-                <span>Mostrando: {filteredProjects.length}</span>
-              </div>
+            {/* Estadísticas compactas */}
+            <div className="text-xs text-muted-foreground">
+              {filteredProjects.length} de {proyectosData.length}
             </div>
-          </UnifiedCard>
-          )}
+          </div>
         </SectionReveal>
 
         {/* Project Gallery */}
