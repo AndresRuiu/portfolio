@@ -131,6 +131,24 @@ src/
 - Implement e2e tests for critical user flows
 - Follow AAA pattern (Arrange, Act, Assert)
 
+## Animation Guidelines
+
+### Animation Library Policy
+**IMPORTANT: ONLY USE GSAP FOR ALL ANIMATIONS**
+- **GSAP** - The only animation library to be used in this project
+- **NEVER use Framer Motion** - This library is prohibited for all animations
+- Use the custom `useScrollAnimations` hook for scroll-based animations
+- Utilize GSAP's ScrollTrigger for scroll-triggered animations
+- Implement proper performance optimizations with `force3D` and hardware acceleration
+- Respect user's `prefers-reduced-motion` settings
+
+### Animation Patterns
+- Use `createSectionReveal()` for section entrance animations
+- Use `createTextReveal()` for text-based animations with left-to-right fade
+- Use `createGridReveal()` for technology stack badges and cards with bottom-to-up block placement
+- Use `createParallaxTitle()` for title parallax effects
+- Use `createMagneticHover()` for interactive hover effects
+
 ## Performance Optimization
 
 ### Bundle Optimization

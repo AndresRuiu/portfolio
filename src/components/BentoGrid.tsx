@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import type { Project, BentoGridItem } from '../types';
 import { 
   Code2, 
@@ -16,7 +15,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { DATOS } from '@/data/resumen';
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 
 interface BentoCardProps {
   className?: string;
@@ -24,40 +23,35 @@ interface BentoCardProps {
   delay?: number;
 }
 
-const BentoCard: React.FC<BentoCardProps> = ({ className, children, delay = 0 }) => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.8 }}
-    animate={{ opacity: 1, scale: 1 }}
-    whileHover={{ scale: 1.02 }}
-    transition={{ 
-      duration: 0.5, 
-      delay,
-      type: "spring",
-      stiffness: 100,
-      damping: 10
-    }}
+const BentoCard: React.FC<BentoCardProps> = ({ className, children }) => (
+  <div
     className={cn(
-      "relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 p-6 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300",
+      "bento-card relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-card/80 to-card/40 p-6 backdrop-blur-sm shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300",
       className
     )}
   >
     {children}
-  </motion.div>
+  </div>
 );
 
 // Componente para el grid principal
 export const BentoGrid: React.FC = () => {
+  // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
+  const { proyectos, nombre } = portfolioData;
+  
   const stats = {
-    projectsCount: DATOS.proyectos.length,
-    activeProjects: DATOS.proyectos.filter((p: Project) => p.activo).length,
-    technologiesCount: Array.from(new Set(DATOS.proyectos.flatMap((p: Project) => p.tecnologias))).length,
+    projectsCount: proyectos?.length || 0,
+    activeProjects: proyectos?.filter((p: Project) => p.activo).length || 0,
+    technologiesCount: Array.from(new Set(proyectos?.flatMap((p: Project) => p.tecnologias) || [])).length,
     experienceYears: new Date().getFullYear() - 2022, // Desde que empezaste programación
   };
+
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
       {/* Card principal - Presentación */}
-      <BentoCard className="lg:col-span-2 lg:row-span-2 bg-gradient-to-br from-blue-500/15 via-blue-400/10 to-slate-500/10" delay={0.1}>
+      <BentoCard className="lg:col-span-2 lg:row-span-2 bg-gradient-to-br from-blue-500/15 via-blue-400/10 to-slate-500/10">
         <div className="flex flex-col h-full justify-between">
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -65,7 +59,7 @@ export const BentoGrid: React.FC = () => {
                 <Code2 className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Andrés Ruiu</h3>
+                <h3 className="text-xl font-bold">{nombre || 'Cargando...'}</h3>
                 <p className="text-muted-foreground">Desarrollador Full Stack</p>
               </div>
             </div>
@@ -84,7 +78,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Proyectos activos */}
-      <BentoCard className="bg-gradient-to-br from-green-500/20 to-emerald-500/10" delay={0.2}>
+      <BentoCard className="bg-gradient-to-br from-green-500/20 to-emerald-500/10">
         <div className="text-center">
           <Rocket className="w-8 h-8 text-green-500 mx-auto mb-3" />
           <div className="text-3xl font-bold text-green-600 dark:text-green-400">
@@ -95,7 +89,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Total de proyectos */}
-      <BentoCard className="bg-gradient-to-br from-blue-500/20 to-cyan-500/10" delay={0.3}>
+      <BentoCard className="bg-gradient-to-br from-blue-500/20 to-cyan-500/10">
         <div className="text-center">
           <Globe className="w-8 h-8 text-blue-500 mx-auto mb-3" />
           <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
@@ -106,7 +100,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Stack tecnológico */}
-      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-purple-500/20 to-pink-500/10" delay={0.4}>
+      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-purple-500/20 to-pink-500/10">
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Palette className="w-6 h-6 text-purple-500" />
@@ -132,7 +126,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Tecnologías dominadas */}
-      <BentoCard className="bg-gradient-to-br from-orange-500/20 to-red-500/10" delay={0.5}>
+      <BentoCard className="bg-gradient-to-br from-orange-500/20 to-red-500/10">
         <div className="text-center">
           <Database className="w-8 h-8 text-orange-500 mx-auto mb-3" />
           <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
@@ -143,7 +137,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Años de experiencia */}
-      <BentoCard className="bg-gradient-to-br from-indigo-500/20 to-purple-500/10" delay={0.6}>
+      <BentoCard className="bg-gradient-to-br from-indigo-500/20 to-purple-500/10">
         <div className="text-center">
           <Clock className="w-8 h-8 text-indigo-500 mx-auto mb-3" />
           <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
@@ -154,7 +148,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Enfoque en calidad */}
-      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-teal-500/20 to-green-500/10" delay={0.7}>
+      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-teal-500/20 to-green-500/10">
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Award className="w-6 h-6 text-teal-500" />
@@ -182,7 +176,7 @@ export const BentoGrid: React.FC = () => {
       </BentoCard>
 
       {/* Disponibilidad */}
-      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-yellow-500/20 to-orange-500/10" delay={0.8}>
+      <BentoCard className="lg:col-span-2 bg-gradient-to-br from-yellow-500/20 to-orange-500/10">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -200,18 +194,9 @@ export const BentoGrid: React.FC = () => {
             </div>
           </div>
           <div className="hidden md:block">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse",
-                ease: "easeInOut"
-              }}
-              className="text-6xl"
-            >
+            <div className="text-6xl animate-pulse">
               👋
-            </motion.div>
+            </div>
           </div>
         </div>
       </BentoCard>
@@ -232,11 +217,10 @@ export const BentoGridCompact: React.FC<{
         </h2>
       )}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {items.map((item, index) => (
+        {items.map((item) => (
           <BentoCard 
             key={item.title}
             className={cn("text-center", item.gradient)}
-            delay={index * 0.1}
           >
             <item.icon className="w-6 h-6 mx-auto mb-2 text-current opacity-80" />
             <div className="text-xl font-bold mb-1">{item.value}</div>

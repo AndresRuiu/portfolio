@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, Calendar, MapPin, ExternalLink, Award, Star, Trophy, CheckCircle, Clock, BookOpen, Sparkles } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,11 +29,78 @@ const EducacionPage = () => {
   const educacion = educacionSupabase ? adapters.educacion(educacionSupabase) : [];
   const certificados = certificadosSupabase ? adapters.certificados(certificadosSupabase) : [];
   
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const certificadosRef = useRef<HTMLDivElement>(null);
+  
   // Removed unused variables isLoading and hasError
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // GSAP Animations
+  useGSAP(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    // Animar elementos de timeline
+    if (timelineRef.current) {
+      const timelineItems = timelineRef.current.querySelectorAll('.timeline-item');
+      const timelineIndicators = timelineRef.current.querySelectorAll('.timeline-indicator');
+      
+      gsap.fromTo(timelineItems, 
+        { opacity: 0, x: -50 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: timelineRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      gsap.fromTo(timelineIndicators, 
+        { scale: 0, rotation: -180 },
+        {
+          scale: 1,
+          rotation: 0,
+          duration: 0.5,
+          ease: "back.out(1.7)",
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: timelineRef.current,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+
+    // Animar certificados
+    if (certificadosRef.current) {
+      const certificadoCards = certificadosRef.current.querySelectorAll('.certificado-card');
+      
+      gsap.fromTo(certificadoCards, 
+        { opacity: 0, y: 50, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: certificadosRef.current,
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+  });
 
 
   const getStatusColor = (estado: string) => {
@@ -117,7 +186,7 @@ const EducacionPage = () => {
 
         {/* Timeline de Educación */}
         <SectionReveal delay={0.3}>
-          <div className="mb-16">
+          <div ref={timelineRef} className="mb-16">
             <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
               Mi evolución académica
             </h2>
@@ -140,8 +209,9 @@ const EducacionPage = () => {
                       gap-8
                     `}>
                       {/* Indicador central */}
-                      <motion.div 
+                      <div 
                         className="
+                          timeline-indicator
                           hidden
                           md:flex
                           absolute 
@@ -158,24 +228,19 @@ const EducacionPage = () => {
                           shadow-xl
                           border-4
                           border-background
+                          hover:scale-110
+                          transition-transform
+                          duration-300
                         "
-                        whileHover={{ 
-                          scale: 1.1, 
-                          rotate: index % 2 === 0 ? 90 : -90
-                        }}
-                        transition={{ type: "spring", stiffness: 300 }}
                       >
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center ${getStatusColor('Completado')}`}>
                           {getStatusIcon('Completado')}
                         </div>
-                      </motion.div>
+                      </div>
 
                       {/* Contenido de la tarjeta */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="w-full md:w-1/2"
+                      <div 
+                        className="timeline-item w-full md:w-1/2"
                       >
                         <UnifiedCard 
                           variant="glass" 
@@ -186,11 +251,10 @@ const EducacionPage = () => {
                           <UnifiedCardHeader>
                             <div className="flex items-start justify-between mb-4">
                               {edu.logoUrl && (
-                                <motion.img 
+                                <img 
                                   src={edu.logoUrl} 
                                   alt={`${edu.institucion} logo`} 
-                                  className="w-16 h-16 object-contain rounded-lg shadow-md"
-                                  whileHover={{ scale: 1.1, rotate: 5 }}
+                                  className="w-16 h-16 object-contain rounded-lg shadow-md hover:scale-110 hover:rotate-3 transition-transform duration-300"
                                 />
                               )}
                               <Badge className={getStatusColor('Completado')}>
@@ -242,7 +306,7 @@ const EducacionPage = () => {
                             </UnifiedCardFooter>
                           )}
                         </UnifiedCard>
-                      </motion.div>
+                      </div>
                     </div>
                   </AnimatedElement>
                 ))}
@@ -259,15 +323,15 @@ const EducacionPage = () => {
               Certificaciones y especializaciones
             </h2>
             
-            <UnifiedGrid columns={3} gap="md">
-              {certificados.map((cert, index) => (
+            <div ref={certificadosRef}>
+              <UnifiedGrid columns={3} gap="md">
+                {certificados.map((cert) => (
                 <UnifiedCard
                   key={cert.titulo}
                   variant="default"
                   size="md"
-                  delay={index * 0.1}
                   hover={true}
-                  className="h-full group overflow-hidden"
+                  className="certificado-card h-full group overflow-hidden"
                 >
                   {cert.imagen_url && (
                     <div className="relative overflow-hidden -m-6 mb-4">
@@ -331,8 +395,9 @@ const EducacionPage = () => {
                     </UnifiedCardFooter>
                   )}
                 </UnifiedCard>
-              ))}
-            </UnifiedGrid>
+                ))}
+              </UnifiedGrid>
+            </div>
           </div>
         </SectionReveal>
 

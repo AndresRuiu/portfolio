@@ -4,6 +4,7 @@ import { X, Send, Phone, Mail, MessageCircle } from 'lucide-react';
 import { LoadingButton } from './LoadingStates';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useAppActions } from '@/contexts/AppContext';
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -22,6 +23,10 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  
+  // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
+  const { contacto, nombre } = portfolioData;
   
   // Unique modal ID
   const modalId = 'contact-modal';
@@ -79,7 +84,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
           hour: '2-digit',
           minute: '2-digit'
         }),                            // Para {{time}}
-        to_name: 'Andrés Ruiu'         // Tu nombre
+        to_name: nombre || 'Andrés Ruiu'         // Tu nombre desde Supabase
       };
 
       // Enviar email usando EmailJS
@@ -116,14 +121,14 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, prefilledS
   };
 
   const handleWhatsApp = () => {
-    const message = `Hola Andrés! Me gustaría contactarte para discutir un proyecto.`;
-    const whatsappUrl = `https://wa.me/543865351958?text=${encodeURIComponent(message)}`;
+    const message = `Hola ${nombre?.split(' ')[0] || 'Andrés'}! Me gustaría contactarte para discutir un proyecto.`;
+    const whatsappUrl = `https://wa.me/54${contacto?.tel || '3865351958'}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleEmail = () => {
     const subject = "Consulta desde tu portafolio";
-    const emailUrl = `mailto:andresruiu@gmail.com?subject=${encodeURIComponent(subject)}`;
+    const emailUrl = `mailto:${contacto?.email || 'andresruiu@gmail.com'}?subject=${encodeURIComponent(subject)}`;
     window.location.href = emailUrl;
   };
 

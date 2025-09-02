@@ -1,5 +1,6 @@
-import React, { useState, useEffect, Suspense } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
 import { Search, Activity, ArrowLeft, Hash, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import SearchCommand from '@/components/SearchCommand';
@@ -27,6 +28,8 @@ const ProyectosPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [showActiveOnly, setShowActiveOnly] = useState(false);
+  
+  const noResultsRef = useRef<HTMLDivElement>(null);
   
   // Usar hook de Supabase para obtener los proyectos
   const { data: proyectosSupabase, isLoading } = useProjects({ onlyActive: false });
@@ -92,6 +95,16 @@ const ProyectosPage = () => {
     setSelectedTech(null);
     setShowActiveOnly(false);
   };
+
+  // GSAP Animation for no results
+  useGSAP(() => {
+    if (noResultsRef.current && filteredProjects.length === 0 && !isLoading) {
+      gsap.fromTo(noResultsRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
+      );
+    }
+  }, [filteredProjects.length, isLoading]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -191,9 +204,8 @@ const ProyectosPage = () => {
               ))}
             </div>
           ) : filteredProjects.length === 0 ? (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <div 
+              ref={noResultsRef}
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
@@ -204,7 +216,7 @@ const ProyectosPage = () => {
               <Button onClick={clearFilters} variant="outline">
                 Limpiar filtros
               </Button>
-            </motion.div>
+            </div>
           ) : (
             <ProjectGallery 
               projects={filteredProjects} 
@@ -252,17 +264,15 @@ const ProyectosPage = () => {
       </div>
 
       {/* Modal de proyecto */}
-      <AnimatePresence>
-        {selectedProject && (
-          <Suspense fallback={<ModalSkeleton />}>
-            <ProjectModal 
-              project={selectedProject} 
-              isOpen={!!selectedProject}
-              onClose={() => setSelectedProject(null)} 
-            />
-          </Suspense>
-        )}
-      </AnimatePresence>
+      {selectedProject && (
+        <Suspense fallback={<ModalSkeleton />}>
+          <ProjectModal 
+            project={selectedProject} 
+            isOpen={!!selectedProject}
+            onClose={() => setSelectedProject(null)} 
+          />
+        </Suspense>
+      )}
     </Layout>
   );
 };

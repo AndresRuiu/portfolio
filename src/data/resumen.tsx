@@ -1,5 +1,9 @@
 import { HomeIcon, NotebookIcon, Sparkles, GraduationCap } from "lucide-react";
 
+// DEPRECADO: Este archivo ahora está migrado a Supabase
+// Usar usePortfolioCompleto() desde @/hooks/usePortfolioSupabase
+// Este archivo se mantiene temporalmente para compatibilidad hacia atrás
+
 export const DATOS = {
   nombre: "Andrés Ruiu",	
   iniciales: "AR",
@@ -14,20 +18,20 @@ export const DATOS = {
     "Next.js",
     "TypeScript",
     "Node.js",
-    "NestJS",
+    "Nest.js",
     "PostgreSQL",
     "MySQL",
     "MongoDB",
-    "Prisma ORM",
+    "Prisma",
     "Tailwind CSS",
     "shadcn/ui",
     "Zustand",
-    "NextAuth.js",
-    "Strapi CMS",
-    "Docker",
+    "Auth.js",
+    "Strapi",
+    "Python",
     "Vercel",
     "Git & GitHub",
-    "REST APIs",
+    "APIs",
     "Responsive Design"
   ],
   navegacion: [
@@ -408,3 +412,10 @@ export const DATOS = {
     }
   ]
 } as const;
+
+// IMPORTANTE: Para obtener datos actualizados desde Supabase, usar:
+// import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase'
+// const portfolioData = usePortfolioCompleto()
+
+// Este hook reemplaza completamente el uso de DATOS hardcodeados
+// y obtiene la información personal desde la tabla 'perfil' en Supabase

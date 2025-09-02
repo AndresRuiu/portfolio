@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DATOS } from "@/data/resumen";
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 import { cn } from "@/lib/utils";
 import { getIcon } from '@/lib/iconResolver';
 import { Link, useLocation } from 'react-router-dom';
@@ -376,6 +376,17 @@ export default function Navbar() {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isNearFooter, setIsNearFooter] = useState(false);
   const { ui } = useAppState();
+  
+  // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
+  const { navegacion, contacto } = portfolioData;
+
+  // Convertir navegacion de Supabase a formato NavItem
+  const navItems: NavItem[] = navegacion?.map(item => ({
+    href: item.href,
+    icon: ({ className }: { className?: string }) => getIcon(item.icon, { className }),
+    label: item.label
+  })) || [];
 
   const isActive = (href: string) => {
     return location.pathname === href;
@@ -399,6 +410,11 @@ export default function Navbar() {
 
   // Navbar visibility controlled by modal state and footer proximity
   const shouldHideNavbar = ui.hasOpenModals || isNearFooter;
+
+  // No renderizar NavBar hasta que los datos estén cargados
+  if (!navegacion || navegacion.length === 0) {
+    return null;
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -460,7 +476,7 @@ export default function Navbar() {
             }}
           >
             {/* Navigation buttons */}
-            {DATOS.navegacion.map((item, index) => (
+            {navItems.map((item, index) => (
               <motion.div
                 key={item.href}
                 initial={{ opacity: 0, y: 20 }}
@@ -491,7 +507,7 @@ export default function Navbar() {
             </motion.div>
 
             {/* Social icons */}
-            {Object.entries(DATOS.contacto.social)
+            {contacto?.social && Object.entries(contacto.social)
               .filter(([, social]) => social.navbar)
               .map(([name, social], index) => (
                 <motion.div
@@ -561,7 +577,7 @@ export default function Navbar() {
             }}
           >
             {/* Navigation buttons */}
-            {DATOS.navegacion.map((item, index) => (
+            {navItems.map((item, index) => (
               <MobileNavButton
                 key={item.href}
                 item={item}
@@ -584,7 +600,7 @@ export default function Navbar() {
             </motion.div>
             
             {/* Social icons for mobile */}
-            {Object.entries(DATOS.contacto.social)
+            {contacto?.social && Object.entries(contacto.social)
               .filter(([, social]) => social.navbar)
               .map(([name, social], index) => (
                 <motion.div

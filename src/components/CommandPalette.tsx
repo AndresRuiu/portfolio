@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { useNotifications } from '@/hooks/useNotifications';
-import { DATOS } from '@/data/resumen';
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 
 interface CommandItem {
   label: string;
@@ -47,6 +47,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const { setTheme } = useTheme();
   const { success, error } = useNotifications();
   const [copied, setCopied] = useState<string | null>(null);
+  
+  // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
+  const { contacto } = portfolioData;
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
@@ -127,18 +131,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         {
           label: 'Copiar Email',
           icon: copied === 'Email' ? Check : Mail,
-          action: () => copyToClipboard(DATOS.contacto.email, 'Email'),
+          action: () => copyToClipboard(contacto?.email || '', 'Email'),
         },
         {
           label: 'Copiar Teléfono',
           icon: copied === 'Teléfono' ? Check : Phone,
-          action: () => copyToClipboard(DATOS.contacto.tel, 'Teléfono'),
+          action: () => copyToClipboard(contacto?.tel || '', 'Teléfono'),
         },
         {
           label: 'GitHub',
           icon: Github,
           action: () => {
-            window.open(DATOS.contacto.social.GitHub.url, '_blank');
+            if (contacto?.social?.GitHub) {
+              window.open(contacto.social.GitHub.url, '_blank');
+            }
             success('Abriendo GitHub', 'Redirigiendo a mi perfil de GitHub');
           },
         },
@@ -146,7 +152,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           label: 'LinkedIn',
           icon: Linkedin,
           action: () => {
-            window.open(DATOS.contacto.social.LinkedIn.url, '_blank');
+            if (contacto?.social?.LinkedIn) {
+              window.open(contacto.social.LinkedIn.url, '_blank');
+            }
             success('Abriendo LinkedIn', 'Redirigiendo a mi perfil de LinkedIn');
           },
         },

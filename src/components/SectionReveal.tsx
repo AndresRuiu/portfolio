@@ -1,6 +1,11 @@
-import React, { useRef } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useDevice, usePrefersReducedMotion } from '@/hooks/useDevice';
+
+// Registrar ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
 
 export const SectionReveal: React.FC<{
   children: React.ReactNode;
@@ -15,46 +20,53 @@ export const SectionReveal: React.FC<{
   yOffset = 30,
   scaleOffset = 0.98
 }) => {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const { isMobile } = useDevice();
   const prefersReducedMotion = usePrefersReducedMotion();
-  
-  const isInView = useInView(ref, { 
-    once: false,  
-    amount: isMobile ? Math.max(threshold * 0.5, 0.02) : threshold,
-    margin: isMobile ? "0px 0px -10% 0px" : "0px 0px -5% 0px"
-  });
 
-  const variants: Variants = {
-    hidden: { 
-      opacity: 0, 
-      y: prefersReducedMotion ? 0 : (isMobile ? yOffset * 0.7 : yOffset),
-      scale: prefersReducedMotion ? 1 : scaleOffset 
-    },
-    visible: { 
-      opacity: 1, 
+  useGSAP(() => {
+    if (prefersReducedMotion || !ref.current) return;
+
+    const element = ref.current;
+    
+    // Set initial state
+    gsap.set(element, {
+      opacity: 0,
+      y: isMobile ? yOffset * 0.7 : yOffset,
+      scale: scaleOffset
+    });
+
+    // Create scroll trigger animation
+    gsap.to(element, {
+      opacity: 1,
       y: 0,
       scale: 1,
-      transition: { 
-        duration: prefersReducedMotion ? 0.01 : (isMobile ? 0.35 : 0.55), 
-        ease: prefersReducedMotion ? "linear" : (isMobile ? "easeOut" : [0.25, 0.1, 0.25, 1]),
-        delay: prefersReducedMotion ? 0 : (isMobile ? delay * 0.6 : delay * 0.8)
+      duration: isMobile ? 0.35 : 0.55,
+      ease: isMobile ? "power2.out" : "power3.out",
+      delay: isMobile ? delay * 0.6 : delay * 0.8,
+      scrollTrigger: {
+        trigger: element,
+        start: `top ${100 - (isMobile ? Math.max(threshold * 50, 2) : threshold * 100)}%`,
+        toggleActions: "play none none reverse",
+        once: false
       }
-    }
-  };
+    });
+  }, [delay, threshold, yOffset, scaleOffset, isMobile, prefersReducedMotion]);
+
+  // For reduced motion, just show content immediately
+  if (prefersReducedMotion) {
+    return <div>{children}</div>;
+  }
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={variants}
       style={{
-        willChange: isInView ? 'opacity, transform' : 'auto'
+        willChange: 'opacity, transform'
       }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -65,34 +77,46 @@ export const AnimateElements: React.FC<{
   children, 
   staggerDelay = 0.08 
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { isMobile } = useDevice();
   const prefersReducedMotion = usePrefersReducedMotion();
-  
-  const variants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
+
+  useGSAP(() => {
+    if (prefersReducedMotion || !ref.current) return;
+
+    const element = ref.current;
+    const childElements = element.children;
+    
+    if (childElements.length === 0) return;
+
+    // Set initial state for all children
+    gsap.set(childElements, { opacity: 0 });
+
+    // Create staggered animation
+    gsap.to(childElements, {
       opacity: 1,
-      transition: {
-        staggerChildren: prefersReducedMotion ? 0.01 : (isMobile ? staggerDelay * 0.5 : staggerDelay * 0.8),
-        delayChildren: prefersReducedMotion ? 0 : (isMobile ? 0.08 : 0.12),
-        ease: "easeInOut"
+      duration: 0.6,
+      ease: "power2.out",
+      stagger: isMobile ? staggerDelay * 0.5 : staggerDelay * 0.8,
+      delay: isMobile ? 0.08 : 0.12,
+      scrollTrigger: {
+        trigger: element,
+        start: `top ${isMobile ? 97 : 88}%`,
+        toggleActions: "play none none reverse",
+        once: false
       }
-    }
-  };
+    });
+  }, [staggerDelay, isMobile, prefersReducedMotion]);
+
+  // For reduced motion, just show content immediately
+  if (prefersReducedMotion) {
+    return <div>{children}</div>;
+  }
 
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ 
-        once: false, 
-        amount: isMobile ? 0.03 : 0.12,
-        margin: isMobile ? "0px 0px -20% 0px" : "0px 0px -8% 0px"
-      }}
-      variants={variants}
-    >
+    <div ref={ref}>
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -103,38 +127,46 @@ export const AnimatedElement: React.FC<{
   children, 
   delay = 0 
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { isMobile } = useDevice();
   const prefersReducedMotion = usePrefersReducedMotion();
-  
-  const variants: Variants = {
-    hidden: { 
-      opacity: 0, 
-      y: prefersReducedMotion ? 0 : (isMobile ? 15 : 25),
-      scale: prefersReducedMotion ? 1 : (isMobile ? 0.99 : 0.97)
-    },
-    visible: { 
-      opacity: 1, 
+
+  useEffect(() => {
+    if (prefersReducedMotion || !ref.current) return;
+
+    const element = ref.current;
+    
+    // Set initial state
+    gsap.set(element, {
+      opacity: 0,
+      y: isMobile ? 15 : 25,
+      scale: isMobile ? 0.99 : 0.97
+    });
+
+    // Create animation (this component is used within AnimateElements, so it's triggered by parent)
+    gsap.to(element, {
+      opacity: 1,
       y: 0,
       scale: 1,
-      transition: { 
-        type: prefersReducedMotion ? "tween" : (isMobile ? "tween" : "spring"),
-        stiffness: (!prefersReducedMotion && !isMobile) ? 160 : undefined,
-        damping: (!prefersReducedMotion && !isMobile) ? 16 : undefined,
-        duration: prefersReducedMotion ? 0.01 : (isMobile ? 0.25 : undefined),
-        ease: prefersReducedMotion ? "linear" : (isMobile ? "easeOut" : undefined),
-        delay: prefersReducedMotion ? 0 : (isMobile ? delay * 0.5 : delay * 0.7)
-      }
-    }
-  };
+      duration: isMobile ? 0.25 : 0.4,
+      ease: isMobile ? "power2.out" : "back.out(1.7)",
+      delay: isMobile ? delay * 0.5 : delay * 0.7
+    });
+  }, [delay, isMobile, prefersReducedMotion]);
+
+  // For reduced motion, just show content immediately
+  if (prefersReducedMotion) {
+    return <div>{children}</div>;
+  }
 
   return (
-    <motion.div
-      variants={variants}
+    <div
+      ref={ref}
       style={{
         willChange: 'opacity, transform'
       }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };

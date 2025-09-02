@@ -1,3 +1,7 @@
+// DEPRECADO: Este hook ahora está migrado a Supabase
+// Usar usePortfolioCompleto() desde @/hooks/usePortfolioSupabase
+// Este archivo se mantiene temporalmente para compatibilidad hacia atrás
+
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { DATOS } from '@/data/resumen';
 import type { Project } from '../types';

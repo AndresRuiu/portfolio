@@ -45,6 +45,7 @@ const Portfolio = () => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
   // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
   const {
     // Datos personales (estáticos)
     nombre,
@@ -61,7 +62,7 @@ const Portfolio = () => {
     // Estados de carga
     isLoading,
     hasError
-  } = usePortfolioCompleto();
+  } = portfolioData;
   const heroRef = useRef(null);
   const { scrollToSection } = useSmoothScroll();
   
@@ -140,6 +141,21 @@ const Portfolio = () => {
     );
   }
 
+  // Mostrar loader si los datos críticos aún no están cargados
+  if (isLoading || !nombre || !description) {
+    return (
+      <main className="relative flex flex-col min-h-screen bg-background">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-pulse text-center">
+            <div className="w-24 h-24 bg-muted rounded-full mx-auto mb-4"></div>
+            <div className="h-8 bg-muted rounded w-48 mx-auto mb-2"></div>
+            <div className="h-4 bg-muted rounded w-64 mx-auto"></div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="flex flex-col min-h-[100dvh] items-center bg-background relative overflow-x-hidden">
       {/* Enhanced Particles Background */}
@@ -185,7 +201,7 @@ const Portfolio = () => {
                       transition={{ duration: 0.5 }}
                       className="text-4xl font-bold tracking-tighter xl:text-6xl bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
                     >
-                      {`Hola, soy ${nombre.split(" ")[0]}`}
+                      {`Hola, soy ${nombre?.split(" ")[0] || 'Cargando...'}`}
                     </motion.h1>
                     <motion.img 
                       src="https://fonts.gstatic.com/s/e/notoemoji/15.1/1faf0/72.png" 
@@ -207,7 +223,7 @@ const Portfolio = () => {
                   <BlurFadeText
                     className="max-w-[600px] text-sm md:text-base text-muted-foreground text-center md:text-left leading-relaxed"
                     delay={BLUR_FADE_DELAY}
-                    text={description}
+                    text={description || 'Cargando descripción...'}
                   />
                   
                   {/* Enhanced CTA Buttons */}
@@ -293,7 +309,7 @@ const Portfolio = () => {
             </AnimatedElement>
             <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 shadow-lg">
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                {habilidades.map((skill, index) => (
+                {habilidades?.map((skill, index) => (
                   <AnimatedElement key={skill} delay={index * 0.05}>
                     <motion.div
                       whileHover={{ scale: 1.05, y: -2 }}
@@ -476,7 +492,7 @@ const Portfolio = () => {
                     <div className="flex flex-col items-center space-y-6">
                       {/* Social Links */}
                       <div className="flex justify-center space-x-6">
-                        {Object.values(contacto.social)
+                        {Object.values(contacto?.social || {})
                           .filter(social => social.navbar)
                           .map((social) => (
                             <motion.a
@@ -500,18 +516,18 @@ const Portfolio = () => {
                           whileHover={{ scale: 1.02 }}
                         >
                           <Icons.email className="size-5 text-primary" />
-                          <span className="text-sm font-medium">{contacto.email}</span>
+                          <span className="text-sm font-medium">{contacto?.email || 'Cargando...'}</span>
                         </motion.div>
 
                         <motion.a
-                          href={`https://wa.me/54${contacto.tel}`}
+                          href={`https://wa.me/54${contacto?.tel || ''}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-green-500/20 transition-colors"
                           whileHover={{ scale: 1.02 }}
                         >
                           <Icons.whatsapp className="size-5 text-green-500" />
-                          <span className="text-sm font-medium">{contacto.tel}</span>
+                          <span className="text-sm font-medium">{contacto?.tel || 'Cargando...'}</span>
                         </motion.a>
                       </div>
 

@@ -4,7 +4,8 @@ import type {
   ServiceRow, 
   EducacionRow, 
   CertificadoRow, 
-  TestimonioRow 
+  TestimonioRow,
+  PerfilRow 
 } from '@/lib/supabase'
 import { adapters } from '@/lib/adapters'
 
@@ -140,70 +141,29 @@ export function usePortfolioData() {
 }
 
 /**
- * Hook para obtener solo datos personales (que permanecen estáticos)
- * Este hook mantiene la información personal del archivo original
+ * Hook para obtener datos personales desde Supabase
  */
 export function usePersonalData() {
-  // Datos que NO se migran a Supabase - permanecen estáticos
+  return useSupabaseQuery<PerfilRow>({
+    table: 'perfil',
+    select: '*',
+    filters: { activo: true },
+  })
+}
+
+/**
+ * Hook para obtener datos personales adaptados al formato frontend
+ */
+export function usePersonalDataAdapted() {
+  const { data, isLoading, error } = usePersonalData()
+  
+  // Si hay datos, adaptar el primer registro (debería ser único)
+  const perfilAdaptado = data && data.length > 0 ? adapters.perfil(data[0]) : null
+  
   return {
-    nombre: "Andrés Ruiu",
-    iniciales: "AR",
-    url: "https://andresruiu.com",
-    ubicacion: "San Miguel de Tucumán, Tucumán, Argentina",
-    description: "Desarrollador Full Stack especializado en crear soluciones digitales que impulsan el crecimiento empresarial. Combino expertise técnico con visión estratégica para desarrollar aplicaciones web modernas y escalables. Actualmente liderando el desarrollo de múltiples proyectos empresariales en producción.",
-    resumen: "Desarrollador Full Stack con sólida formación académica y experiencia práctica comprobada en proyectos reales. Mi background en ingeniería me aporta una perspectiva analítica única para resolver problemas complejos y diseñar arquitecturas eficientes. Especializado en el stack moderno de JavaScript/TypeScript, he desarrollado aplicaciones completas para diversos sectores empresariales, desde plataformas de gestión hasta portales médicos. Próximo a graduarme como Técnico Universitario en Programación (UTN-FRT), busco oportunidades que me permitan aplicar mi experiencia en desarrollo full stack y contribuir al crecimiento tecnológico de organizaciones innovadoras.",
-    urlAvatar: "/yo.webp",
-    habilidades: [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Node.js",
-      "NestJS",
-      "PostgreSQL",
-      "MySQL",
-      "MongoDB",
-      "Prisma ORM",
-      "Tailwind CSS",
-      "shadcn/ui",
-      "Zustand",
-      "NextAuth.js",
-      "Strapi CMS",
-      "Docker",
-      "Vercel",
-      "Git & GitHub",
-      "REST APIs",
-      "Responsive Design"
-    ],
-    navegacion: [
-      { href: "/", icon: "HomeIcon", label: "Inicio" },
-      { href: "/proyectos", icon: "Sparkles", label: "Proyectos" },
-      { href: "/servicios", icon: "NotebookIcon", label: "Servicios" },
-      { href: "/educacion", icon: "GraduationCap", label: "Educación" },
-    ],
-    contacto: {
-      email: "andresruiu@gmail.com",
-      tel: "3865351958",
-      social: {
-        GitHub: {
-          name: "GitHub",
-          url: "https://github.com/AndresRuiu",
-          icon: "github",
-          navbar: true,
-        },
-        LinkedIn: {
-          name: "LinkedIn",
-          url: "https://www.linkedin.com/in/andrés-ruiu-b941a1103",
-          icon: "linkedin",
-          navbar: true,
-        },
-        email: {
-          name: "Enviar Correo",
-          url: "#",
-          icon: "email",
-          navbar: false,
-        },
-      },
-    }
+    data: perfilAdaptado,
+    isLoading,
+    error
   }
 }
 
@@ -213,10 +173,10 @@ export function usePersonalData() {
  */
 export function usePortfolioCompleto() {
   const portfolioData = usePortfolioData()
-  const personalData = usePersonalData()
+  const { data: personalData, isLoading: personalLoading, error: personalError } = usePersonalDataAdapted()
 
   return {
-    // Datos personales (estáticos)
+    // Datos personales desde Supabase (adaptados)
     ...personalData,
     
     // Datos dinámicos desde Supabase - convertidos a tipos del frontend
@@ -226,12 +186,13 @@ export function usePortfolioCompleto() {
     certificados: portfolioData.certificados.data ? adapters.certificados(portfolioData.certificados.data) : [],
     testimonios: portfolioData.testimonios.data ? adapters.testimonios(portfolioData.testimonios.data) : [],
     
-    // Estados de carga
-    isLoading: portfolioData.isLoading,
-    hasError: portfolioData.hasError,
+    // Estados de carga (incluye datos personales)
+    isLoading: portfolioData.isLoading || personalLoading,
+    hasError: portfolioData.hasError || !!personalError,
     
     // Estados individuales por si necesitas granularidad
     loadingStates: {
+      personal: personalLoading,
       projects: portfolioData.projects.isLoading,
       services: portfolioData.services.isLoading,
       educacion: portfolioData.educacion.isLoading,
@@ -240,6 +201,7 @@ export function usePortfolioCompleto() {
     },
     
     errors: {
+      personal: personalError,
       projects: portfolioData.projects.error,
       services: portfolioData.services.error,
       educacion: portfolioData.educacion.error,

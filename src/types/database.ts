@@ -194,6 +194,63 @@ export type Database = {
         }
         Relationships: []
       }
+      perfil: {
+        Row: {
+          activo: boolean | null
+          created_at: string | null
+          description: string | null
+          email: string | null
+          habilidades: string[] | null
+          id: string
+          iniciales: string
+          navegacion: Json | null
+          nombre: string
+          redes_sociales: Json | null
+          resumen: string | null
+          telefono: string | null
+          ubicacion: string | null
+          updated_at: string | null
+          url: string | null
+          url_avatar: string | null
+        }
+        Insert: {
+          activo?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          habilidades?: string[] | null
+          id?: string
+          iniciales: string
+          navegacion?: Json | null
+          nombre: string
+          redes_sociales?: Json | null
+          resumen?: string | null
+          telefono?: string | null
+          ubicacion?: string | null
+          updated_at?: string | null
+          url?: string | null
+          url_avatar?: string | null
+        }
+        Update: {
+          activo?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          habilidades?: string[] | null
+          id?: string
+          iniciales?: string
+          navegacion?: Json | null
+          nombre?: string
+          redes_sociales?: Json | null
+          resumen?: string | null
+          telefono?: string | null
+          ubicacion?: string | null
+          updated_at?: string | null
+          url?: string | null
+          url_avatar?: string | null
+        }
+        Relationships: []
+      }
       testimonios: {
         Row: {
           activo: boolean | null

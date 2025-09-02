@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
 import { cn } from '@/lib/utils';
 
 // Sistema de design unificado basado en Bento Grid
@@ -38,24 +39,35 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
   hover = true,
   onClick,
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const isInteractive = !!onClick;
 
+  useGSAP(() => {
+    if (!ref.current) return;
+
+    const element = ref.current;
+
+    // Set initial state
+    gsap.set(element, {
+      opacity: 0,
+      scale: 0.95,
+      y: 20
+    });
+
+    // Create entrance animation
+    gsap.to(element, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      duration: 0.5,
+      delay: delay,
+      ease: "back.out(1.7)"
+    });
+  }, [delay]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      whileHover={hover ? { 
-        scale: 1.02, 
-        y: -2,
-        transition: { duration: 0.2, ease: "easeOut" }
-      } : undefined}
-      transition={{ 
-        duration: 0.5, 
-        delay,
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }}
+    <div
+      ref={ref}
       onClick={onClick}
       className={cn(
         // Base styles - siguiendo Bento Grid
@@ -71,11 +83,14 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
         // Interactive states
         isInteractive && "cursor-pointer hover:border-primary/30",
         
+        // Hover effects (replacing Framer Motion whileHover)
+        hover && "hover:scale-[1.02] hover:-translate-y-0.5 transition-transform duration-200 ease-out",
+        
         className
       )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 

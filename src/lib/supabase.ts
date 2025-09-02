@@ -30,3 +30,7 @@ export type CertificadoUpdate = Database['public']['Tables']['certificados']['Up
 export type TestimonioRow = Database['public']['Tables']['testimonios']['Row']
 export type TestimonioInsert = Database['public']['Tables']['testimonios']['Insert']
 export type TestimonioUpdate = Database['public']['Tables']['testimonios']['Update']
+
+export type PerfilRow = Database['public']['Tables']['perfil']['Row']
+export type PerfilInsert = Database['public']['Tables']['perfil']['Insert']
+export type PerfilUpdate = Database['public']['Tables']['perfil']['Update']

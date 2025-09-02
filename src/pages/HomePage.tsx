@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
-import { useGSAP } from '@gsap/react'; // Re-habilitado solo para animaciones ligeras
+import { useGSAP } from '@gsap/react';
 import { Download, MessageCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import { getIcon } from '@/lib/iconResolver';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { useKeyboardNavigation } from '@/hooks/useNavigation';
 import { useMagneticHover } from '@/hooks/useMagneticHover';
-import { useScrollAnimations } from '@/hooks/useScrollAnimations';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BentoGrid } from '@/components/BentoGrid';
 import GSAPHero from '@/components/GSAPHero';
 import { Project } from '@/types';
@@ -59,19 +60,18 @@ const HomePage = () => {
   
   // useSmoothScroll(); // Deshabilitado por performance
   
-  // Re-habilitar animaciones ligeras de scroll + elementos internos + efectos wow
-  const { 
-    createSectionReveal, 
-    createGridReveal,
-    createTextReveal,
-    createParallaxTitle,
-    prefersReducedMotion 
-  } = useScrollAnimations();
+  // Registrar ScrollTrigger
+  gsap.registerPlugin(ScrollTrigger);
+  
+  // Media queries y preferencias
+  const prefersReducedMotion = typeof window !== 'undefined' && 
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   // Mantener FLIP animations deshabilitadas
   // const { createHoverFLIP, gsap } = useFLIPAnimations();
   
   // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
   const {
     // Datos personales (estáticos)
     nombre,
@@ -83,8 +83,8 @@ const HomePage = () => {
     iniciales,
     // Datos dinámicos desde Supabase
     servicios
-    // Estados de carga - removed unused isLoading, hasError, proyectos, testimonios
-  } = usePortfolioCompleto();
+    // Estados de carga - removed unused hasError, proyectos, testimonios
+  } = portfolioData;
   
   // Obtener proyectos destacados específicamente
   const { 
@@ -156,224 +156,374 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // GSAP optimizado - scroll reveal + elementos internos específicos
+  // GSAP Animations - Implementación directa y funcional
   useGSAP(() => {
     // Si el usuario prefiere reducir movimiento, no animar
     if (prefersReducedMotion) return;
     
-    // 1. BentoGrid con sus elementos internos
-    if (bentoGridRef.current) {
-      createSectionReveal(bentoGridRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
-      
-      // Animar elementos del BentoGrid con delay
-      setTimeout(() => {
-        const bentoItems = bentoGridRef.current?.querySelectorAll('[class*="bento"], [class*="card"], [class*="grid-item"]');
-        if (bentoItems && bentoItems.length > 0) {
-          createGridReveal(bentoItems, {
-            trigger: bentoGridRef.current,
-            start: "top 80%"
-          });
-        }
-      }, 100);
-    }
-
-    // 2. About Section con animación de texto + parallax
+    // Limpiar animaciones previas
+    ScrollTrigger.getAll().forEach(st => st.kill());
+    
+    // 1. About Section - "Mi historia" con texto de izquierda a derecha
     if (aboutSectionRef.current) {
-      createSectionReveal(aboutSectionRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
+      const aboutTitle = aboutSectionRef.current.querySelector('h2');
+      const aboutText = aboutSectionRef.current.querySelector('p');
       
-      // Animar título y texto de historia por separado
-      setTimeout(() => {
-        const aboutTitle = aboutSectionRef.current?.querySelector('h2');
-        const aboutText = aboutSectionRef.current?.querySelector('p');
-        
-        if (aboutTitle) {
-          // Parallax effect para el título
-          createParallaxTitle(aboutTitle, {
-            speed: 0.3,
-            trigger: aboutSectionRef.current
-          });
-          
-          createTextReveal(aboutTitle, {
-            trigger: aboutSectionRef.current,
-            start: "top 80%"
-          });
-        }
-        
-        if (aboutText) {
-          createTextReveal(aboutText, {
-            trigger: aboutSectionRef.current,
-            start: "top 75%"
-          });
-        }
-      }, 100);
+      if (aboutTitle) {
+        gsap.fromTo(aboutTitle, 
+          { opacity: 0, x: -50 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: aboutTitle,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (aboutText) {
+        gsap.fromTo(aboutText, 
+          { opacity: 0, x: -30 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 1,
+            delay: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: aboutText,
+              start: "top 75%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
     }
 
-    // 3. Skills Section con animación de badges + parallax
+    // 2. Skills Section - "Stack tecnológico" badges con animación bottom-to-up como bloques
     if (skillsSectionRef.current) {
-      createSectionReveal(skillsSectionRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
+      const skillsTitle = skillsSectionRef.current.querySelector('h2');
+      const skillsBadges = skillsSectionRef.current.querySelectorAll('.badge');
       
-      // Animar título con parallax
-      setTimeout(() => {
-        const skillsTitle = skillsSectionRef.current?.querySelector('h2');
-        if (skillsTitle) {
-          createParallaxTitle(skillsTitle, {
-            speed: 0.4,
-            trigger: skillsSectionRef.current
-          });
-        }
-        
-        // Animar badges del stack tecnológico
-        const skillsBadges = skillsSectionRef.current?.querySelectorAll('.badge');
-        if (skillsBadges && skillsBadges.length > 0) {
-          createGridReveal(skillsBadges, {
-            trigger: skillsSectionRef.current,
-            start: "top 75%"
-          });
-        }
-      }, 150);
+      if (skillsTitle) {
+        gsap.fromTo(skillsTitle, 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: skillsTitle,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (skillsBadges.length > 0) {
+        gsap.fromTo(skillsBadges, 
+          { opacity: 0, y: 40, scale: 0.8 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.5,
+            ease: "back.out(1.7)",
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: skillsBadges[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
     }
 
-    // 4. Services Section con efectos wow + parallax
+    // 3. Services Section
     if (servicesSectionRef.current) {
-      createSectionReveal(servicesSectionRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
+      const servicesTitle = servicesSectionRef.current.querySelector('h2');
+      const serviceCards = servicesSectionRef.current.querySelectorAll('.unified-card');
       
-      // Animar título de servicios con parallax
-      setTimeout(() => {
-        const servicesTitle = servicesSectionRef.current?.querySelector('h2');
-        if (servicesTitle) {
-          createParallaxTitle(servicesTitle, {
-            speed: 0.6,
-            trigger: servicesSectionRef.current
-          });
-          
-          createTextReveal(servicesTitle, {
-            trigger: servicesSectionRef.current,
-            start: "top 80%"
-          });
-        }
-        
-        // Animar cards de servicios con efecto dramático
-        const serviceCards = servicesSectionRef.current?.querySelectorAll('.unified-card');
-        if (serviceCards && serviceCards.length > 0) {
-          createGridReveal(serviceCards, {
-            trigger: servicesSectionRef.current,
-            start: "top 75%"
-          });
-        }
-      }, 150);
+      if (servicesTitle) {
+        gsap.fromTo(servicesTitle, 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: servicesTitle,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (serviceCards.length > 0) {
+        gsap.fromTo(serviceCards, 
+          { opacity: 0, y: 50, rotationX: 15 },
+          {
+            opacity: 1,
+            y: 0,
+            rotationX: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.2,
+            scrollTrigger: {
+              trigger: serviceCards[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
     }
 
-    // 5. Projects Section con efectos impactantes + parallax
+    // 4. Projects Section
     if (projectsSectionRef.current) {
-      createSectionReveal(projectsSectionRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
+      const projectsTitle = projectsSectionRef.current.querySelector('h2');
+      const projectCards = projectsSectionRef.current.querySelectorAll('.project-card');
       
-      // Animaciones escalonadas para proyectos
-      setTimeout(() => {
-        const projectsTitle = projectsSectionRef.current?.querySelector('h2');
-        if (projectsTitle) {
-          createParallaxTitle(projectsTitle, {
-            speed: 0.5,
-            trigger: projectsSectionRef.current
-          });
-          
-          createTextReveal(projectsTitle, {
-            trigger: projectsSectionRef.current,
-            start: "top 80%"
-          });
-        }
-        
-        // Animar tarjetas de proyectos con efecto wow
-        const projectCards = projectsSectionRef.current?.querySelectorAll('.project-card');
-        if (projectCards && projectCards.length > 0) {
-          createGridReveal(projectCards, {
-            trigger: projectsSectionRef.current,
-            start: "top 70%"
-          });
-        }
-      }, 200);
+      if (projectsTitle) {
+        gsap.fromTo(projectsTitle, 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: projectsTitle,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (projectCards.length > 0) {
+        gsap.fromTo(projectCards, 
+          { opacity: 0, y: 60, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: projectCards[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
     }
 
-    // 6. Contact Section con efectos wow dramáticos + parallax
+    // 5. Contact Section
     if (contactSectionRef.current) {
-      createSectionReveal(contactSectionRef.current, {
-        start: "top 85%",
-        fastScrollEnd: true
-      });
+      const contactTitle = contactSectionRef.current.querySelector('h2');
+      const socialLinks = contactSectionRef.current.querySelectorAll('a[href*="linkedin"], a[href*="github"], a[target="_blank"]');
+      const contactInfo = contactSectionRef.current.querySelectorAll('.grid.grid-cols-1 > div');
+      const actionButtons = contactSectionRef.current.querySelectorAll('button, a[download]');
       
-      // Animar elementos específicos de contacto con secuencia dramática
-      setTimeout(() => {
-        // Título principal con efecto impactante + parallax
-        const contactTitle = contactSectionRef.current?.querySelector('h2');
-        if (contactTitle) {
-          createParallaxTitle(contactTitle, {
-            speed: 0.7,
-            trigger: contactSectionRef.current
-          });
+      if (contactTitle) {
+        gsap.fromTo(contactTitle, 
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: contactTitle,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (socialLinks.length > 0) {
+        gsap.fromTo(socialLinks, 
+          { opacity: 0, y: 30, scale: 0.8 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "back.out(1.7)",
+            stagger: 0.1,
+            delay: 0.2,
+            scrollTrigger: {
+              trigger: socialLinks[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (contactInfo.length > 0) {
+        gsap.fromTo(contactInfo, 
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.1,
+            delay: 0.4,
+            scrollTrigger: {
+              trigger: contactInfo[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+      
+      if (actionButtons.length > 0) {
+        gsap.fromTo(actionButtons, 
+          { opacity: 0, y: 40, scale: 0.9 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: "back.out(1.7)",
+            stagger: 0.1,
+            delay: 0.6,
+            scrollTrigger: {
+              trigger: actionButtons[0],
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+    }
+
+    // 6. BentoGrid Section - Animación mejorada para cada card
+    if (bentoGridRef.current) {
+      const bentoCards = bentoGridRef.current.querySelectorAll('.bento-card');
+      
+      if (bentoCards.length > 0) {
+        // Animar las cards del bento grid con diferentes efectos según su tamaño
+        bentoCards.forEach((card, index) => {
+          const isLargeCard = card.classList.contains('lg:col-span-2');
+          const delay = index * 0.08;
           
-          createTextReveal(contactTitle, {
-            trigger: contactSectionRef.current,
-            start: "top 75%"
-          });
-        }
-        
-        // Social links
-        const socialLinks = contactSectionRef.current?.querySelectorAll('a[href*="linkedin"], a[href*="github"], a[href*="email"], a[target="_blank"]');
-        if (socialLinks && socialLinks.length > 0) {
-          createGridReveal(socialLinks, {
-            trigger: contactSectionRef.current,
-            start: "top 70%"
-          });
-        }
-        
-        // Contact info cards (email, WhatsApp)
-        const contactInfo = contactSectionRef.current?.querySelectorAll('.grid.grid-cols-1 > div, .flex.items-center.justify-center');
-        if (contactInfo && contactInfo.length > 0) {
-          createGridReveal(contactInfo, {
-            trigger: contactSectionRef.current,
-            start: "top 65%"
-          });
-        }
-        
-        // Action buttons (Hablemos, Descargar CV) con efecto final
-        const actionButtons = contactSectionRef.current?.querySelectorAll('button, a[download], .flex-1');
-        if (actionButtons && actionButtons.length > 0) {
-          createGridReveal(actionButtons, {
-            trigger: contactSectionRef.current,
-            start: "top 60%"
-          });
-        }
-      }, 250);
+          gsap.fromTo(card, 
+            { 
+              opacity: 0, 
+              y: isLargeCard ? 60 : 40,
+              scale: 0.92,
+              rotationX: 8
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              rotationX: 0,
+              duration: isLargeCard ? 1 : 0.7,
+              delay: delay,
+              ease: "back.out(1.4)",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 90%",
+                toggleActions: "play none none reverse"
+              }
+            }
+          );
+          
+          // Animar elementos internos de cada card con más detalle
+          const icons = card.querySelectorAll('svg, .text-3xl, .text-6xl');
+          const numbers = card.querySelectorAll('.text-3xl:not(.text-6xl)');
+          const texts = card.querySelectorAll('p, .text-sm, h3, h4');
+          
+          if (icons.length > 0) {
+            gsap.fromTo(icons, 
+              { scale: 0, rotation: -45 },
+              {
+                scale: 1,
+                rotation: 0,
+                duration: 0.6,
+                delay: delay + 0.3,
+                ease: "back.out(2)",
+                stagger: 0.1,
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse"
+                }
+              }
+            );
+          }
+          
+          if (numbers.length > 0) {
+            gsap.fromTo(numbers, 
+              { scale: 0.5, opacity: 0 },
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                delay: delay + 0.4,
+                ease: "elastic.out(1, 0.3)",
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse"
+                }
+              }
+            );
+          }
+          
+          if (texts.length > 0) {
+            gsap.fromTo(texts, 
+              { opacity: 0, y: 10 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                delay: delay + 0.5,
+                ease: "power2.out",
+                stagger: 0.05,
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse"
+                }
+              }
+            );
+          }
+        });
+      }
     }
   });
   
   // Obtener servicios principales (los 2 primeros)
   const serviciosPrincipales = servicios.slice(0, 2);
-  
-  // Solo mostrar error crítico si hay problemas, pero no loading adicional
 
   return (
     <Layout>
       {/* GSAP Hero Section */}
       <GSAPHero 
-        nombre={nombre}
-        description={description}
-        urlAvatar={urlAvatar}
-        iniciales={iniciales}
+        nombre={nombre || 'Andrés Ruiu'}
+        description={description || 'Desarrollador Full Stack'}
+        urlAvatar={urlAvatar || '/yo.webp'}
+        iniciales={iniciales || 'AR'}
         onContactClick={handleContactClick}
       />
 
@@ -390,7 +540,7 @@ const HomePage = () => {
         <UnifiedCard variant="gradient" size="lg">
           <UnifiedCardContent>
             <p className="text-muted-foreground text-center md:text-left leading-relaxed text-base no-word-break">
-              {resumen}
+              {resumen || 'Cargando mi historia...'}
             </p>
           </UnifiedCardContent>
         </UnifiedCard>
@@ -404,7 +554,7 @@ const HomePage = () => {
         <UnifiedCard variant="subtle" size="lg">
           <UnifiedCardContent>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              {habilidades.map((skill) => (
+              {habilidades?.map((skill) => (
                 <Badge 
                   key={skill}
                   variant="secondary" 
@@ -439,6 +589,7 @@ const HomePage = () => {
               variant="highlight"
               size="md"
               hover={true}
+              className="unified-card"
             >
               <UnifiedCardHeader>
                 <div className="flex items-center gap-3 mb-4">
@@ -583,7 +734,7 @@ const HomePage = () => {
               <div className="flex flex-col items-center space-y-6">
               {/* Social Links */}
               <div className="flex justify-center space-x-6">
-                {Object.values(contacto.social)
+                {Object.values(contacto?.social || {})
                   .filter(social => social.navbar)
                   .map((social) => (
                     <a
@@ -602,17 +753,17 @@ const HomePage = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-xl hover:scale-105 transition-transform">
                   <Icons.email className="size-5 text-primary" />
-                  <span className="text-sm font-medium">{contacto.email}</span>
+                  <span className="text-sm font-medium">{contacto?.email || 'Cargando...'}</span>
                 </div>
 
                 <a
-                  href={`https://wa.me/54${contacto.tel}`}
+                  href={`https://wa.me/54${contacto?.tel || ''}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-xl hover:bg-green-500/20 transition-colors hover:scale-105"
                 >
                   <Icons.whatsapp className="size-5 text-green-500" />
-                  <span className="text-sm font-medium">{contacto.tel}</span>
+                  <span className="text-sm font-medium">{contacto?.tel || 'Cargando...'}</span>
                 </a>
               </div>
 

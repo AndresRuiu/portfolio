@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Mail, MessageCircle } from 'lucide-react';
-import { DATOS } from '@/data/resumen';
+import { usePortfolioCompleto } from '@/hooks/usePortfolioSupabase';
 import ContactModal from '@/components/ContactModal';
 
 const Footer: React.FC = () => {
@@ -9,6 +9,10 @@ const Footer: React.FC = () => {
   const isHomePage = location.pathname === '/';
   const [lastUpdateDate, setLastUpdateDate] = useState<string>('');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  
+  // Obtener datos desde Supabase
+  const portfolioData = usePortfolioCompleto();
+  const { nombre, contacto, isLoading } = portfolioData;
   
   // Obtener la fecha del último commit de la API de GitHub
   useEffect(() => {
@@ -48,6 +52,19 @@ const Footer: React.FC = () => {
     return `${day} de ${month} de ${year}`;
   };
 
+  // Mostrar loader minimal si está cargando
+  if (isLoading) {
+    return (
+      <footer className="w-full bg-background/95 backdrop-blur-sm border-t border-border/50 mt-auto z-30 relative">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <div className="animate-pulse">Cargando...</div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <>
       <footer className="w-full bg-background/95 backdrop-blur-sm border-t border-border/50 mt-auto z-30 relative">
@@ -55,7 +72,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6 text-sm text-muted-foreground">
             {/* Copyright y políticas */}
             <div className="flex flex-col sm:flex-row items-center gap-4 order-2 lg:order-1">
-              <span className="text-center sm:text-left">© 2025 {DATOS.nombre}</span>
+              <span className="text-center sm:text-left">© 2025 {nombre || 'Cargando...'}</span>
               <div className="flex items-center gap-3 text-xs">
                 <button className="hover:text-foreground transition-colors underline-offset-4 hover:underline">
                   Términos y Condiciones
@@ -79,7 +96,7 @@ const Footer: React.FC = () => {
                   <span className="font-medium">Contactar</span>
                 </button>
                 <a 
-                  href={`https://wa.me/54${DATOS.contacto.tel}`}
+                  href={`https://wa.me/54${contacto?.tel || ''}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg hover:text-foreground transition-all duration-200 group"
