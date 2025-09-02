@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Separator } from "@/components/ui/separator";
@@ -374,21 +374,38 @@ const IconButton: React.FC<{
 export default function Navbar() {
   const location = useLocation();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [isNearFooter, setIsNearFooter] = useState(false);
   const { ui } = useAppState();
 
   const isActive = (href: string) => {
     return location.pathname === href;
   };
 
-  // Navbar visibility controlled by modal state
-  const shouldHideNavbar = ui.hasOpenModals;
+  // Detectar proximidad al footer
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const footerThreshold = documentHeight - 200; // 200px antes del final
+      
+      setIsNearFooter(scrollPosition >= footerThreshold);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Ejecutar una vez al montar
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Navbar visibility controlled by modal state and footer proximity
+  const shouldHideNavbar = ui.hasOpenModals || isNearFooter;
 
   return (
     <AnimatePresence mode="wait">
       {!shouldHideNavbar && (
         <motion.div
           key="navbar"
-          className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center px-4"
+          className="fixed bottom-0 left-0 right-0 z-[9998] flex justify-center px-4"
           data-lenis-prevent
           data-navbar
           data-fixed

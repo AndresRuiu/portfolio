@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 import ScrollProgress from '@/components/ScrollProgress';
+import ScrollToTop from '@/components/ScrollToTop';
 import { CommandPalette, useCommandPalette } from '@/components/CommandPalette';
 import { useTheme } from '@/components/theme-provider';
 
@@ -71,15 +73,22 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-transparent to-background/80 z-[1]" />
       
-      <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[85%] xl:max-w-[75%] px-4 pb-16 relative z-10">
+      <div className="w-full max-w-[90%] md:max-w-[90%] lg:max-w-[85%] xl:max-w-[75%] px-4 pb-16 relative z-10 flex-1">
         {children}
       </div>
+      
+      {/* Footer */}
+      <Footer />
+      
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
       
       {/* Navbar fixed to viewport - outside content container */}
       <NavBar />
       
       {/* Command Palette */}
       <CommandPalette open={open} onOpenChange={setOpen} />
+      
     </main>
   );
 };
