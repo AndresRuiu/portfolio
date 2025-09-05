@@ -138,6 +138,61 @@ export function useScrollAnimations() {
   }, [prefersReducedMotion]);
 
   /**
+   * Animación de texto con efecto blur left-to-right
+   */
+  const createBlurTextReveal = useCallback((
+    selector: string | Element | null,
+    config: ScrollAnimationConfig = {}
+  ) => {
+    if (prefersReducedMotion) {
+      return gsap.set(selector, { opacity: 1 });
+    }
+
+    // Verificar que el elemento existe
+    const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    
+    if (!element) {
+      console.warn(`GSAP blur target not found: ${selector}`);
+      return null;
+    }
+
+    const defaultConfig: ScrollAnimationConfig = {
+      start: "top 85%",
+      toggleActions: "play none none reverse",
+      ...config
+    };
+
+    console.log('🌪️ Creating blur text reveal animation');
+
+    return gsap.fromTo(element,
+      {
+        opacity: 0,
+        filter: "blur(10px)",
+        clipPath: "inset(0 100% 0 0)",
+        y: 20
+      },
+      {
+        opacity: 1,
+        filter: "blur(0px)",
+        clipPath: "inset(0 0% 0 0)",
+        y: 0,
+        duration: 1.5,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: config.trigger || element,
+          ...defaultConfig
+        },
+        onStart: () => {
+          console.log('🌪️ Blur text reveal started');
+        },
+        onComplete: () => {
+          console.log('✅ Blur text reveal completed');
+        }
+      }
+    );
+  }, [prefersReducedMotion]);
+
+  /**
    * Animación de grid/cards con stagger dinámico
    */
   const createGridReveal = useCallback((
@@ -338,6 +393,7 @@ export function useScrollAnimations() {
     // Animaciones principales
     createSectionReveal,
     createTextReveal,
+    createBlurTextReveal,
     createGridReveal,
     createCounterAnimation,
     createMagneticHover,

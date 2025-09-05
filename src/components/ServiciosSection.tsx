@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
 import { Check, ArrowRight, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { AnimateElements, AnimatedElement } from '@/components/SectionReveal';
+import { useScrollAnimations } from '@/hooks/useScrollAnimations';
+import { gsap } from 'gsap';
 
 interface Servicio {
   titulo: string;
@@ -21,7 +22,21 @@ interface ServiciosProps {
 const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [direction, setDirection] = useState(1);
+  
+  // GSAP refs
+  const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  
+  // GSAP animations
+  const { 
+    createSectionReveal, 
+    createTextReveal, 
+    createGridReveal,
+    prefersReducedMotion 
+  } = useScrollAnimations();
 
   // Detectar cambios de tamaño de pantalla
   useEffect(() => {
@@ -34,92 +49,133 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
 
   const goToNext = () => {
     if (currentIndex < servicios.length - 1) {
-      setDirection(1);
       setCurrentIndex(prev => prev + 1);
     }
   };
 
   const goToPrev = () => {
     if (currentIndex > 0) {
-      setDirection(-1);
       setCurrentIndex(prev => prev - 1);
     }
   };
 
   const goToSlide = (index: number) => {
-    setDirection(index > currentIndex ? 1 : -1);
     setCurrentIndex(index);
   };
 
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
+  // Touch/swipe handling with vanilla JS
+  const handleTouchStart = useRef<{ x: number; y: number } | null>(null);
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!handleTouchStart.current) return;
+    
+    const touchEnd = e.changedTouches[0];
+    const deltaX = touchEnd.clientX - handleTouchStart.current.x;
     const swipeThreshold = 50;
-    if (info.offset.x < -swipeThreshold && currentIndex < servicios.length - 1) {
-      goToNext();
-    } else if (info.offset.x > swipeThreshold && currentIndex > 0) {
-      goToPrev();
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
+    
+    if (Math.abs(deltaX) > swipeThreshold) {
+      if (deltaX < 0 && currentIndex < servicios.length - 1) {
+        goToNext();
+      } else if (deltaX > 0 && currentIndex > 0) {
+        goToPrev();
       }
     }
+    
+    handleTouchStart.current = null;
   };
 
-  const cardVariants = {
-    hidden: { 
-      opacity: 0,
-      y: 50,
-      scale: 0.95
-    },
-    visible: { 
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 100
+  const handleTouchStartCapture = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    handleTouchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  // GSAP Animations
+  useGSAP(() => {
+    if (prefersReducedMotion || !sectionRef.current) return;
+
+    // Animate title
+    if (titleRef.current) {
+      createTextReveal(titleRef.current, {
+        start: "top 85%"
+      });
+    }
+
+    // Animate description
+    if (descRef.current) {
+      createTextReveal(descRef.current, {
+        start: "top 90%"
+      });
+    }
+
+    // Animate cards for desktop
+    if (!isMobile && cardsRef.current.length > 0) {
+      const validCards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+      if (validCards.length > 0) {
+        // Convert to NodeList-like for createGridReveal
+        createGridReveal(validCards as any, {
+          start: "top 85%"
+        });
       }
     }
-  };
 
-  const mobileSlideVariants = {
-    initial: (direction: number) => ({
-      opacity: 0,
-      x: direction > 0 ? 300 : -300,
-      scale: 0.8,
-    }),
-    in: {
-      opacity: 1,
-      x: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 100
-      }
-    },
-    out: (direction: number) => ({
-      opacity: 0,
-      x: direction < 0 ? 300 : -300,
-      scale: 0.8,
-      transition: {
-        duration: 0.3
-      }
-    })
-  };
+    // Animate CTA section
+    if (ctaRef.current) {
+      // Ensure initial visibility
+      gsap.set(ctaRef.current, { opacity: 1, visibility: 'visible' });
+      
+      const result = createSectionReveal(ctaRef.current, {
+        start: "top 90%"
+      });
+      console.log('💼 Services CTA animation setup:', result ? 'SUCCESS' : 'FAILED');
+    }
+  }, { dependencies: [servicios.length, isMobile, prefersReducedMotion] });
 
-  const renderServiceCard = (servicio: Servicio) => (
-    <motion.div
+  // Mobile card transition animation
+  useGSAP(() => {
+    if (!isMobile || prefersReducedMotion) return;
+    
+    const currentCard = cardsRef.current[currentIndex];
+    if (!currentCard) return;
+
+    // Animate current card in
+    gsap.fromTo(currentCard, 
+      {
+        opacity: 0,
+        x: 50,
+        scale: 0.95
+      },
+      {
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        duration: 0.6,
+        ease: "back.out(1.7)"
+      }
+    );
+  }, { dependencies: [currentIndex, isMobile] });
+
+  const renderServiceCard = (servicio: Servicio, index: number) => (
+    <div
       key={servicio.titulo}
-      variants={cardVariants}
-      className="group relative w-full"
-      whileHover={!isMobile ? { y: -8 } : {}}
+      ref={el => cardsRef.current[index] = el}
+      className="group relative w-full gsap-card"
+      onMouseEnter={!isMobile ? (e) => {
+        if (!prefersReducedMotion) {
+          gsap.to(e.currentTarget, {
+            y: -8,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+      } : undefined}
+      onMouseLeave={!isMobile ? (e) => {
+        if (!prefersReducedMotion) {
+          gsap.to(e.currentTarget, {
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+      } : undefined}
     >
       {/* Featured Badge for Full Stack */}
       {servicio.titulo.includes('Full Stack') && (
@@ -141,13 +197,21 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
         <div className="relative z-10">
           {/* Header */}
           <div className="flex items-start gap-4 mb-6">
-            <motion.div
-              className="text-4xl"
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            <div
+              className="text-4xl service-icon"
+              ref={el => {
+                if (el && !prefersReducedMotion) {
+                  gsap.to(el, {
+                    rotation: "360_cw",
+                    duration: 20,
+                    ease: "none",
+                    repeat: -1
+                  });
+                }
+              }}
             >
               {servicio.icono}
-            </motion.div>
+            </div>
             <div className="flex-1">
               <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
                 {servicio.titulo}
@@ -159,18 +223,13 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
           </div>
 
 
-          {/* Technologies */}
-          <div className="mb-6">
-            <h4 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
-              Tecnologías
-            </h4>
+          {/* Technologies - SIMPLIFIED for HomePage */}
+          <div className="mb-4">
             <div className="flex flex-wrap gap-2">
-              {servicio.tecnologias.map((tech, techIndex) => (
-                <motion.div
+              {servicio.tecnologias.slice(0, 4).map((tech, techIndex) => (
+                <div
                   key={tech}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 * techIndex }}
+                  className={`tech-badge tech-badge-${index}-${techIndex}`}
                 >
                   <Badge 
                     variant="secondary" 
@@ -178,151 +237,124 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
                   >
                     {tech}
                   </Badge>
-                </motion.div>
+                </div>
               ))}
+              {servicio.tecnologias.length > 4 && (
+                <Badge variant="outline" className="text-xs">
+                  +{servicio.tecnologias.length - 4} más
+                </Badge>
+              )}
             </div>
           </div>
 
-          {/* Includes */}
+          {/* Key Features - SIMPLIFIED */}
           <div className="mb-6">
-            <h4 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
-              Incluye
-            </h4>
             <ul className="space-y-2">
-              {servicio.incluye.map((item, itemIndex) => (
-                <motion.li
+              {servicio.incluye.slice(0, 3).map((item, itemIndex) => (
+                <li
                   key={item}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 * itemIndex }}
-                  className="flex items-start gap-3 text-sm"
+                  className={`flex items-start gap-3 text-sm include-item include-item-${index}-${itemIndex}`}
                 >
                   <div className="mt-0.5 p-0.5 bg-green-500/20 rounded-full">
                     <Check className="w-3 h-3 text-green-500" />
                   </div>
                   <span className="leading-relaxed">{item}</span>
-                </motion.li>
+                </li>
               ))}
+              {servicio.incluye.length > 3 && (
+                <li className="text-sm text-muted-foreground pl-6">
+                  y {servicio.incluye.length - 3} características más...
+                </li>
+              )}
             </ul>
           </div>
 
-          {/* Deliverables */}
-          <div className="mb-8">
-            <h4 className="text-sm font-semibold mb-2 text-muted-foreground uppercase tracking-wide">
-              Entregables
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {servicio.entregables}
-            </p>
+          {/* CTA Button - SIMPLIFIED */}
+          <div className="flex gap-3">
+            <button
+              onClick={onContactClick}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300 shadow-md group/btn font-medium text-sm service-cta-btn"
+            >
+              <span>Cotizar</span>
+              <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+            <a
+              href="/servicios"
+              className="flex items-center justify-center px-4 py-2.5 border border-border rounded-lg hover:bg-muted/50 transition-all duration-300 text-sm font-medium"
+            >
+              Ver detalles
+            </a>
           </div>
-
-          {/* CTA Button */}
-          <motion.button
-            onClick={onContactClick}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-xl group/btn font-medium"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <span>Solicitar Cotización</span>
-            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-          </motion.button>
         </div>
 
         {/* Decorative Elements */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-tr from-secondary/10 to-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
       </div>
-    </motion.div>
+    </div>
   );
 
   return (
-    <AnimateElements>
-      <section id="servicios" className="container mx-auto px-4 py-16">
-        <AnimatedElement delay={0}>
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent">
-              Servicios
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              ¿Tienes una idea genial? Te ayudo a convertirla en realidad con código limpio y diseño moderno.
-            </p>
-          </div>
-        </AnimatedElement>
+    <section ref={sectionRef} id="servicios" className="container mx-auto px-4 py-16">
+      <div className="text-center mb-16">
+        <h2 
+          ref={titleRef}
+          className="text-4xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent"
+        >
+          Servicios
+        </h2>
+        <p 
+          ref={descRef}
+          className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+        >
+          ¿Tienes una idea genial? Te ayudo a convertirla en realidad con código limpio y diseño moderno.
+        </p>
+      </div>
 
         {/* Desktop Grid View */}
         {!isMobile && (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto"
-          >
-            {servicios.map((servicio) => renderServiceCard(servicio))}
-          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+            {servicios.map((servicio, index) => renderServiceCard(servicio, index))}
+          </div>
         )}
 
         {/* Mobile Carousel View */}
         {isMobile && (
           <div className="relative max-w-sm mx-auto">
             {/* Navigation Buttons */}
-            <AnimatePresence>
-              {currentIndex > 0 && (
-                <motion.button
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  onClick={goToPrev}
-                  className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 hover:bg-primary hover:text-primary-foreground shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </motion.button>
-              )}
+            {currentIndex > 0 && (
+              <button
+                onClick={goToPrev}
+                className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 hover:bg-primary hover:text-primary-foreground shadow-lg transition-all duration-300"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            )}
 
-              {currentIndex < servicios.length - 1 && (
-                <motion.button
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  onClick={goToNext}
-                  className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 hover:bg-primary hover:text-primary-foreground shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </motion.button>
-              )}
-            </AnimatePresence>
+            {currentIndex < servicios.length - 1 && (
+              <button
+                onClick={goToNext}
+                className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-card/80 backdrop-blur-sm border border-border/50 hover:bg-primary hover:text-primary-foreground shadow-lg transition-all duration-300"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
 
             {/* Carousel Container */}
-            <motion.div
+            <div
               className="overflow-hidden relative"
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.1}
-              onDragEnd={handleDragEnd}
+              onTouchStart={handleTouchStartCapture}
+              onTouchEnd={handleTouchEnd}
             >
-              <AnimatePresence initial={false} mode="wait" custom={direction}>
-                <motion.div
-                  key={currentIndex}
-                  custom={direction}
-                  variants={mobileSlideVariants}
-                  initial="initial"
-                  animate="in"
-                  exit="out"
-                  className="w-full"
-                >
-                  {renderServiceCard(servicios[currentIndex])}
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+              <div className="w-full">
+                {renderServiceCard(servicios[currentIndex], currentIndex)}
+              </div>
+            </div>
 
             {/* Pagination Dots */}
             <div className="flex justify-center items-center mt-6 gap-2">
               {servicios.map((_, index) => (
-                <motion.button
+                <button
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`relative overflow-hidden transition-all duration-300 ${
@@ -330,73 +362,78 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
                       ? 'w-8 h-3 bg-primary' 
                       : 'w-3 h-3 bg-muted hover:bg-muted-foreground/30'
                   } rounded-full`}
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
                 >
                   {index === currentIndex && (
-                    <motion.div
+                    <div 
                       className="absolute inset-0 bg-gradient-to-r from-primary/70 to-secondary/70 rounded-full"
-                      animate={{ opacity: [0.7, 1, 0.7] }}
-                      transition={{ 
-                        duration: 2, 
-                        repeat: Infinity, 
-                        ease: "easeInOut" 
+                      ref={el => {
+                        if (el && !prefersReducedMotion) {
+                          gsap.to(el, {
+                            opacity: 0.7,
+                            yoyo: true,
+                            repeat: -1,
+                            duration: 1,
+                            ease: "power2.inOut"
+                          });
+                        }
                       }}
                     />
                   )}
-                </motion.button>
+                </button>
               ))}
             </div>
 
             {/* Swipe Indicator */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+            <div 
               className="flex justify-center mt-4"
+              ref={el => {
+                if (el && !prefersReducedMotion) {
+                  gsap.fromTo(el, 
+                    { opacity: 0, y: 10 },
+                    { opacity: 1, y: 0, duration: 0.6, delay: 0.3 }
+                  );
+                }
+              }}
             >
               <div className="text-xs text-muted-foreground bg-muted/30 px-3 py-1 rounded-full backdrop-blur-sm">
                 Desliza para ver más servicios
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
 
         {/* Call to Action Section */}
-        <AnimatedElement delay={0.8}>
-          <div className="mt-16 text-center">
-            <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-xl max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold mb-4">
-                ¿Tienes un proyecto en mente?
-              </h3>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Me encanta trabajar en proyectos nuevos. Cuéntame tu idea y juntos 
-                encontraremos la mejor manera de hacerla realidad.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.button
-                  onClick={onContactClick}
-                  className="px-8 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-300 shadow-lg font-medium"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Hablemos de tu proyecto
-                </motion.button>
-                <motion.a
-                  href="https://wa.me/543865351958?text=Hola! Me gustaría conocer más sobre tus servicios de desarrollo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-3 border border-border rounded-xl hover:bg-muted/50 transition-all duration-300 shadow-md font-medium"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  WhatsApp directo
-                </motion.a>
-              </div>
+        <div className="mt-16 text-center">
+          <div 
+            ref={ctaRef}
+            className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-xl max-w-2xl mx-auto"
+          >
+            <h3 className="text-2xl font-bold mb-4">
+              ¿Tienes un proyecto en mente?
+            </h3>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Me encanta trabajar en proyectos nuevos. Cuéntame tu idea y juntos 
+              encontraremos la mejor manera de hacerla realidad.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={onContactClick}
+                className="px-8 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-300 shadow-lg font-medium"
+              >
+                Hablemos de tu proyecto
+              </button>
+              <a
+                href="https://wa.me/543865351958?text=Hola! Me gustaría conocer más sobre tus servicios de desarrollo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-3 border border-border rounded-xl hover:bg-muted/50 transition-all duration-300 shadow-md font-medium"
+              >
+                WhatsApp directo
+              </a>
             </div>
           </div>
-        </AnimatedElement>
+        </div>
       </section>
-    </AnimateElements>
   );
 };
 

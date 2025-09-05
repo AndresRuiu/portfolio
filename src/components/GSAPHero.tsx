@@ -27,7 +27,7 @@ export default function GSAPHero({
   const ctaButtonRef = useRef<HTMLButtonElement>(null);
   const projectsButtonRef = useRef<HTMLButtonElement>(null);
   
-  const { scrambleReveal, typewriterReveal } = useTextAnimations();
+  const { scrambleReveal } = useTextAnimations();
   const { createMagneticButton, magneticEffect } = useMagneticEffects();
   const { isMobile, prefersReducedMotion, gsap } = useGSAPResponsive();
   
@@ -61,19 +61,10 @@ export default function GSAPHero({
         });
         
         if (!isMobile) {
-          // Scramble animation para desktop
+          // Scramble animation para desktop - ORIGINAL
           const scrambleAnim = scrambleReveal(heroTitleRef.current);
           if (scrambleAnim) {
             tl.add(scrambleAnim, 0);
-            // CALLBACK DE MONITOREO
-            tl.call(() => {
-              console.log('🚀 Scramble completado - verificando visibilidad:', {
-                element: heroTitleRef.current,
-                opacity: heroTitleRef.current?.style.opacity,
-                visibility: heroTitleRef.current?.style.visibility,
-                display: heroTitleRef.current?.style.display
-              });
-            }, [], 2); // 2 segundos después del inicio
           } else {
             // Fallback si scramble falla
             tl.fromTo(heroTitleRef.current, 
@@ -120,29 +111,41 @@ export default function GSAPHero({
         }
       }
 
-      // Descripción - usar typewriter effect con WORDS (preserva word-break)
+      // Descripción - TYPEWRITER PALABRA POR PALABRA
       if (heroDescRef.current) {
-        const typewriterAnim = typewriterReveal(heroDescRef.current);
-        if (typewriterAnim) {
-          tl.add(typewriterAnim, isMobile ? 0.4 : 0.8);
-        } else {
-          // Fallback con preservación de word-break
-          tl.fromTo(heroDescRef.current,
-            { opacity: 0, y: 20 },
-            { 
-              opacity: 1, 
-              y: 0, 
-              duration: 0.8, 
-              ease: "power2.out",
-              onComplete: () => {
-                if (heroDescRef.current) {
-                  heroDescRef.current.classList.add('no-word-break');
-                }
+        console.log('📝 Animando descripción con efecto typewriter palabra por palabra');
+        
+        // Asegurar visibilidad inicial
+        gsap.set(heroDescRef.current, {
+          opacity: 1,
+          visibility: 'visible',
+          display: 'block'
+        });
+        
+        // Asegurar clases de word-break desde el inicio
+        heroDescRef.current.classList.add('no-word-break');
+        
+        // REVIRTIENDO AL MÉTODO ORIGINAL QUE FUNCIONABA
+        // Animación simple y confiable (igual que en móvil)
+        tl.fromTo(heroDescRef.current,
+          { opacity: 0, y: 20, scale: 0.95 },
+          { 
+            opacity: 1, 
+            y: 0,
+            scale: 1, 
+            duration: 0.8, 
+            ease: "power2.out",
+            onComplete: () => {
+              console.log('✅ Descripción animada exitosamente');
+              if (heroDescRef.current) {
+                heroDescRef.current.classList.add('no-word-break');
               }
-            },
-            isMobile ? 0.4 : 0.8
-          );
-        }
+            }
+          },
+          isMobile ? 0.4 : 0.8
+        );
+      } else {
+        console.error('❌ heroDescRef.current is null');
       }
 
       // Botones con efecto magnético

@@ -12,6 +12,7 @@ interface UnifiedCardProps {
   delay?: number;
   hover?: boolean;
   onClick?: () => void;
+  scrollTriggered?: boolean; // NEW: Disable internal animation when controlled by ScrollTrigger
 }
 
 const gradientVariants = {
@@ -38,6 +39,7 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
   delay = 0,
   hover = true,
   onClick,
+  scrollTriggered = false, // NEW: Default to false for backward compatibility
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInteractive = !!onClick;
@@ -46,8 +48,21 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
     if (!ref.current) return;
 
     const element = ref.current;
+    
+    // IMPROVED: Check if element should be scroll-animated
+    const isScrollAnimated = scrollTriggered || element.hasAttribute('data-scroll-animated');
+    
+    if (isScrollAnimated) {
+      // Set initial state for ScrollTrigger to animate
+      gsap.set(element, {
+        opacity: 0,
+        scale: 0.95,
+        y: 20
+      });
+      return; // Let ScrollTrigger handle the animation
+    }
 
-    // Set initial state
+    // Set initial state for auto animation
     gsap.set(element, {
       opacity: 0,
       scale: 0.95,
@@ -63,7 +78,7 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
       delay: delay,
       ease: "back.out(1.7)"
     });
-  }, [delay]);
+  }, [delay, scrollTriggered]);
 
   return (
     <div
@@ -73,6 +88,9 @@ export const UnifiedCard: React.FC<UnifiedCardProps> = ({
         // Base styles - siguiendo Bento Grid
         "relative overflow-hidden border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300",
         "backdrop-blur-sm",
+        
+        // FIXED: Always add unified-card class for ScrollTrigger detection
+        "unified-card",
         
         // Gradient backgrounds
         gradientVariants[variant],

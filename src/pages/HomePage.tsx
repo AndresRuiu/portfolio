@@ -11,11 +11,12 @@ import { Icons } from '@/components/ui/icons';
 import { getIcon } from '@/lib/iconResolver';
 import { ModalSkeleton } from '@/components/LoadingFallbacks';
 import { useKeyboardNavigation } from '@/hooks/useNavigation';
-import { useMagneticHover } from '@/hooks/useMagneticHover';
+import { useScrollAnimations } from '@/hooks/useScrollAnimations';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BentoGrid } from '@/components/BentoGrid';
 import GSAPHero from '@/components/GSAPHero';
+import ServiciosSection from '@/components/ServiciosSection';
 import { Project } from '@/types';
 import { 
   UnifiedCard, 
@@ -54,18 +55,22 @@ const HomePage = () => {
   const bentoGridRef = useRef<HTMLElement>(null);
   const aboutSectionRef = useRef<HTMLElement>(null);
   const skillsSectionRef = useRef<HTMLElement>(null);
-  const servicesSectionRef = useRef<HTMLElement>(null);
+  const servicesSectionRef = useRef<HTMLDivElement>(null);
   const projectsSectionRef = useRef<HTMLElement>(null);
   const contactSectionRef = useRef<HTMLElement>(null);
   
-  // useSmoothScroll(); // Deshabilitado por performance
+  // Hook de animaciones de scroll originales
+  const {
+    createSectionReveal,
+    createTextReveal,
+    createBlurTextReveal,
+    createGridReveal,
+    prefersReducedMotion,
+    isMobile
+  } = useScrollAnimations();
   
   // Registrar ScrollTrigger
   gsap.registerPlugin(ScrollTrigger);
-  
-  // Media queries y preferencias
-  const prefersReducedMotion = typeof window !== 'undefined' && 
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   // Mantener FLIP animations deshabilitadas
   // const { createHoverFLIP, gsap } = useFLIPAnimations();
@@ -101,25 +106,114 @@ const HomePage = () => {
     setIsProjectModalOpen(false);
   });
 
-  // Magnetic hover effects for buttons and interactive elements
-  useMagneticHover('button', { 
-    strength: 0.2, 
-    speed: 0.3, 
-    lightEffect: true,
-    morphing: true 
-  });
-  
-  useMagneticHover('.unified-card', { 
-    strength: 0.1, 
-    speed: 0.4, 
-    lightEffect: true 
-  });
-  
-  useMagneticHover('a[href]', { 
-    strength: 0.15, 
-    speed: 0.25, 
-    lightEffect: true 
-  });
+  // EFECTO MAGNÉTICO SIMPLE - UN SOLO SISTEMA GLOBAL
+  useEffect(() => {
+    if (isMobile || prefersReducedMotion) {
+      console.log('📱 Móvil o reduced motion - sin efectos magnéticos');
+      return;
+    }
+    
+    console.log('🧢 Configurando efectos magnéticos globales...');
+    
+    // CLEAN MAGNETIC SYSTEM - Works with CSS transitions by using CSS custom properties
+    const applyMagneticEffect = (element: Element, strength: number = 0.1) => {
+      if (!(element instanceof HTMLElement)) return;
+      
+      // Store original transform and add magnetic CSS class
+      const originalTransform = element.style.transform || '';
+      element.classList.add('magnetic-active');
+      
+      const handleMouseEnter = () => {
+        // Temporarily disable existing transitions for magnetic effect
+        element.style.setProperty('--magnetic-transition', 'transform 0.2s ease-out');
+        element.style.transition = 'var(--magnetic-transition)';
+      };
+      
+      const handleMouseMove = (e: MouseEvent) => {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        const deltaX = (e.clientX - centerX) * strength;
+        const deltaY = (e.clientY - centerY) * strength;
+        
+        // Use CSS transform that works with existing styles
+        const currentTransform = originalTransform.replace(/translate\([^)]*\)/g, '');
+        element.style.transform = `${currentTransform} translate(${deltaX}px, ${deltaY}px)`.trim();
+      };
+      
+      const handleMouseLeave = () => {
+        // Return to center with elastic effect
+        element.style.setProperty('--magnetic-transition', 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)');
+        element.style.transition = 'var(--magnetic-transition)';
+        
+        const currentTransform = originalTransform.replace(/translate\([^)]*\)/g, '');
+        element.style.transform = `${currentTransform} translate(0px, 0px)`.trim();
+        
+        // Restore original transition after animation
+        setTimeout(() => {
+          element.style.removeProperty('--magnetic-transition');
+          element.style.transition = '';
+        }, 600);
+      };
+      
+      element.addEventListener('mouseenter', handleMouseEnter);
+      element.addEventListener('mousemove', handleMouseMove);
+      element.addEventListener('mouseleave', handleMouseLeave);
+      
+      return () => {
+        element.removeEventListener('mouseenter', handleMouseEnter);
+        element.removeEventListener('mousemove', handleMouseMove);
+        element.removeEventListener('mouseleave', handleMouseLeave);
+        element.classList.remove('magnetic-active');
+        element.style.transform = originalTransform;
+        element.style.removeProperty('--magnetic-transition');
+        element.style.transition = '';
+      };
+    };
+    
+    // Apply magnetic effects with better targeting
+    const timer = setTimeout(() => {
+      const cleanupFunctions: (() => void)[] = [];
+      
+      // Specific targeting for different element types
+      const magneticSelectors = [
+        // Services section buttons
+        'button.service-cta-btn',
+        '.service-card button',
+        // Project buttons
+        '.unified-card button', 
+        '.project-card button',
+        // General buttons excluding hero and navigation
+        'button:not(.gsap-magnetic-btn):not([class*="nav"]):not([class*="scroll"]):not([class*="close"]):not([class*="dialog"])',
+        // Links excluding hero
+        'a[href]:not(.gsap-magnetic-btn):not([class*="nav"])'
+      ];
+      
+      let totalElements = 0;
+      magneticSelectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        console.log(`🧲 Selector "${selector}": ${elements.length} elementos`);
+        totalElements += elements.length;
+        
+        elements.forEach(element => {
+          const cleanup = applyMagneticEffect(element, 0.12);
+          if (cleanup) cleanupFunctions.push(cleanup);
+        });
+      });
+      
+      console.log(`🧲 Total elementos con efecto magnético: ${totalElements}`);
+      
+      return () => {
+        console.log('🧹 Limpiando efectos magnéticos');
+        cleanupFunctions.forEach(cleanup => cleanup());
+      };
+    }, 1500); // Increased delay to ensure all components are rendered
+    
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [servicios, isMobile, prefersReducedMotion]);
 
   const handleContactClick = () => {
     setIsContactModalOpen(true);
@@ -156,7 +250,7 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // GSAP Animations - Implementación directa y funcional
+  // GSAP Animations - Con debugging para identificar problemas
   useGSAP(() => {
     // Si el usuario prefiere reducir movimiento, no animar
     if (prefersReducedMotion) return;
@@ -164,357 +258,109 @@ const HomePage = () => {
     // Limpiar animaciones previas
     ScrollTrigger.getAll().forEach(st => st.kill());
     
-    // 1. About Section - "Mi historia" con texto de izquierda a derecha
+    console.log('🎬 Iniciando configuración de animaciones de scroll');
+    
+    // 1. About Section - "Mi historia" - CON BLUR EFFECT
     if (aboutSectionRef.current) {
       const aboutTitle = aboutSectionRef.current.querySelector('h2');
       const aboutText = aboutSectionRef.current.querySelector('p');
       
       if (aboutTitle) {
-        gsap.fromTo(aboutTitle, 
-          { opacity: 0, x: -50 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: aboutTitle,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createTextReveal(aboutTitle);
+        console.log('📖 About title animation:', result ? 'SUCCESS' : 'FAILED');
       }
       
       if (aboutText) {
-        gsap.fromTo(aboutText, 
-          { opacity: 0, x: -30 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            delay: 0.2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: aboutText,
-              start: "top 75%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createBlurTextReveal(aboutText, {
+          start: "top 85%"
+        });
+        console.log('🌪️ About text blur animation:', result ? 'SUCCESS' : 'FAILED');
       }
     }
 
-    // 2. Skills Section - "Stack tecnológico" badges con animación bottom-to-up como bloques
+    // 2. Skills Section - "Stack tecnológico" - RESTORED
     if (skillsSectionRef.current) {
       const skillsTitle = skillsSectionRef.current.querySelector('h2');
-      const skillsBadges = skillsSectionRef.current.querySelectorAll('.badge');
+      const skillsCard = skillsSectionRef.current.querySelector('.unified-card');
       
       if (skillsTitle) {
-        gsap.fromTo(skillsTitle, 
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: skillsTitle,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createTextReveal(skillsTitle);
+        console.log('🛠️ Skills title animation:', result ? 'SUCCESS' : 'FAILED');
       }
       
-      if (skillsBadges.length > 0) {
-        gsap.fromTo(skillsBadges, 
-          { opacity: 0, y: 40, scale: 0.8 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.5,
-            ease: "back.out(1.7)",
-            stagger: 0.1,
-            scrollTrigger: {
-              trigger: skillsBadges[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+      if (skillsCard) {
+        const result = createSectionReveal(skillsCard);
+        console.log('🛠️ Skills card animation:', result ? 'SUCCESS' : 'FAILED');
       }
     }
 
-    // 3. Services Section
+    // 3. Services Section - SKIP CTA (has its own internal animation)
     if (servicesSectionRef.current) {
       const servicesTitle = servicesSectionRef.current.querySelector('h2');
-      const serviceCards = servicesSectionRef.current.querySelectorAll('.unified-card');
+      const servicesDesc = servicesSectionRef.current.querySelector('p');
       
       if (servicesTitle) {
-        gsap.fromTo(servicesTitle, 
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: servicesTitle,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createTextReveal(servicesTitle);
+        console.log('🏢 Services title animation:', result ? 'SUCCESS' : 'FAILED');
       }
       
-      if (serviceCards.length > 0) {
-        gsap.fromTo(serviceCards, 
-          { opacity: 0, y: 50, rotationX: 15 },
-          {
-            opacity: 1,
-            y: 0,
-            rotationX: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            stagger: 0.2,
-            scrollTrigger: {
-              trigger: serviceCards[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+      if (servicesDesc) {
+        const result = createTextReveal(servicesDesc);
+        console.log('🏢 Services desc animation:', result ? 'SUCCESS' : 'FAILED');
       }
+      
+      console.log('🏢 Services section: CTA has internal animation');
     }
 
-    // 4. Projects Section
+    // 4. Projects Section - RESTORED
     if (projectsSectionRef.current) {
       const projectsTitle = projectsSectionRef.current.querySelector('h2');
-      const projectCards = projectsSectionRef.current.querySelectorAll('.project-card');
+      const projectCards = projectsSectionRef.current.querySelectorAll('.unified-card');
       
       if (projectsTitle) {
-        gsap.fromTo(projectsTitle, 
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: projectsTitle,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createTextReveal(projectsTitle);
+        console.log('💼 Projects title animation:', result ? 'SUCCESS' : 'FAILED');
       }
       
       if (projectCards.length > 0) {
-        gsap.fromTo(projectCards, 
-          { opacity: 0, y: 60, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            stagger: 0.15,
-            scrollTrigger: {
-              trigger: projectCards[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createGridReveal(projectCards);
+        console.log('💼 Projects cards animation:', result ? 'SUCCESS' : 'FAILED');
       }
     }
 
-    // 5. Contact Section
+    // 5. Contact Section - RESTORED
     if (contactSectionRef.current) {
       const contactTitle = contactSectionRef.current.querySelector('h2');
-      const socialLinks = contactSectionRef.current.querySelectorAll('a[href*="linkedin"], a[href*="github"], a[target="_blank"]');
-      const contactInfo = contactSectionRef.current.querySelectorAll('.grid.grid-cols-1 > div');
-      const actionButtons = contactSectionRef.current.querySelectorAll('button, a[download]');
+      const contactCard = contactSectionRef.current.querySelector('.unified-card');
       
       if (contactTitle) {
-        gsap.fromTo(contactTitle, 
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: contactTitle,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+        const result = createTextReveal(contactTitle);
+        console.log('📞 Contact title animation:', result ? 'SUCCESS' : 'FAILED');
       }
       
-      if (socialLinks.length > 0) {
-        gsap.fromTo(socialLinks, 
-          { opacity: 0, y: 30, scale: 0.8 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.6,
-            ease: "back.out(1.7)",
-            stagger: 0.1,
-            delay: 0.2,
-            scrollTrigger: {
-              trigger: socialLinks[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
-      }
-      
-      if (contactInfo.length > 0) {
-        gsap.fromTo(contactInfo, 
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            stagger: 0.1,
-            delay: 0.4,
-            scrollTrigger: {
-              trigger: contactInfo[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
-      }
-      
-      if (actionButtons.length > 0) {
-        gsap.fromTo(actionButtons, 
-          { opacity: 0, y: 40, scale: 0.9 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            ease: "back.out(1.7)",
-            stagger: 0.1,
-            delay: 0.6,
-            scrollTrigger: {
-              trigger: actionButtons[0],
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            }
-          }
-        );
+      if (contactCard) {
+        const result = createSectionReveal(contactCard);
+        console.log('📞 Contact card animation:', result ? 'SUCCESS' : 'FAILED');
       }
     }
 
-    // 6. BentoGrid Section - Animación mejorada para cada card
+    // 6. BentoGrid Section (FUNCIONA)
     if (bentoGridRef.current) {
       const bentoCards = bentoGridRef.current.querySelectorAll('.bento-card');
       
+      console.log('📊 BentoGrid section:', { cards: bentoCards.length });
+      
       if (bentoCards.length > 0) {
-        // Animar las cards del bento grid con diferentes efectos según su tamaño
-        bentoCards.forEach((card, index) => {
-          const isLargeCard = card.classList.contains('lg:col-span-2');
-          const delay = index * 0.08;
-          
-          gsap.fromTo(card, 
-            { 
-              opacity: 0, 
-              y: isLargeCard ? 60 : 40,
-              scale: 0.92,
-              rotationX: 8
-            },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              rotationX: 0,
-              duration: isLargeCard ? 1 : 0.7,
-              delay: delay,
-              ease: "back.out(1.4)",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 90%",
-                toggleActions: "play none none reverse"
-              }
-            }
-          );
-          
-          // Animar elementos internos de cada card con más detalle
-          const icons = card.querySelectorAll('svg, .text-3xl, .text-6xl');
-          const numbers = card.querySelectorAll('.text-3xl:not(.text-6xl)');
-          const texts = card.querySelectorAll('p, .text-sm, h3, h4');
-          
-          if (icons.length > 0) {
-            gsap.fromTo(icons, 
-              { scale: 0, rotation: -45 },
-              {
-                scale: 1,
-                rotation: 0,
-                duration: 0.6,
-                delay: delay + 0.3,
-                ease: "back.out(2)",
-                stagger: 0.1,
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top 85%",
-                  toggleActions: "play none none reverse"
-                }
-              }
-            );
-          }
-          
-          if (numbers.length > 0) {
-            gsap.fromTo(numbers, 
-              { scale: 0.5, opacity: 0 },
-              {
-                scale: 1,
-                opacity: 1,
-                duration: 0.5,
-                delay: delay + 0.4,
-                ease: "elastic.out(1, 0.3)",
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top 85%",
-                  toggleActions: "play none none reverse"
-                }
-              }
-            );
-          }
-          
-          if (texts.length > 0) {
-            gsap.fromTo(texts, 
-              { opacity: 0, y: 10 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.4,
-                delay: delay + 0.5,
-                ease: "power2.out",
-                stagger: 0.05,
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top 85%",
-                  toggleActions: "play none none reverse"
-                }
-              }
-            );
-          }
-        });
+        const result = createGridReveal(bentoCards);
+        console.log('📊 BentoGrid cards animation:', result ? 'SUCCESS' : 'FAILED');
       }
+    } else {
+      console.error('❌ BentoGrid section ref not found');
     }
+    
+    console.log('✅ Configuración de animaciones completada');
   });
-  
-  // Obtener servicios principales (los 2 primeros)
-  const serviciosPrincipales = servicios.slice(0, 2);
+
 
   return (
     <Layout>
@@ -551,7 +397,7 @@ const HomePage = () => {
         <h2 className="text-3xl md:text-2xl font-bold mb-6 text-center md:text-left bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent performance-optimized">
           Mi stack tecnológico
         </h2>
-        <UnifiedCard variant="subtle" size="lg">
+        <UnifiedCard variant="subtle" size="lg" delay={0} data-scroll-animated="true">
           <UnifiedCardContent>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
               {habilidades?.map((skill) => (
@@ -568,56 +414,13 @@ const HomePage = () => {
         </UnifiedCard>
       </section>
 
-      {/* Preview de Servicios */}
-      <section ref={servicesSectionRef} className="container mx-auto pt-16 pb-8">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-secondary bg-clip-text text-transparent performance-optimized">
-            Servicios
-          </h2>
-          <Link to="/servicios">
-            <Button variant="outline" className="flex items-center gap-2 morphing-button morphing-secondary">
-              <span className="text-morph">Ver todos</span>
-              <ArrowRight className="w-4 h-4 icon-morph" />
-            </Button>
-          </Link>
-        </div>
-        
-        <UnifiedGrid columns={2} gap="md">
-          {serviciosPrincipales.map((servicio) => (
-            <UnifiedCard
-              key={servicio.titulo}
-              variant="highlight"
-              size="md"
-              hover={true}
-              className="unified-card"
-            >
-              <UnifiedCardHeader>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">{servicio.icono}</span>
-                  <UnifiedCardTitle size="md">{servicio.titulo}</UnifiedCardTitle>
-                </div>
-              </UnifiedCardHeader>
-              <UnifiedCardContent>
-                <UnifiedCardDescription className="mb-4">
-                  {servicio.descripcion}
-                </UnifiedCardDescription>
-                <div className="flex flex-wrap gap-2">
-                  {servicio.tecnologias.slice(0, 3).map((tech) => (
-                    <Badge key={tech} variant="secondary" className="text-xs">
-                      {tech}
-                    </Badge>
-                  ))}
-                  {servicio.tecnologias.length > 3 && (
-                    <Badge variant="secondary" className="text-xs">
-                      +{servicio.tecnologias.length - 3} más
-                    </Badge>
-                  )}
-                </div>
-              </UnifiedCardContent>
-            </UnifiedCard>
-          ))}
-        </UnifiedGrid>
-      </section>
+      {/* Servicios Section - MIGRADO A GSAP */}
+      <div ref={servicesSectionRef}>
+        <ServiciosSection 
+          servicios={servicios} 
+          onContactClick={handleContactClick}
+        />
+      </div>
 
       {/* Preview de Proyectos */}
       <section ref={projectsSectionRef} className="container mx-auto pt-8 pb-16">
@@ -641,6 +444,7 @@ const HomePage = () => {
               size="md"
               hover={true}
               className="overflow-hidden group cursor-pointer project-card"
+              data-scroll-animated="true"
               onClick={() => {
                 handleProjectClick(proyecto);
               }}
@@ -730,7 +534,7 @@ const HomePage = () => {
           </h2>
           
           <div className="max-w-2xl mx-auto">
-            <UnifiedCard variant="glass" size="xl">
+            <UnifiedCard variant="glass" size="xl" data-scroll-animated="true">
               <div className="flex flex-col items-center space-y-6">
               {/* Social Links */}
               <div className="flex justify-center space-x-6">

@@ -6,7 +6,8 @@
       "Bash(npm run preview:*)",
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Read(/C:\\Users\\andre\\Desktop\\proyectos\\portfolio\\src\\components/**)"
     ],
     "deny": []
   }

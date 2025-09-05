@@ -336,7 +336,7 @@ export function useTextAnimations() {
     return tl;
   }, [createSplitText, isMobile, prefersReducedMotion]);
 
-  const typewriterReveal = useCallback((target: string | Element) => {
+  const typewriterReveal = useCallback((target: string | Element, config: { delay?: number, speed?: number } = {}) => {
     // Verificar que el target existe y tiene contenido
     if (!target) {
       console.warn('typewriterReveal: No target provided');
@@ -356,9 +356,9 @@ export function useTextAnimations() {
       return null;
     }
     
-    // Ensure element is visible before animation
+    // Set up container for word animation
     gsap.set(element, { 
-      opacity: 1, 
+      opacity: 1,
       visibility: 'visible',
       display: 'block'
     });
@@ -376,46 +376,54 @@ export function useTextAnimations() {
     }
 
     const split = createSplitText(element);
+    
     if (!split || !split.words) {
-      console.warn('typewriterReveal: SplitText failed, using fallback animation');
-      // Fallback animation
+      console.warn('typewriterReveal: SplitText failed, using simple fallback');
+      // SIMPLE FALLBACK: Just fade in the complete text
       return gsap.fromTo(element, 
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+        { 
+          opacity: 1, 
+          y: 0,
+          duration: 1, 
+          ease: "power2.out",
+          delay: config.delay || 0
+        }
       );
     }
 
     const words = split.words;
+    
     if (words.length === 0) {
-      console.warn('typewriterReveal: No words found after split');
+      console.warn('typewriterReveal: No words found after split, using fallback');
       return gsap.fromTo(element, 
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
       );
     }
 
-    // Ensure all words are visible and positioned inline initially
+    // SIMPLIFIED: Setup initial state for words
     gsap.set(words, { 
-      opacity: 1, 
+      opacity: 0, 
       visibility: 'visible',
       display: 'inline-block',
-      marginRight: '0.25em' // Espaciado entre palabras
+      marginRight: '0.25em'
     });
 
-    return gsap.fromTo(words, 
-      { 
-        opacity: 0,
-        rotationX: -90,
-        transformOrigin: "50% 50% -50px"
-      },
-      { 
-        opacity: 1, 
-        rotationX: 0,
-        stagger: 0.08, // Más lento que chars para words
-        duration: 0.6,
-        ease: "back.out(1.4)"
+    // SIMPLIFIED: Direct animation without complex timeline
+    return gsap.to(words, { 
+      opacity: 1,
+      stagger: 0.08, // Word-by-word reveal
+      duration: 0.6,
+      ease: "power2.out",
+      onComplete: () => {
+        // Simple cleanup
+        gsap.set(words, {
+          opacity: 1,
+          visibility: 'visible'
+        });
       }
-    );
+    });
   }, [createSplitText, isMobile, prefersReducedMotion]);
 
   return {
