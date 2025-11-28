@@ -7,7 +7,8 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
       "WebFetch(domain:github.com)",
-      "Read(/C:\\Users\\andre\\Desktop\\proyectos\\portfolio\\src\\components/**)"
+      "Read(/C:\\Users\\andre\\Desktop\\proyectos\\portfolio\\src\\components/**)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

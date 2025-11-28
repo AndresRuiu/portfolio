@@ -21,16 +21,16 @@ interface ServiciosProps {
 
 const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1024
+  );
   
-  // GSAP refs
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   
-  // GSAP animations
   const { 
     createSectionReveal, 
     createTextReveal, 
@@ -46,6 +46,10 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
   }, []);
 
   const isMobile = windowWidth < 768;
+
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [servicios.length]);
 
   const goToNext = () => {
     if (currentIndex < servicios.length - 1) {
@@ -319,7 +323,7 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
         )}
 
         {/* Mobile Carousel View */}
-        {isMobile && (
+        {isMobile && servicios.length > 0 && (
           <div className="relative max-w-sm mx-auto">
             {/* Navigation Buttons */}
             {currentIndex > 0 && (
@@ -347,7 +351,7 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
               onTouchEnd={handleTouchEnd}
             >
               <div className="w-full">
-                {renderServiceCard(servicios[currentIndex], currentIndex)}
+                {servicios[currentIndex] && renderServiceCard(servicios[currentIndex], currentIndex)}
               </div>
             </div>
 
@@ -399,6 +403,13 @@ const ServiciosSection: React.FC<ServiciosProps> = ({ servicios, onContactClick 
                 Desliza para ver más servicios
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Empty state for mobile when no services */}
+        {isMobile && servicios.length === 0 && (
+          <div className="text-center text-muted-foreground">
+            Los servicios se están cargando...
           </div>
         )}
 
